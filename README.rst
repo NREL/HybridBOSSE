@@ -2,10 +2,6 @@
 hybrids_shared_infrastructure
 =============================
 
-
-.. image:: https://img.shields.io/pypi/v/hybrids_shared_infrastructure.svg
-        :target: https://pypi.python.org/pypi/hybrids_shared_infrastructure
-
 .. image:: https://img.shields.io/travis/parangat94/hybrids_shared_infrastructure.svg
         :target: https://travis-ci.com/parangat94/hybrids_shared_infrastructure
 
