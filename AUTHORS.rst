@@ -10,4 +10,5 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Aaron Barker <barker59@gmail.com>
+* Benjamin Anderson <badeshiben@gmail.com>
