@@ -9,7 +9,8 @@ python:
 install: pip install landbosse
 
 # Command to run tests, e.g. python setup.py test
-script: pytest
+script:
+  - python $TRAVIS_BUILD_DIR/LandBOSSE/main.py --validate
 
 # Assuming you have installed the travis-ci CLI tool, after you
 # create the Github repo and add it to Travis, run the
