@@ -21,8 +21,8 @@ install:
 
 env:
   global:
-    - LANDBOSSE_INPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
-    - LANDBOSSE_OUTPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
+    - LANDBOSSE_INPUT_DIR: $TRAVIS_BUILD_DIR/LandBOSSE/project_input_template
+    - LANDBOSSE_OUTPUT_DIR: $TRAVIS_BUILD_DIR/LandBOSSE/project_input_template
 
 # Command to run tests, e.g. python setup.py test
 script:
