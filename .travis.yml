@@ -27,3 +27,7 @@ env:
 # Command to run tests, e.g. python setup.py test
 script:
   - python $TRAVIS_BUILD_DIR/LandBOSSE/main.py --validate
+
+branches:
+  only:
+    - develop
