@@ -2,6 +2,7 @@
 hybrids_shared_infrastructure
 =============================
 
+
 .. image:: https://travis-ci.com/parangat94/hybrids_shared_infrastructure.svg?branch=develop
     :target: https://travis-ci.com/parangat94/hybrids_shared_infrastructure
 
