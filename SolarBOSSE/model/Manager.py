@@ -20,10 +20,12 @@ class Manager:
         self.input_dict = input_dict
         self.output_dict = output_dict
 
+    def
+
     def execute_solarbosse(self):
 
         racking_system_installation = RackingSystemInstallation(input_dict=self.input_dict,
                                                                 output_dict=self.output_dict)
         self.output_dict['racking_assembly_cost'] = racking_system_installation.run_module()
-        return self.output_dict
+        return self.output_dict['racking_assembly_cost']
 
