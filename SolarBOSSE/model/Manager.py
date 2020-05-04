@@ -1,5 +1,6 @@
 from .RackingSystemInstallation import RackingSystemInstallation
 from .SitePreparationCost import SitePreparationCost
+from .SubstationCost import SubstationCost
 
 
 class Manager:
@@ -22,18 +23,30 @@ class Manager:
         self.input_dict = input_dict
         self.output_dict = output_dict
 
-
     def execute_solarbosse(self):
 
         project_name = 'solar_run'
 
+        # RackingSystemInstallation:
         racking_system_installation = RackingSystemInstallation(input_dict=self.input_dict,
                                                                 output_dict=self.output_dict)
-        self.output_dict['racking_assembly_cost'] = racking_system_installation.run_module()
+        racking_system_installation.run_module()
 
+        # SitePrepCost:
         siteprep = SitePreparationCost(input_dict=self.input_dict,
                                        output_dict=self.output_dict,
                                        project_name=project_name)
         siteprep.run_module()
+
+        # SubstationCost:
+        substationcost = SubstationCost(input_dict=self.input_dict,
+                                       output_dict=self.output_dict,
+                                       project_name=project_name)
+        substationcost.run_module()
+
+        self.output_dict['total_bos_cost'] = self.output_dict['total_racking_cost'] + \
+                                             self.output_dict['total_road_cost'] +  \
+                                             self.output_dict['total_substation_cost']
+
         return self.output_dict
 

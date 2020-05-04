@@ -107,6 +107,8 @@ class XlsxReader:
             project_data_dataframes['site_facility_building_area']
 
         incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
+        incomplete_input_dict['crew'] = project_data_dataframes['crew']
+        incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
         incomplete_input_dict['component_data'] = project_data_dataframes['components']
 
         # Read development tab, if it exists (it is optional since development costs can
@@ -126,6 +128,8 @@ class XlsxReader:
 
         incomplete_input_dict['system_size_MW_DC'] = \
             project_parameters['System Size (MW_DC)']
+        incomplete_input_dict['system_size_MW_AC'] = \
+            incomplete_input_dict['system_size_MW_DC'] / 1.2
 
         incomplete_input_dict['module_rating_W'] = \
             project_parameters['Module rating (Watts)']
@@ -154,8 +158,19 @@ class XlsxReader:
 
         incomplete_input_dict['road_quality'] = project_parameters['Road Quality (0-1)']
 
+        incomplete_input_dict['site_prep_area_acres_mw_ac'] = \
+            project_parameters['Project site prep area (Acres/MW_ac)']
+
+        # Assuming DC-AC ratio of 1.2:
+        incomplete_input_dict['site_prep_area_acres_mw_dc'] = \
+            incomplete_input_dict['site_prep_area_acres_mw_ac'] / 0.8
+
+        incomplete_input_dict['site_prep_area_acres'] = \
+            incomplete_input_dict['site_prep_area_acres_mw_dc'] * incomplete_input_dict['system_size_MW_DC']
+
+        # 1 acre = 4046.86 m2:
         incomplete_input_dict['site_prep_area_m2'] = \
-            project_parameters['Project site prep area (Acres)']
+            incomplete_input_dict['site_prep_area_acres'] * 4046.86
 
         incomplete_input_dict['fraction_new_roads'] = \
             project_parameters['Percent of roads that will be constructed']

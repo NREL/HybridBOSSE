@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 import math
 import traceback
+import landbosse
+from landbosse.landbosse_api.run import run_landbosse
 
+# TODO: Add implementation of road quality
 
 class SitePreparationCost:
     """
@@ -146,7 +149,7 @@ class SitePreparationCost:
         self.output_dict = output_dict
         self.project_name = project_name
 
-        #Road quality and fraction of roads that are
+        # Road quality and fraction of roads that are
         self.fraction_new_roads = self.input_dict['fraction_new_roads']
         self.road_quality  = self.input_dict['road_quality']
 
@@ -305,11 +308,12 @@ class SitePreparationCost:
         output_dict['rough_grading_area'] = \
             (input_dict['site_prep_area_m2'] * 10.76391) / 100000
 
-        material_quantity_dict = {'cubic yard': output_dict['topsoil_volume'],
-                                  'embankment cubic yards crane': output_dict['embankment_volume_crane'],
-                                  'embankment cubic yards road': output_dict['embankment_volume_road'],
-                                  'loose cubic yard': output_dict['material_volume_cubic_yards'],
-                                  'Each (100000 square feet)': output_dict['rough_grading_area']}
+        material_quantity_dict = {
+            'cubic yard': output_dict['topsoil_volume'],
+            'embankment cubic yards crane': output_dict['embankment_volume_crane'],
+            'embankment cubic yards road': output_dict['embankment_volume_road'],
+            'loose cubic yard': output_dict['material_volume_cubic_yards'],
+            'Each (100000 square feet)': output_dict['rough_grading_area']}
 
         material_needs = pd.DataFrame(columns=['Units', 'Quantity of material'])
         for unit in list_units:
@@ -350,6 +354,34 @@ class SitePreparationCost:
 
         operation_data['Time construct days'] = \
             operation_data[['time_construct_bool', 'Number of days']].min(axis=1)
+
+        num_days = operation_data['Time construct days'].max()
+
+        # pull out management data
+        crew_cost = self.input_dict['crew_cost']
+
+        crew = self.input_dict['crew'][
+            self.input_dict['crew']['Crew type ID'].str.contains('M0')]
+
+        management_crew = pd.merge(crew_cost, crew, on=['Labor type ID'])
+
+        per_diem_total = management_crew['Per diem USD per day'] * \
+                         management_crew['Number of workers'] * num_days
+        management_crew = management_crew.assign(per_diem_total=per_diem_total)
+
+        hourly_costs_total = management_crew['Hourly rate USD per hour'] * \
+                             self.input_dict['hour_day'][self.input_dict['time_construct']] * \
+                             num_days
+        management_crew = management_crew.assign(hourly_costs_total=hourly_costs_total)
+
+        total_crew_cost_before_wind_delay = management_crew['per_diem_total'] + \
+                                            management_crew['hourly_costs_total']
+        management_crew = management_crew.assign(total_crew_cost_before_wind_delay=
+                                                 total_crew_cost_before_wind_delay)
+
+        self.output_dict['management_crew'] = management_crew
+        self.output_dict['management_crew_cost'] = \
+            management_crew['total_crew_cost_before_wind_delay'].sum()
 
         output_dict['operation_data'] = operation_data
 
@@ -446,7 +478,8 @@ class SitePreparationCost:
                                   labor_per_diem
                                   )
 
-        labor_for_inner_roads_cost_usd = (labor_data['Cost USD'].sum())
+        labor_for_inner_roads_cost_usd = labor_data['Cost USD'].sum() + \
+                                         output_dict['management_crew_cost']
         labor_costs = pd.DataFrame([['Labor',
                                      float(labor_for_inner_roads_cost_usd),
                                      'Inter-array roads (Solar)']],
@@ -497,15 +530,26 @@ class SitePreparationCost:
 
         mobilization_costs = pd.DataFrame([['Mobilization',
                                             mobilization_costs_new_roads,
-                                            'Roads']],
+                                            'Inter-array roads (Solar)']],
                                           columns=['Type of cost',
                                                    'Cost USD',
                                                    'Phase of construction'])
 
         road_cost = road_cost.append(mobilization_costs)
         total_road_cost = road_cost
-        output_dict['total_road_cost'] = total_road_cost
+        output_dict['total_road_cost_df'] = total_road_cost
+        output_dict['total_road_cost'] = total_road_cost['Cost USD'].sum()
         return total_road_cost
+
+    def access_road_cost(self):
+        """
+        A solar array only needs an access road leading up to the array. The inter-array
+        roads are lower quality, dirt roads that only need to be able to support ~20 ton
+        loads on them. For access road construction, we just use LandBOSSE's SitePrepCost
+        module to determine cost of access road construction.
+        """
+        pass    # TODO: add implementation
+
 
     def run_module(self):
         """
