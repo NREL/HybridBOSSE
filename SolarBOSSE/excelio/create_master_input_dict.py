@@ -114,6 +114,9 @@ class XlsxReader:
         if 'development' in project_data_dataframes:
             incomplete_input_dict['development_df'] = project_data_dataframes['development']
 
+        # TODO: Add to project_list.xlsx spreadsheet
+        incomplete_input_dict['construction_estimator_per_diem'] = 144
+
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
         incomplete_input_dict['project_data_file'] = \
             project_parameters['Project data file']
@@ -154,11 +157,11 @@ class XlsxReader:
         incomplete_input_dict['site_prep_area_m2'] = \
             project_parameters['Project site prep area (Acres)']
 
-        incomplete_input_dict['new_road_percent'] = \
+        incomplete_input_dict['fraction_new_roads'] = \
             project_parameters['Percent of roads that will be constructed']
 
         incomplete_input_dict['road_width_ft'] = project_parameters['Road width (ft)']
-        incomplete_input_dict['road_thickness'] = project_parameters['Road thickness (in)']
+        incomplete_input_dict['road_thickness_in'] = project_parameters['Road thickness (in)']
         incomplete_input_dict['crane_width'] = project_parameters['Crane width (m)']
         incomplete_input_dict['num_access_roads'] = project_parameters['Number of access roads']
         incomplete_input_dict['overtime_multiplier'] = project_parameters['Overtime multiplier']

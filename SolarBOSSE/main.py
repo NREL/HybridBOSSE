@@ -42,6 +42,7 @@ def run_solarbosse():
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
         results['total_bos_cost'] = output_dict['racking_installation_cost_USD']
+        results['siteprep_cost'] = output_dict['total_road_cost']
     return results
 
 

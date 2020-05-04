@@ -1,4 +1,6 @@
 from .RackingSystemInstallation import RackingSystemInstallation
+from .SitePreparationCost import SitePreparationCost
+
 
 class Manager:
     """
@@ -20,12 +22,18 @@ class Manager:
         self.input_dict = input_dict
         self.output_dict = output_dict
 
-    def
 
     def execute_solarbosse(self):
+
+        project_name = 'solar_run'
 
         racking_system_installation = RackingSystemInstallation(input_dict=self.input_dict,
                                                                 output_dict=self.output_dict)
         self.output_dict['racking_assembly_cost'] = racking_system_installation.run_module()
-        return self.output_dict['racking_assembly_cost']
+
+        siteprep = SitePreparationCost(input_dict=self.input_dict,
+                                       output_dict=self.output_dict,
+                                       project_name=project_name)
+        siteprep.run_module()
+        return self.output_dict
 
