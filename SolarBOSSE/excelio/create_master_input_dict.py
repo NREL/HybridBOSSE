@@ -153,6 +153,10 @@ class XlsxReader:
             project_parameters['Interconnect Voltage (kV)']
 
         incomplete_input_dict['switchyard_y_n'] = project_parameters['New Switchyard (y/n)']
+        if incomplete_input_dict['switchyard_y_n'] == 'y':
+            incomplete_input_dict['new_switchyard'] = True
+        else:
+            incomplete_input_dict['new_switchyard'] = False
 
         incomplete_input_dict['road_length_m'] = project_parameters['Road length adder (m)']
 

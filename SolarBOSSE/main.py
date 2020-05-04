@@ -45,6 +45,7 @@ def run_solarbosse():
         results['total_racking_cost'] = output_dict['total_racking_cost']
         results['siteprep_cost'] = output_dict['total_road_cost']
         results['substation_cost'] = output_dict['total_substation_cost']
+        results['total_transdist_cost'] = output_dict['total_transdist_cost']
         results['total_management_cost'] = output_dict['total_management_cost']
     return results
 
