@@ -1,6 +1,7 @@
 from .RackingSystemInstallation import RackingSystemInstallation
 from .SitePreparationCost import SitePreparationCost
 from .SubstationCost import SubstationCost
+from .ManagementCost import ManagementCost
 
 
 class Manager:
@@ -44,9 +45,15 @@ class Manager:
                                        project_name=project_name)
         substationcost.run_module()
 
+        managementcost = ManagementCost(input_dict=self.input_dict,
+                                       output_dict=self.output_dict,
+                                       project_name=project_name)
+        managementcost.run_module()
+
         self.output_dict['total_bos_cost'] = self.output_dict['total_racking_cost'] + \
-                                             self.output_dict['total_road_cost'] +  \
-                                             self.output_dict['total_substation_cost']
+                                             self.output_dict['total_road_cost'] + \
+                                             self.output_dict['total_substation_cost'] + \
+                                             self.output_dict['total_management_cost']
 
         return self.output_dict
 
