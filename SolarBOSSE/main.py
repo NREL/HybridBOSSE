@@ -3,15 +3,14 @@ import pandas as pd
 from SolarBOSSE.excelio.create_master_input_dict import XlsxReader
 from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from SolarBOSSE.model.Manager import Manager
-import csv
 
 
-def run_solarbosse(input_dict):
+def run_solarbosse(input_dict_file_name):
     input_output_path = os.path.dirname(__file__)
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
 
-    project_data = read_data(input_dict['project_list'])
+    project_data = read_data(input_dict_file_name['project_list'])
     xlsx_reader = XlsxReader()
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
@@ -141,9 +140,5 @@ for size in sizes:
     print(input_dict)
     BOS_results, detailed_results = run_solarbosse(input_dict)
     print(BOS_results)
-    # write to csv
-    with open('/Users/pbhaskar/Desktop/solar_outputs/solar_all_MW.csv', 'w') as f:
-        for key in BOS_results.keys():
-            f.write("%s,%s\n" % (key, BOS_results[key]))
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
