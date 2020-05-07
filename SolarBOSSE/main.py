@@ -140,5 +140,7 @@ for size in sizes:
     print(input_dict)
     BOS_results, detailed_results = run_solarbosse(input_dict)
     print(BOS_results)
+    bos_capex = BOS_results['total_bos_cost'] / (size * 1e6)
+    print(str(size) + ' MW BOS CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
