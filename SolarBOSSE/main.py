@@ -3,15 +3,15 @@ import pandas as pd
 from SolarBOSSE.excelio.create_master_input_dict import XlsxReader
 from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from SolarBOSSE.model.Manager import Manager
-from datetime import datetime, timedelta
+import csv
 
 
-def run_solarbosse():
+def run_solarbosse(input_dict):
     input_output_path = os.path.dirname(__file__)
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
 
-    project_data = read_data()
+    project_data = read_data(input_dict['project_list'])
     xlsx_reader = XlsxReader()
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
@@ -42,21 +42,22 @@ def run_solarbosse():
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
         results['total_bos_cost'] = output_dict['total_bos_cost']
-        results['total_racking_cost'] = output_dict['total_racking_cost']
+        results['total_racking_cost'] = output_dict['total_racking_cost_USD']
         results['siteprep_cost'] = output_dict['total_road_cost']
         results['substation_cost'] = output_dict['total_substation_cost']
         results['total_transdist_cost'] = output_dict['total_transdist_cost']
         results['total_management_cost'] = output_dict['total_management_cost']
-    return results
+
+    return results, output_dict
 
 
 # This method reads in the two input Excel files (project_list; project_1)
 # and stores them as data frames. This method is called internally in
 # run_landbosse(), where the data read in is converted to a master input
 # dictionary.
-def read_data():
+def read_data(file_name):
     path_to_project_list = os.path.dirname(__file__)
-    sheets = XlsxDataframeCache.read_all_sheets_from_xlsx('project_list',
+    sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(file_name,
                                                           path_to_project_list
                                                           )
 
@@ -130,10 +131,19 @@ class NegativeInputError(Error):
 
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
+input_dict = dict()
+sizes = [5, 50, 100]
 
-# TODO: Un-comment these out if running this script directly.
-
-BOS_results = run_solarbosse()
-print(BOS_results)
+for size in sizes:
+    BOS_results = dict()
+    BOS_results.update({str(size)+' MW scenario': ' '})
+    input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
+    print(input_dict)
+    BOS_results, detailed_results = run_solarbosse(input_dict)
+    print(BOS_results)
+    # write to csv
+    with open('/Users/pbhaskar/Desktop/solar_outputs/solar_all_MW.csv', 'w') as f:
+        for key in BOS_results.keys():
+            f.write("%s,%s\n" % (key, BOS_results[key]))
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

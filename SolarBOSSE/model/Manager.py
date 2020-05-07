@@ -31,7 +31,8 @@ class Manager:
 
         # RackingSystemInstallation:
         racking_system_installation = RackingSystemInstallation(input_dict=self.input_dict,
-                                                                output_dict=self.output_dict)
+                                                                output_dict=self.output_dict,
+                                                                project_name=project_name)
         racking_system_installation.run_module()
 
         # SitePrepCost:
@@ -59,11 +60,10 @@ class Manager:
         gridconnection.run_module()
 
         # Sum all costs
-        self.output_dict['total_bos_cost'] = self.output_dict['total_racking_cost'] + \
+        self.output_dict['total_bos_cost'] = self.output_dict['total_racking_cost_USD'] + \
                                              self.output_dict['total_road_cost'] + \
                                              self.output_dict['total_substation_cost'] + \
                                              self.output_dict['total_management_cost'] + \
                                              self.output_dict['total_transdist_cost']
 
         return self.output_dict
-

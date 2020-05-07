@@ -103,13 +103,14 @@ class XlsxReader:
         incomplete_input_dict['construction_estimator'] = \
             project_data_dataframes['construction_estimator']
 
+        incomplete_input_dict['solar_BOM'] = project_data_dataframes['balance_of_material_1MW']
+
         incomplete_input_dict['site_facility_building_area_df'] = \
             project_data_dataframes['site_facility_building_area']
 
         incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
         incomplete_input_dict['crew'] = project_data_dataframes['crew']
         incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
-        incomplete_input_dict['component_data'] = project_data_dataframes['components']
 
         # Read development tab, if it exists (it is optional since development costs can
         # be placed in the project list):
@@ -134,8 +135,8 @@ class XlsxReader:
         incomplete_input_dict['module_rating_W'] = \
             project_parameters['Module rating (Watts)']
 
-        incomplete_input_dict['panels_per_week'] = \
-            project_parameters['Rack and Panel Installation Rate (x1000 panels / week)']
+        incomplete_input_dict['foundation_hole_ft'] = \
+            project_parameters['Foundation hole length (ft)']
 
         incomplete_input_dict['line_freq_hz'] = \
             project_parameters['Line Frequency (Hz)']

@@ -74,18 +74,20 @@ class SubstationCost:
                 11652 * (input_dict['interconnect_voltage_kV'] + input_dict['system_size_MW_AC']) + \
                 11795 * (input_dict['system_size_MW_AC'] ** 0.3549) + 1526800
 
-            output_dict['substation_cost_output_df'] = pd.DataFrame(
-                                                [['Other',
-                                                  output_dict['substation_cost_usd'],
-                                                  'Substation']],
+        else:
 
-                                                columns=['Type of cost',
-                                                         'Cost USD',
-                                                         'Phase of construction'])
+            output_dict['substation_cost_usd'] = 0
 
-            output_dict['total_substation_cost_df'] = output_dict['substation_cost_output_df']
-            output_dict['total_substation_cost'] = \
-                output_dict['substation_cost_output_df']['Cost USD'].sum()
+        output_dict['substation_cost_output_df'] = pd.DataFrame([['Other',
+                                                                  output_dict['substation_cost_usd'],
+                                                                  'Substation']],
+                                                                columns=['Type of cost',
+                                                                         'Cost USD',
+                                                                         'Phase of construction'])
+
+        output_dict['total_substation_cost_df'] = output_dict['substation_cost_output_df']
+        output_dict['total_substation_cost'] = \
+        output_dict['substation_cost_output_df']['Cost USD'].sum()
 
         return output_dict['substation_cost_output_df']
 
