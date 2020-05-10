@@ -12,9 +12,7 @@ class FoundationCost:
     """
     **FoundationCost.py**
 
-    - Created by Annika Eberle and Owen Roberts on Apr. 3, 2018
-
-    - Refactored by Parangat Bhaskar and Alicia Key on June 3, 2019
+    - Refactored by Parangat Bhaskar on May 10, 2020
 
     \nCalculates the costs of constructing foundations for land-based wind projects *(items in brackets are not yet implemented)*:
 
