@@ -3,10 +3,6 @@ import math
 
 import pandas as pd
 import numpy as np
-import math
-from sympy.solvers import solve
-from sympy import Symbol
-
 
 class FoundationCost:
     """
@@ -14,7 +10,12 @@ class FoundationCost:
 
     - Refactored by Parangat Bhaskar on May 10, 2020
 
-    \nCalculates the costs of constructing foundations for land-based wind projects *(items in brackets are not yet implemented)*:
+    \nCalculates the costs of constructing foundations for utility scale solar projects.
+    Here, foundations is referring to the concrete pad that holds the inverter +
+    transformer container (only).
+
+    Not considered in this module: Racking systems foundation. Ths is done in
+    RackingSystemInstallation module.
 
     * Get number of turbines
     * Get duration of construction
