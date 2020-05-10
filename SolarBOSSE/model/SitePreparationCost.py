@@ -370,8 +370,7 @@ class SitePreparationCost:
         management_crew = management_crew.assign(per_diem_total=per_diem_total)
 
         hourly_costs_total = management_crew['Hourly rate USD per hour'] * \
-                             self.input_dict['hour_day'][self.input_dict['time_construct']] * \
-                             num_days
+                             self.input_dict['hour_day'] * num_days
         management_crew = management_crew.assign(hourly_costs_total=hourly_costs_total)
 
         total_crew_cost_before_wind_delay = management_crew['per_diem_total'] + \

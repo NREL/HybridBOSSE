@@ -302,7 +302,8 @@ class FoundationCost:
         # 1 MW. That is to say, SolarBOSSE only models central MVAC systems only
         # (currently); which means, only central inverters and NOT string inverters.
         inverter_rating_MW = self.input_dict['inverter_rating_kW'] / 1000
-        number_concrete_pads = self.input_dict['system_size_MW_AC'] / inverter_rating_MW
+        number_concrete_pads = self.input_dict['system_size_MW_DC'] / inverter_rating_MW
+        self.output_dict['number_concrete_pads'] = number_concrete_pads
         return number_concrete_pads
 
     def estimate_construction_time(self, input_data, output_data):

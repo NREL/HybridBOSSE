@@ -4,6 +4,7 @@ from .SubstationCost import SubstationCost
 from .ManagementCost import ManagementCost
 from .GridConnectionCost import GridConnectionCost
 from .FoundationCost import FoundationCost
+from .InverterTransformerErection import InverterTransformerErection
 
 
 class Manager:
@@ -46,6 +47,11 @@ class Manager:
                                          output_dict=self.output_dict,
                                          project_name=project_name)
         foundation_cost.run_module()
+
+        container_erection = InverterTransformerErection(input_dict=self.input_dict,
+                                                         output_dict=self.output_dict,
+                                                         project_name=project_name)
+        container_erection.run_module()
 
         # SubstationCost:
         substationcost = SubstationCost(input_dict=self.input_dict,

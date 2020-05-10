@@ -103,6 +103,9 @@ class XlsxReader:
         incomplete_input_dict['construction_estimator'] = \
             project_data_dataframes['construction_estimator']
 
+        # TODO: add this as user input in project_list.xlsx:
+        incomplete_input_dict['hour_day'] = 10
+
         incomplete_input_dict['solar_BOM'] = \
             project_data_dataframes['balance_of_material_1MW']
 
@@ -114,6 +117,7 @@ class XlsxReader:
 
         incomplete_input_dict['crew'] = project_data_dataframes['crew']
         incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
+        incomplete_input_dict['equip_price'] = project_data_dataframes['equip_price']
 
         # Read development tab, if it exists (it is optional since development costs
         # can be placed in the project list):
@@ -121,9 +125,13 @@ class XlsxReader:
             incomplete_input_dict['development_df'] = \
                 project_data_dataframes['development']
 
-        # TODO: Add to project_list.xlsx spreadsheet
+        # TODO: Add per diem cost as input to project_list.xlsx spreadsheet
         incomplete_input_dict['construction_estimator_per_diem'] = \
             project_parameters['Labor per diem (USD/day)']
+
+        incomplete_input_dict['fuel_cost'] = 1.5
+        # TODO: Add fuel_cost as input to project_list.xlsx spreadsheet
+        # incomplete_input_dict['fuel_cost'] = project_parameters['Fuel cost USD per gal']
 
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
         incomplete_input_dict['project_data_file'] = \
