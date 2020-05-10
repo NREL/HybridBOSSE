@@ -3,6 +3,7 @@ from .SitePreparationCost import SitePreparationCost
 from .SubstationCost import SubstationCost
 from .ManagementCost import ManagementCost
 from .GridConnectionCost import GridConnectionCost
+from .FoundationCost import FoundationCost
 
 
 class Manager:
@@ -29,17 +30,22 @@ class Manager:
 
         project_name = 'solar_run'
 
+        # SitePrepCost:
+        siteprep = SitePreparationCost(input_dict=self.input_dict,
+                                       output_dict=self.output_dict,
+                                       project_name=project_name)
+        siteprep.run_module()
+
         # RackingSystemInstallation:
         racking_system_installation = RackingSystemInstallation(input_dict=self.input_dict,
                                                                 output_dict=self.output_dict,
                                                                 project_name=project_name)
         racking_system_installation.run_module()
 
-        # SitePrepCost:
-        siteprep = SitePreparationCost(input_dict=self.input_dict,
-                                       output_dict=self.output_dict,
-                                       project_name=project_name)
-        siteprep.run_module()
+        foundation_cost = FoundationCost(input_dict=self.input_dict,
+                                         output_dict=self.output_dict,
+                                         project_name=project_name)
+        foundation_cost.run_module()
 
         # SubstationCost:
         substationcost = SubstationCost(input_dict=self.input_dict,
@@ -64,6 +70,7 @@ class Manager:
                                              self.output_dict['total_road_cost'] + \
                                              self.output_dict['total_substation_cost'] + \
                                              self.output_dict['total_management_cost'] + \
-                                             self.output_dict['total_transdist_cost']
+                                             self.output_dict['total_transdist_cost'] + \
+                                             self.output_dict['total_foundation_cost']
 
         return self.output_dict

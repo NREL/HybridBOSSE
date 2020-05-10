@@ -46,6 +46,7 @@ def run_solarbosse(input_dict_file_name):
         results['substation_cost'] = output_dict['total_substation_cost']
         results['total_transdist_cost'] = output_dict['total_transdist_cost']
         results['total_management_cost'] = output_dict['total_management_cost']
+        results['total_foundation_cost'] = output_dict['total_foundation_cost']
 
     return results, output_dict
 
@@ -132,6 +133,7 @@ class NegativeInputError(Error):
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
 input_dict = dict()
 sizes = [5, 50, 100]
+# sizes = [5]
 
 for size in sizes:
     BOS_results = dict()
@@ -141,6 +143,8 @@ for size in sizes:
     BOS_results, detailed_results = run_solarbosse(input_dict)
     print(BOS_results)
     bos_capex = BOS_results['total_bos_cost'] / (size * 1e6)
+    capex = 0.51 + bos_capex
     print(str(size) + ' MW BOS CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
+    print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(capex, 2)))
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

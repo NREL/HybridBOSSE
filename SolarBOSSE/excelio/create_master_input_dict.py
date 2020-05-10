@@ -34,10 +34,10 @@ class XlsxReader:
 
     The second set of data are read from a single sheet as described below.
 
-    The first set of data represent a database used by the various modules. Queries
-    on these data allow calculation based on labor, material, crane capacity
-    and so on. These data can be shared among different projects. These data
-    are called project_data.
+    The first set of data represent a database used by the various modules. Queries on
+    these data allow calculation based on labor, material, crane capacity and so on.
+    These data can be shared among different projects. These data are called
+    project_data.
 
     The second set of data represent the parameters specific to each project.
     These parameters include things values like hub height, rotor diameter,
@@ -103,22 +103,27 @@ class XlsxReader:
         incomplete_input_dict['construction_estimator'] = \
             project_data_dataframes['construction_estimator']
 
-        incomplete_input_dict['solar_BOM'] = project_data_dataframes['balance_of_material_1MW']
+        incomplete_input_dict['solar_BOM'] = \
+            project_data_dataframes['balance_of_material_1MW']
 
         incomplete_input_dict['site_facility_building_area_df'] = \
             project_data_dataframes['site_facility_building_area']
 
-        incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
+        incomplete_input_dict['material_price'] = \
+            project_data_dataframes['material_price']
+
         incomplete_input_dict['crew'] = project_data_dataframes['crew']
         incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
 
-        # Read development tab, if it exists (it is optional since development costs can
-        # be placed in the project list):
+        # Read development tab, if it exists (it is optional since development costs
+        # can be placed in the project list):
         if 'development' in project_data_dataframes:
-            incomplete_input_dict['development_df'] = project_data_dataframes['development']
+            incomplete_input_dict['development_df'] = \
+                project_data_dataframes['development']
 
         # TODO: Add to project_list.xlsx spreadsheet
-        incomplete_input_dict['construction_estimator_per_diem'] = 144
+        incomplete_input_dict['construction_estimator_per_diem'] = \
+            project_parameters['Labor per diem (USD/day)']
 
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
         incomplete_input_dict['project_data_file'] = \
@@ -134,6 +139,27 @@ class XlsxReader:
 
         incomplete_input_dict['module_rating_W'] = \
             project_parameters['Module rating (Watts)']
+
+        incomplete_input_dict['inverter_rating_kW'] = \
+            project_parameters['Inverter Rating (kW)']
+
+        incomplete_input_dict['modules_per_string'] = \
+            project_parameters['Modules per string']
+
+        incomplete_input_dict['max_strings_combiner_box'] = \
+            project_parameters['Maximum strings per combiner box']
+
+        incomplete_input_dict['concrete_pad_length_inches'] = \
+            project_parameters['Inverter and LV/MV transformer pad length (inches)']
+
+        incomplete_input_dict['concrete_pad_width_inches'] = \
+            project_parameters['Inverter and LV/MV transformer pad width (inches)']
+
+        incomplete_input_dict['concrete_pad_depth_inches'] = \
+            project_parameters['Inverter and LV/MV transformer pad depth (inches)']
+
+        incomplete_input_dict['concrete_pad_excavation_depth_inches'] = \
+            project_parameters['Inverter and LV/MV transformer pad excavation depth (inches)']
 
         incomplete_input_dict['foundation_hole_ft'] = \
             project_parameters['Foundation hole length (ft)']
@@ -153,15 +179,19 @@ class XlsxReader:
         incomplete_input_dict['interconnect_voltage_kV'] = \
             project_parameters['Interconnect Voltage (kV)']
 
-        incomplete_input_dict['switchyard_y_n'] = project_parameters['New Switchyard (y/n)']
+        incomplete_input_dict['switchyard_y_n'] = \
+            project_parameters['New Switchyard (y/n)']
+
         if incomplete_input_dict['switchyard_y_n'] == 'y':
             incomplete_input_dict['new_switchyard'] = True
         else:
             incomplete_input_dict['new_switchyard'] = False
 
-        incomplete_input_dict['road_length_m'] = project_parameters['Road length adder (m)']
+        incomplete_input_dict['road_length_m'] = \
+            project_parameters['Road length adder (m)']
 
-        incomplete_input_dict['road_quality'] = project_parameters['Road Quality (0-1)']
+        incomplete_input_dict['road_quality'] = \
+            project_parameters['Road Quality (0-1)']
 
         incomplete_input_dict['site_prep_area_acres_mw_ac'] = \
             project_parameters['Project site prep area (Acres/MW_ac)']
@@ -171,7 +201,8 @@ class XlsxReader:
             incomplete_input_dict['site_prep_area_acres_mw_ac'] / 0.8
 
         incomplete_input_dict['site_prep_area_acres'] = \
-            incomplete_input_dict['site_prep_area_acres_mw_dc'] * incomplete_input_dict['system_size_MW_DC']
+            incomplete_input_dict['site_prep_area_acres_mw_dc'] * \
+            incomplete_input_dict['system_size_MW_DC']
 
         # 1 acre = 4046.86 m2:
         incomplete_input_dict['site_prep_area_m2'] = \
@@ -180,12 +211,23 @@ class XlsxReader:
         incomplete_input_dict['fraction_new_roads'] = \
             project_parameters['Percent of roads that will be constructed']
 
-        incomplete_input_dict['road_width_ft'] = project_parameters['Road width (ft)']
-        incomplete_input_dict['road_thickness_in'] = project_parameters['Road thickness (in)']
-        incomplete_input_dict['crane_width'] = project_parameters['Crane width (m)']
-        incomplete_input_dict['num_access_roads'] = project_parameters['Number of access roads']
-        incomplete_input_dict['overtime_multiplier'] = project_parameters['Overtime multiplier']
-        incomplete_input_dict['markup_contingency'] = project_parameters['Markup contingency']
+        incomplete_input_dict['road_width_ft'] = \
+            project_parameters['Road width (ft)']
+
+        incomplete_input_dict['road_thickness_in'] = \
+            project_parameters['Road thickness (in)']
+
+        incomplete_input_dict['crane_width'] = \
+            project_parameters['Crane width (m)']
+
+        incomplete_input_dict['num_access_roads'] = \
+            project_parameters['Number of access roads']
+
+        incomplete_input_dict['overtime_multiplier'] = \
+            project_parameters['Overtime multiplier']
+
+        incomplete_input_dict['markup_contingency'] = \
+            project_parameters['Markup contingency']
 
         incomplete_input_dict['markup_warranty_mgmt'] = \
             project_parameters['Markup warranty management']
@@ -193,7 +235,8 @@ class XlsxReader:
         incomplete_input_dict['markup_sales_tax'] = \
             project_parameters['Markup sales and use tax']
 
-        incomplete_input_dict['markup_overhead'] = project_parameters['Markup overhead']
+        incomplete_input_dict['markup_overhead'] = \
+            project_parameters['Markup overhead']
         incomplete_input_dict['markup_profit_margin'] = \
             project_parameters['Markup profit margin']
 
@@ -233,9 +276,9 @@ class XlsxReader:
         For the crew_price dataframe, the labor_cost_multiplier is broadcast
         down the "Hourly rate USD per hour" and the "Per diem USD per day" columns.
 
-        For the construction_estimator dataframe, rows that have "Labor" for the "Type of cost"
-        column are found and, for those rows, the values in the "Rate USD per unit"
-        column is multiplied by the multiplier
+        For the construction_estimator dataframe, rows that have "Labor" for the
+        "Type of cost" column are found and, for those rows, the values in the
+        "Rate USD per unit" column is multiplied by the multiplier
 
         The dataframes are modified in place.
 
@@ -274,9 +317,5 @@ class XlsxReader:
             construction_estimator.apply(map_labor_rates, axis=1)
         construction_estimator.drop(columns=['Rate USD per unit'],
                                     inplace=True)
-        construction_estimator['Rate USD per unit'] = construction_estimator_new_labor_rates
-
-
-
-
-
+        construction_estimator['Rate USD per unit'] = \
+            construction_estimator_new_labor_rates
