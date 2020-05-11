@@ -156,8 +156,17 @@ class XlsxReader:
         incomplete_input_dict['module_width_m'] = 1
         incomplete_input_dict['module_length_m'] = 1.98
 
+        # TODO: Add module V_oc to user inputs in project_list.xlsx
+        incomplete_input_dict['module_V_oc'] = 52
+
+        # TODO: Add module I_SC to user input in project_list.xlsx
+        incomplete_input_dict['module_I_SC_DC'] = 9.3  # Module short circuit current
+
         incomplete_input_dict['inverter_rating_kW'] = \
             project_parameters['Inverter Rating (kW)']
+
+        # TODO: Add inverter max MPPT DC Voltage to user input in project_list.xlsx
+        incomplete_input_dict['inverter_max_mppt_V_DC'] = 820
 
         incomplete_input_dict['modules_per_string'] = \
             project_parameters['Modules per string']

@@ -20,7 +20,6 @@ class CollectionCost:
      a way that any future interest to allow the user design project layout will be
      possible.
 
-
      Key:
      ||| - 3 phase HV power cables (gen-tie)
 
@@ -91,6 +90,10 @@ class CollectionCost:
         self.project_name = project_name
         self.m2_per_acre = 4046.86
         self.inch_to_m = 0.0254
+        self.m_to_lf = 3.28084
+
+        # Mac allowable voltage drop (VD%) in circuits
+        self.allowable_vd_percent = 2 / 100
 
     def land_dimensions(self):
         """
@@ -171,10 +174,184 @@ class CollectionCost:
         # multiplied by 2 since 2 modules end-to-end in portrait orientation
         single_row_rating_W = 2 * self.number_panels_along_x() * module_rating_W
 
-        # Since each quadrant is size according to inverter rating (DC)
-        inverter_rating_W = self.input_dict['inverter_rating_kW'] * 1000
+        # Since each quadrant is sized according to inverter rating (DC)
+        inverter_rating_W = self.input_dict['inverter_rating_kW'] * 1000 * \
+                            self.input_dict['dc_ac_ratio']
         num_rows_sub_quadrant = math.floor((inverter_rating_W / 2) / single_row_rating_W)
         return num_rows_sub_quadrant
+
+    def number_modules_per_string(self):
+        """
+        Calculate number of modules per string based on module V_oc and inverter max
+        MPPT DC voltage
+        """
+        number_modules_per_string = math.floor(self.input_dict['inverter_max_mppt_V_DC'] /
+                                           self.input_dict['module_V_oc'])
+
+        # string open circuit voltage (used later in VD% calculations):
+        self.output_dict['string_V_oc'] = number_modules_per_string * \
+                                          self.input_dict['module_V_oc']
+
+        return number_modules_per_string
+
+    def num_strings_per_row(self):
+        """
+        Combined number of strings from both sub rows
+        """
+        number_panels_along_x = self.number_panels_along_x()
+
+        # Multiplying by 2 since there are 2 sub rows per row
+        num_strings_per_row = 2 * math.floor(number_panels_along_x /
+                                             self.number_modules_per_string())
+        return num_strings_per_row
+
+    def distance_to_combiner_box(self, number_of_strings):
+        """
+        Cumulative distance to combiner box at end of each row for all strings in a
+        row. Note that this is only the cumulative length of source circuits for 1 of
+        the 2 sub rows in a row. Remember that each row has 2 panels in portrait
+        orientation stacked end-to-end. Multiply result obtained form this method by
+        2 to get total cumulative length of source circuit wire for entire row.
+        """
+        distance_to_combiner_box = 0    # initialize
+
+        number_modules_per_string = self.number_modules_per_string()
+
+        # Get module length (plus 1" width of mid clamp):
+        module_width_m = self.input_dict['module_width_m'] + self.inch_to_m
+
+        number_of_strings_per_sub_row = int(number_of_strings / 2)
+
+        for i in range(number_of_strings_per_sub_row):
+            if 0 == i:
+                # Distance of terminal module in 1st string from combiner box:
+                distance_to_combiner_box = (i + 1) * module_width_m * \
+                                           number_modules_per_string
+
+                adder = distance_to_combiner_box + module_width_m
+
+            else:
+                # Where adder is the first module in subsequent strings
+                distance_to_combiner_box += adder + ((i + 1) * module_width_m *
+                                                     number_modules_per_string)
+
+                adder = ((i + 1) * module_width_m * number_modules_per_string) + \
+                        module_width_m
+
+        return distance_to_combiner_box
+
+    def source_circuit_wire_length_lf(self,
+                                      num_strings_per_row,
+                                      number_rows_per_subquadrant):
+        """
+        Determine total source circuit wire length for each quadrant
+        """
+
+        distance_to_combiner_box_per_row = \
+            self.distance_to_combiner_box(num_strings_per_row)
+
+        # Multiply by 2 since there are 2 sets of rows in a quadrant:
+        source_circuit_wire_length_m = distance_to_combiner_box_per_row * \
+                                        number_rows_per_subquadrant * 2
+
+        source_circuit_wire_length_lf = source_circuit_wire_length_m * self.m_to_lf
+
+        return source_circuit_wire_length_lf
+
+    def source_circuit_wire_length_total_lf(self, source_circuit_wire_length_lf,
+                                           num_quadrants):
+        """
+        Returns combined source circuit wire length for all quadrants combined. This
+        includes length of wire in each sub row of each sub quadrant.
+
+        Accordingly, length of wire for both sub rows of every row, and both sub
+        quadrants of a quadrant has been accounted for up till this point.
+        """
+
+        source_circuit_wire_length_total_lf = \
+            source_circuit_wire_length_lf * num_quadrants
+
+        self.output_dict['source_circuit_wire_length_total_lf'] = \
+            source_circuit_wire_length_total_lf
+
+        return source_circuit_wire_length_total_lf
+
+    def pv_wire_cost(self, source_circuit_length_lf):
+        """
+        Empirical curve fit of pv wire cost ($/LF)
+        """
+        pv_wire_cost = 1.023 * (source_circuit_length_lf ** (-0.222))
+        return pv_wire_cost
+
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    # Output circuit calculations:
+    def number_strings_quadrant(self, num_strings_per_row, num_rows_per_subquadrant):
+        """
+        Get number of strings in each quadrant
+        """
+        number_strings_quadrant = num_strings_per_row * num_rows_per_subquadrant * 2
+        return number_strings_quadrant
+
+    def num_strings_parallel(self, number_strings_quadrant):
+        """
+        Starting with the highest allowable number of strings in parallel as possible.
+        This is to ensure highest possible output circuit ampacity, which would lead
+        to lowest possible max allowable circuit resistance. 
+        """
+        if number_strings_quadrant > 36:
+            num_strings_parallel = round(number_strings_quadrant / 36)
+
+        elif number_strings_quadrant > 24:
+            num_strings_parallel = round(number_strings_quadrant / 24)
+
+        elif number_strings_quadrant > 12:
+            num_strings_parallel = round(number_strings_quadrant / 12)
+
+        elif number_strings_quadrant > 6:
+            num_strings_parallel = round(number_strings_quadrant / 6)
+
+        return num_strings_parallel
+
+    def output_circuit_ampacity(self, num_strings_in_parallel):
+        """
+
+        """
+        string_short_circuit_current = self.input_dict['module_I_SC_DC']
+
+        # Consider 25% safety factor for over irradiance / over-current scenarios
+        over_current_factor = 1.25
+
+        output_circuit_ampacity = over_current_factor * \
+                                  string_short_circuit_current * \
+                                  num_strings_in_parallel
+
+        return output_circuit_ampacity
+
+    def row_spacing_m(self, quadrant_length_m, number_rows_per_subquadrant):
+        """
+
+        """
+        row_spacing_m = quadrant_length_m / number_rows_per_subquadrant
+        return row_spacing_m
+
+    def voltage_drop_V(self):
+        """
+        Returns maximum allowable Voltage drop (in V) in an output circuit based on
+        NEC guidelines.
+        """
+        voltage_drop_V = self.allowable_vd_percent * self.output_dict['string_V_oc']
+
+        return voltage_drop_V
+
+    def max_allowable_resistance(self, circuit_length_m, max_VD, output_circuit_ampacity):
+        """
+        Max allowable output circuit cable resistance (Ohms/ft)
+        """
+        I_mp = output_circuit_ampacity
+        R = max_VD / I_mp
+        circuit_length_ft = circuit_length_m * self.m_to_lf
+        R_per_kft = (R / circuit_length_ft) * 1000
+        return R_per_kft
 
     def run_module(self):
         """
@@ -195,11 +372,53 @@ class CollectionCost:
 
         """
         try:
-            project_l, project_w = self.land_dimensions()
+            self.land_dimensions()
             l, w = self.get_quadrant_dimensions()
-            self.inverter_list()
-            # self.number_panels_along_x()
-            self.number_rows_per_subquadrant()
+            num_quadrants = len(self.inverter_list())
+            number_rows_per_subquadrant = self.number_rows_per_subquadrant()
+            num_strings_per_row = self.num_strings_per_row()
+
+            source_circuit_wire_length_lf =\
+                self.source_circuit_wire_length_lf(num_strings_per_row,
+                                                   number_rows_per_subquadrant)
+
+            source_circuit_wire_length_total_lf = \
+                self.source_circuit_wire_length_total_lf(source_circuit_wire_length_lf,
+                                                         num_quadrants)
+
+            total_collection_cost = \
+                source_circuit_wire_length_total_lf * \
+                self.pv_wire_cost(source_circuit_wire_length_total_lf)
+
+            self.output_dict['total_collection_cost'] = total_collection_cost
+
+            # Begin output circuit calculations:
+            num_strings_per_quadrant = self.number_strings_quadrant(num_strings_per_row,
+                                                                    number_rows_per_subquadrant)
+
+            num_strings_parallel = self.num_strings_parallel(num_strings_per_quadrant)
+
+            row_spacing_m = self.row_spacing_m(l, number_rows_per_subquadrant)
+
+            # make a list of rows in each quadrant:
+            all_rows = [n for n in range(number_rows_per_subquadrant)]
+            row_out_circuit_length_m = all_rows
+
+            # starting with the bottom-most row in a quadrant (which is also the
+            # farthest row from the inverter.
+            for row in all_rows:
+                row_inverter_distance_m = ((number_rows_per_subquadrant - 1) - row) * \
+                                          row_spacing_m
+                row_out_circuit_length_m[row] = row_inverter_distance_m * 2
+
+            # Series of methods to select the right cable for output circuit:
+            longest_output_circuit_m = row_out_circuit_length_m[0]
+            max_voltage_drop_V = self.voltage_drop_V()
+            output_circuit_ampacity = self.output_circuit_ampacity(num_strings_parallel)
+            max_allowable_resistance = self.max_allowable_resistance(longest_output_circuit_m,
+                                                                     max_voltage_drop_V,
+                                                                     output_circuit_ampacity)
+
             return 0, 0   # module ran successfully
 
         except Exception as error:

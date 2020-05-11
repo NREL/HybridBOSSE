@@ -84,6 +84,7 @@ class Manager:
                                              self.output_dict['total_management_cost'] + \
                                              self.output_dict['total_transdist_cost'] + \
                                              self.output_dict['total_foundation_cost'] + \
-                                             self.output_dict['total_erection_cost']
+                                             self.output_dict['total_erection_cost'] + \
+                                             self.output_dict['total_collection_cost']
 
         return self.output_dict
