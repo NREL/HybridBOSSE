@@ -5,6 +5,7 @@ from .ManagementCost import ManagementCost
 from .GridConnectionCost import GridConnectionCost
 from .FoundationCost import FoundationCost
 from .InverterTransformerErection import InverterTransformerErection
+from .CollectionCost import CollectionCost
 
 
 class Manager:
@@ -43,6 +44,11 @@ class Manager:
                                                                 project_name=project_name)
         racking_system_installation.run_module()
 
+        collection_system = CollectionCost(input_dict=self.input_dict,
+                                           output_dict=self.output_dict,
+                                           project_name=project_name)
+        collection_system.run_module()
+
         foundation_cost = FoundationCost(input_dict=self.input_dict,
                                          output_dict=self.output_dict,
                                          project_name=project_name)
@@ -77,6 +83,7 @@ class Manager:
                                              self.output_dict['total_substation_cost'] + \
                                              self.output_dict['total_management_cost'] + \
                                              self.output_dict['total_transdist_cost'] + \
-                                             self.output_dict['total_foundation_cost']
+                                             self.output_dict['total_foundation_cost'] + \
+                                             self.output_dict['total_erection_cost']
 
         return self.output_dict

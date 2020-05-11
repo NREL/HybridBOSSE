@@ -140,13 +140,21 @@ class XlsxReader:
         incomplete_input_dict['construction_time_months'] = \
             project_parameters['Total project construction time (months)']
 
+        # TODO: Add dc_ac_ratio as user input in project_list.xlsx
+        incomplete_input_dict['dc_ac_ratio'] = 1.2
+
         incomplete_input_dict['system_size_MW_DC'] = \
             project_parameters['System Size (MW_DC)']
+
         incomplete_input_dict['system_size_MW_AC'] = \
-            incomplete_input_dict['system_size_MW_DC'] / 1.2
+            incomplete_input_dict['system_size_MW_DC'] / incomplete_input_dict['dc_ac_ratio']
 
         incomplete_input_dict['module_rating_W'] = \
             project_parameters['Module rating (Watts)']
+
+        # TODO: Add module length and width as user inputs in project_list.xlsx
+        incomplete_input_dict['module_width_m'] = 1
+        incomplete_input_dict['module_length_m'] = 1.98
 
         incomplete_input_dict['inverter_rating_kW'] = \
             project_parameters['Inverter Rating (kW)']
@@ -204,9 +212,8 @@ class XlsxReader:
         incomplete_input_dict['site_prep_area_acres_mw_ac'] = \
             project_parameters['Project site prep area (Acres/MW_ac)']
 
-        # Assuming DC-AC ratio of 1.2:
         incomplete_input_dict['site_prep_area_acres_mw_dc'] = \
-            incomplete_input_dict['site_prep_area_acres_mw_ac'] / 0.8
+            incomplete_input_dict['site_prep_area_acres_mw_ac'] * incomplete_input_dict['dc_ac_ratio']
 
         incomplete_input_dict['site_prep_area_acres'] = \
             incomplete_input_dict['site_prep_area_acres_mw_dc'] * \
