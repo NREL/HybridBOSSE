@@ -1,5 +1,7 @@
 import traceback
 import math
+import numpy as np
+import pandas as pd
 
 
 class CollectionCost:
@@ -91,6 +93,7 @@ class CollectionCost:
         self.m2_per_acre = 4046.86
         self.inch_to_m = 0.0254
         self.m_to_lf = 3.28084
+        self._km_to_LF = 3.28084 * 1000
 
         # Max allowable voltage drop (VD%) in circuits
         self.allowable_vd_percent = 3 / 100
@@ -369,7 +372,11 @@ class CollectionCost:
 
         return voltage_drop_V
 
-    def VD_passes(self, circuit_length_m, wire_R_per_kft, max_VD, output_circuit_ampacity):
+    def VD_passes(self,
+                  circuit_length_m,
+                  wire_R_per_kft,
+                  max_VD,
+                  output_circuit_ampacity):
         """
         Once the wire has been picked based on its ampacity, call this method to
         check whether the VD from using this wire exceeds 3%
@@ -389,6 +396,220 @@ class CollectionCost:
         circular_mills_area = (circuit_length * self.Cu_specific_resistivity *
                                current) / VD
         return circular_mills_area
+
+    def estimate_construction_time(self):
+        """
+        Function to estimate construction time on per turbine basis.
+
+        Parameters
+        -------
+        duration_construction
+
+        pd.DataFrame
+            construction_estimator
+
+        pd.DataFrame
+            trench_length_km
+
+
+        Returns
+        -------
+
+        (pd.DataFrame) operation_data
+
+        """
+        # assumes collection construction occurs for 45 % of project duration
+        collection_construction_time = self.input_dict['construction_time_months'] * \
+                                       0.45
+
+        throughput_operations = self.input_dict['construction_estimator']
+        trench_length_km = self.output_dict['trench_length_km']
+
+        operation_data = throughput_operations.where(
+            throughput_operations['Module'] == 'Collection').dropna(thresh=4)
+
+        # from construction_estimator data, only read in Collection related data and
+        # filter out the rest:
+        cable_trenching = throughput_operations[throughput_operations.Module == 'Collection']
+
+        # Storing data with labor related inputs:
+        trenching_labor = cable_trenching[cable_trenching.values == 'Labor']
+        trenching_labor_usd_per_hr = trenching_labor['Rate USD per unit'].sum()
+
+        self.output_dict['trenching_labor_usd_per_hr'] = trenching_labor_usd_per_hr
+
+        # Units:  LF/day  -> where LF = Linear Foot
+        trenching_labor_daily_output = trenching_labor['Daily output'].values[0]
+        trenching_labor_num_workers = trenching_labor['Number of workers'].sum()
+
+        # Storing data with equipment related inputs:
+        trenching_equipment = cable_trenching[cable_trenching.values == 'Equipment']
+        trenching_cable_equipment_usd_per_hr = trenching_equipment['Rate USD per unit'].sum()
+
+        self.output_dict['trenching_cable_equipment_usd_per_hr'] = \
+            trenching_cable_equipment_usd_per_hr
+
+        # Units:  LF/day  -> where LF = Linear Foot
+        trenching_equipment_daily_output = trenching_equipment['Daily output'].values[0]
+        self.output_dict['trenching_labor_daily_output'] = trenching_labor_daily_output
+        self.output_dict['trenching_equipment_daily_output'] = trenching_equipment_daily_output
+
+        operation_data['Number of days taken by single crew'] = \
+            ((trench_length_km / self._km_to_LF) / trenching_labor_daily_output)
+
+        operation_data['Number of crews'] = \
+            np.ceil((operation_data['Number of days taken by single crew'] / 30) /
+                    collection_construction_time)
+
+        operation_data['Cost USD without weather delays'] = \
+            ((trench_length_km / self._km_to_LF) / trenching_labor_daily_output) * \
+            (operation_data['Rate USD per unit'] * self.input_dict['operational_hrs_per_day'])
+
+        alpha = operation_data[operation_data['Type of cost'] == 'Labor']
+        operation_data_id_days_crews_workers = alpha[['Operation ID',
+                                                      'Number of days taken by single crew',
+                                                      'Number of crews',
+                                                      'Number of workers']]
+
+        # if more than one crew needed to complete within construction duration then
+        # assume that all construction happens within that window and use that timeframe
+        # for weather delays;
+        # if not, use the number of days calculated
+        operation_data['time_construct_bool'] = \
+            operation_data['Number of days taken by single crew'] > \
+            (collection_construction_time * 30)
+
+        boolean_dictionary = {True: collection_construction_time * 30, False: np.NAN}
+        operation_data['time_construct_bool'] = \
+            operation_data['time_construct_bool'].map(boolean_dictionary)
+
+        operation_data['Time construct days'] = \
+            operation_data[['time_construct_bool',
+                            'Number of days taken by single crew']].min(axis=1)
+
+        self.output_dict['num_days'] = operation_data['Time construct days'].max()
+
+        self.output_dict['managament_crew_cost_before_wind_delay'] = 0
+
+        self.output_dict['operation_data_id_days_crews_workers'] = \
+            operation_data_id_days_crews_workers
+
+        self.output_dict['operation_data_entire_farm'] = operation_data
+
+        return self.output_dict['operation_data_entire_farm']
+
+    def calculate_costs(self):
+
+        # Read in construction_estimator data:
+        # construction_estimator = input_dict['construction_estimator']
+        operation_data = self.output_dict['operation_data_entire_farm']
+
+        per_diem = operation_data['Number of workers'] * \
+                   operation_data['Number of crews'] * \
+                   (operation_data['Time construct days'] +
+                    np.ceil(operation_data['Time construct days'] / 7)) * \
+                   self.input_dict['construction_estimator_per_diem']
+
+        per_diem = per_diem.dropna()
+
+        self.output_dict['time_construct_days'] = \
+            (self.output_dict['trench_length_km'] / self._km_to_LF) / \
+            self.output_dict['trenching_labor_daily_output']
+
+        wind_delay_fraction = \
+            (self.output_dict['wind_delay_time'] / self.input_dict['operational_hrs_per_day']) \
+            / self.output_dict['time_construct_days']
+
+        # weather based delays not yet implemented in SolarBOSSE
+        self.output_dict['wind_multiplier'] = 1     # Placeholder
+
+        #Calculating trenching cost:
+        output_dict['Days taken for trenching (equipment)'] = \
+            (self.output_dict['trench_length_km'] / self._km_to_LF) / \
+            self.output_dict['trenching_equipment_daily_output']
+
+        self.output_dict['Equipment cost of trenching per day {usd/day)'] = \
+            self.output_dict['trenching_cable_equipment_usd_per_hr'] * \
+            self.input_dict['operational_hrs_per_day']
+
+        self.output_dict['Equipment Cost USD without weather delays'] = \
+            self.output_dict['Days taken for trenching (equipment)'] * \
+            self.output_dict['Equipment cost of trenching per day {usd/day)']
+
+        self.output_dict['Equipment Cost USD with weather delays'] = \
+            self.output_dict['Equipment Cost USD without weather delays'] * \
+            self.output_dict['wind_multiplier']
+
+        trenching_equipment_rental_cost_df = \
+            pd.DataFrame([['Equipment rental',
+                           self.output_dict['Equipment Cost USD with weather delays'],
+                           'Collection']],
+                         columns=['Type of cost',
+                                    'Cost USD',
+                                    'Phase of construction'])
+
+        # Calculating labor cost:
+        self.output_dict['Days taken for trenching (labor)'] = \
+            ((self.output_dict['trench_length_km'] / self._km_to_LF) /
+             self.output_dict['trenching_labor_daily_output'])
+
+        self.output_dict['Labor cost of trenching per day (usd/day)'] = \
+            (self.output_dict['trenching_labor_usd_per_hr'] *
+             self.input_dict['operational_hrs_per_day'] *
+             self.input_dict['overtime_multiplier'])
+
+        self.output_dict['Total per diem costs (USD)'] = per_diem.sum()
+        self.output_dict['Labor Cost USD without weather delays'] = \
+            ((self.output_dict['Days taken for trenching (labor)'] *
+              self.output_dict['Labor cost of trenching per day (usd/day)']
+              ) +
+             (self.output_dict['Total per diem costs (USD)'] +
+              self.output_dict['managament_crew_cost_before_wind_delay']
+              ))
+
+        self.output_dict['Labor Cost USD with weather delays'] = \
+            self.output_dict['Labor Cost USD without weather delays'] * \
+            self.output_dict['wind_multiplier']
+
+        trenching_labor_cost_df = pd.DataFrame([['Labor',
+                                                 self.output_dict['Labor Cost USD with weather delays'],
+                                                 'Collection']],
+                                               columns=['Type of cost',
+                                                        'Cost USD',
+                                                        'Phase of construction'])
+
+        # Calculate cable cost:
+        cable_cost_usd_per_LF_df = pd.DataFrame([['Materials',
+                                                  self.['total_material_cost'],
+                                                  'Collection']],
+                                                columns=['Type of cost',
+                                                         'Cost USD',
+                                                         'Phase of construction'])
+
+        # Combine all calculated cost items into the 'collection_cost' data frame:
+        collection_cost = pd.DataFrame([],columns = ['Type of cost',
+                                                     'Cost USD',
+                                                     'Phase of construction'])
+
+        collection_cost = collection_cost.append(trenching_equipment_rental_cost_df)
+        collection_cost = collection_cost.append(trenching_labor_cost_df)
+        collection_cost = collection_cost.append(cable_cost_usd_per_LF_df)
+
+
+        # Calculate Mobilization Cost and add to collection_cost data frame:
+        collection_mobilization_usd = collection_cost['Cost USD'].sum() * 0.05
+        mobilization_cost = pd.DataFrame([['Mobilization',
+                                           collection_mobilization_usd ,
+                                           'Collection']],
+                                         columns=['Type of cost',
+                                                  'Cost USD',
+                                                  'Phase of construction'])
+        collection_cost = collection_cost.append(mobilization_cost)
+
+        self.output_dict['total_collection_cost_df'] = collection_cost
+        self.output_dict['total_collection_cost_df'] = collection_cost['Cost USD'].sum()
+
+        return collection_cost
 
     def run_module(self):
         """
@@ -450,7 +671,7 @@ class CollectionCost:
             TOC_length_quadrant_m = total_out_circuit_length_m * 2
 
             # Trench length for project (all quadrants combined):
-            project_trench_length_lf = project_l_m * self.m_to_lf * 2
+            self.output_dict['trench_length_km'] = project_l_m * self.m_to_lf * 2
 
             # Series of methods to select the right cable for output circuit:
             # Not using this set of implementations for now. That is, I'm assuming the
@@ -474,6 +695,7 @@ class CollectionCost:
                                                       'output_circuit',
                                                       output_circuit_ampacity)
 
+            self.output_dict['total_material_cost'] = total_material_cost
             self.output_dict['total_collection_cost'] = total_material_cost
 
             return 0, 0   # module ran successfully
