@@ -24,8 +24,8 @@ class CollectionCost:
      ||| - 3 phase HV power cables (gen-tie)
 
      ||  - main project road; assumed to have 20+ ton bearing capacity. Also contains
-           trench along one side of the road for output circuit cables (DC), as well as
-           MV power cables from each inverter station going all the way to the
+           trench along both sides of the road for output circuit cables (DC), as well
+           as MV power cables from each inverter station going all the way to the
            substation.
 
      === - horizontal road running across the width of project land. Assumed to be of
