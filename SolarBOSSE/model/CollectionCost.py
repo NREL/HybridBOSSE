@@ -92,8 +92,11 @@ class CollectionCost:
         self.inch_to_m = 0.0254
         self.m_to_lf = 3.28084
 
-        # Mac allowable voltage drop (VD%) in circuits
-        self.allowable_vd_percent = 2 / 100
+        # Max allowable voltage drop (VD%) in circuits
+        self.allowable_vd_percent = 3 / 100
+
+        # Specific resistivity of copper between 25 and 50 deg C:
+        self.Cu_specific_resistivity = 11
 
     def land_dimensions(self):
         """
@@ -276,11 +279,40 @@ class CollectionCost:
 
         return source_circuit_wire_length_total_lf
 
-    def pv_wire_cost(self, source_circuit_length_lf):
+    def pv_wire_cost(self, system_size_MW_DC, circuit_type, circuit_amps):
         """
-        Empirical curve fit of pv wire cost ($/LF)
+        Empirical curve fit of pv wire cost ($/LF) for AWG #10 wire or smaller.
         """
-        pv_wire_cost = 1.023 * (source_circuit_length_lf ** (-0.222))
+        if system_size_MW_DC > 50:
+            volume_order_discount_multiplier = 0.80    # 20 % discount (volume pricing)
+        elif system_size_MW_DC > 20:
+            volume_order_discount_multiplier = 0.90
+        else:
+            volume_order_discount_multiplier = 1
+
+        pv_wire_DC_specs = self.input_dict['pv_wire_DC_specs']
+        if circuit_type is 'source_circuit':
+            cost_usd_lf = pv_wire_DC_specs.loc[
+                pv_wire_DC_specs['Size (AWG or kcmil)'] == 10, 'Cost (USD/LF)']
+
+            cost_usd_lf = cost_usd_lf.iloc[0]
+
+        elif circuit_type is 'output_circuit':
+            if circuit_amps >= 175:
+                cost_usd_lf = \
+                    pv_wire_DC_specs.loc[
+                        pv_wire_DC_specs['Temperature Rating of Conductor at 75°C ' \
+                                         '(167°F) in Amps'] == 175, 'Cost (USD/LF)']
+            else:
+                cost_usd_lf = \
+                    pv_wire_DC_specs.loc[
+                        pv_wire_DC_specs['Temperature Rating of Conductor at 75°C ' \
+                                         '(167°F) in Amps'] == 150, 'Cost (USD/LF)']
+
+            cost_usd_lf = cost_usd_lf.iloc[0]
+
+        pv_wire_cost = cost_usd_lf * volume_order_discount_multiplier     # $/LF
+
         return pv_wire_cost
 
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
@@ -292,25 +324,19 @@ class CollectionCost:
         number_strings_quadrant = num_strings_per_row * num_rows_per_subquadrant * 2
         return number_strings_quadrant
 
-    def num_strings_parallel(self, number_strings_quadrant):
+    def num_strings_parallel(self, num_strings_per_row):
         """
         Starting with the highest allowable number of strings in parallel as possible.
         This is to ensure highest possible output circuit ampacity, which would lead
-        to lowest possible max allowable circuit resistance. 
+        to lowest possible max allowable circuit resistance.
+
         """
-        if number_strings_quadrant > 36:
-            num_strings_parallel = round(number_strings_quadrant / 36)
+        if num_strings_per_row > 24:
+            num_strings_parallel = 24
+        else:
+            num_strings_parallel = num_strings_per_row
 
-        elif number_strings_quadrant > 24:
-            num_strings_parallel = round(number_strings_quadrant / 24)
-
-        elif number_strings_quadrant > 12:
-            num_strings_parallel = round(number_strings_quadrant / 12)
-
-        elif number_strings_quadrant > 6:
-            num_strings_parallel = round(number_strings_quadrant / 6)
-
-        return num_strings_parallel
+        return int(num_strings_parallel)
 
     def output_circuit_ampacity(self, num_strings_in_parallel):
         """
@@ -343,15 +369,26 @@ class CollectionCost:
 
         return voltage_drop_V
 
-    def max_allowable_resistance(self, circuit_length_m, max_VD, output_circuit_ampacity):
+    def VD_passes(self, circuit_length_m, wire_R_per_kft, max_VD, output_circuit_ampacity):
         """
-        Max allowable output circuit cable resistance (Ohms/ft)
+        Once the wire has been picked based on its ampacity, call this method to
+        check whether the VD from using this wire exceeds 3%
         """
-        I_mp = output_circuit_ampacity
-        R = max_VD / I_mp
-        circuit_length_ft = circuit_length_m * self.m_to_lf
-        R_per_kft = (R / circuit_length_ft) * 1000
-        return R_per_kft
+        R = wire_R_per_kft * (1 / 1000) * (circuit_length_m * self.m_to_lf)
+        VD = R * output_circuit_ampacity
+        if VD > max_VD:
+            return False
+        else:
+            return True
+
+    def circular_mils_area(self, circuit_length, current, VD):
+        """
+        Calculates the wire's circ mils area. This will help in selecting wire
+        appropriate for wiring (based on its ampacity and ohms/kFT)
+        """
+        circular_mills_area = (circuit_length * self.Cu_specific_resistivity *
+                               current) / VD
+        return circular_mills_area
 
     def run_module(self):
         """
@@ -372,7 +409,8 @@ class CollectionCost:
 
         """
         try:
-            self.land_dimensions()
+            # l = length ; w = width
+            project_l_m, project_w_m = self.land_dimensions()
             l, w = self.get_quadrant_dimensions()
             num_quadrants = len(self.inverter_list())
             number_rows_per_subquadrant = self.number_rows_per_subquadrant()
@@ -386,17 +424,12 @@ class CollectionCost:
                 self.source_circuit_wire_length_total_lf(source_circuit_wire_length_lf,
                                                          num_quadrants)
 
-            total_collection_cost = \
-                source_circuit_wire_length_total_lf * \
-                self.pv_wire_cost(source_circuit_wire_length_total_lf)
-
-            self.output_dict['total_collection_cost'] = total_collection_cost
-
             # Begin output circuit calculations:
-            num_strings_per_quadrant = self.number_strings_quadrant(num_strings_per_row,
-                                                                    number_rows_per_subquadrant)
+            num_strings_per_quadrant = \
+                self.number_strings_quadrant(num_strings_per_row,
+                                             number_rows_per_subquadrant)
 
-            num_strings_parallel = self.num_strings_parallel(num_strings_per_quadrant)
+            num_strings_parallel = self.num_strings_parallel(num_strings_per_row)
 
             row_spacing_m = self.row_spacing_m(l, number_rows_per_subquadrant)
 
@@ -406,18 +439,42 @@ class CollectionCost:
 
             # starting with the bottom-most row in a quadrant (which is also the
             # farthest row from the inverter.
+            total_out_circuit_length_m = 0  # Initialize
             for row in all_rows:
                 row_inverter_distance_m = ((number_rows_per_subquadrant - 1) - row) * \
                                           row_spacing_m
                 row_out_circuit_length_m[row] = row_inverter_distance_m * 2
+                total_out_circuit_length_m += row_out_circuit_length_m[row]
+
+            # total output circuit length for quadrant (2 sub quadrants per quadrant):
+            TOC_length_quadrant_m = total_out_circuit_length_m * 2
+
+            # Trench length for project (all quadrants combined):
+            project_trench_length_lf = project_l_m * self.m_to_lf * 2
 
             # Series of methods to select the right cable for output circuit:
-            longest_output_circuit_m = row_out_circuit_length_m[0]
-            max_voltage_drop_V = self.voltage_drop_V()
+            # Not using this set of implementations for now. That is, I'm assuming the
+            # cable selected based solely on circuit ampacity also satisfies the 3 %
+            # VD (max) requirement.
+
+            # longest_output_circuit_m = row_out_circuit_length_m[0]
+            # max_voltage_drop_V = self.voltage_drop_V()
+            # self.VD_passes(longest_output_circuit_m, max_voltage_drop_V,
+            # output_circuit_ampacity)
+
             output_circuit_ampacity = self.output_circuit_ampacity(num_strings_parallel)
-            max_allowable_resistance = self.max_allowable_resistance(longest_output_circuit_m,
-                                                                     max_voltage_drop_V,
-                                                                     output_circuit_ampacity)
+
+            total_material_cost = source_circuit_wire_length_total_lf * \
+                                    self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
+                                                      'source_circuit',
+                                                      self.input_dict['module_I_SC_DC'])
+
+            total_material_cost += TOC_length_quadrant_m * num_quadrants * \
+                                    self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
+                                                      'output_circuit',
+                                                      output_circuit_ampacity)
+
+            self.output_dict['total_collection_cost'] = total_material_cost
 
             return 0, 0   # module ran successfully
 
