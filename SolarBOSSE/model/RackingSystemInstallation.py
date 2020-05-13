@@ -43,7 +43,7 @@ class RackingSystemInstallation:
         discount (multiplier) to racking system cost for a larger system.
         """
         system_size_MW_DC = self.input_dict['system_size_MW_DC']
-        discount_multiplier = 0.0939 * math.log(system_size_MW_DC) + 0.0522
+        discount_multiplier = 1 - ((0.0018 * system_size_MW_DC) - 0.0018)
         return discount_multiplier
 
     def racking_cost_USD_watt(self):

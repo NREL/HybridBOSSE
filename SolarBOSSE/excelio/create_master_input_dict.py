@@ -197,9 +197,6 @@ class XlsxReader:
         incomplete_input_dict['user_trench_length'] = \
             project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
 
-        incomplete_input_dict['total_trench_length_km'] = \
-            project_parameters['Combined Homerun Trench Length to Substation (km)']
-
         incomplete_input_dict['dist_interconnect_mi'] = \
             project_parameters['Distance to interconnect (miles)']
 
