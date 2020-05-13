@@ -419,8 +419,8 @@ class CollectionCost:
 
         """
         # assumes collection construction occurs for 45 % of project duration
-        collection_construction_time = self.input_dict['construction_time_months'] * \
-                                       0.45
+        collection_construction_time = self.input_dict[
+                                           'construction_time_months'] * 0.45
 
         throughput_operations = self.input_dict['construction_estimator']
         trench_length_km = self.output_dict['trench_length_km']
@@ -455,15 +455,15 @@ class CollectionCost:
         self.output_dict['trenching_equipment_daily_output'] = trenching_equipment_daily_output
 
         operation_data['Number of days taken by single crew'] = \
-            ((trench_length_km / self._km_to_LF) / trenching_labor_daily_output)
+            ((trench_length_km * self._km_to_LF) / trenching_labor_daily_output)
 
         operation_data['Number of crews'] = \
             np.ceil((operation_data['Number of days taken by single crew'] / 30) /
                     collection_construction_time)
 
         operation_data['Cost USD without weather delays'] = \
-            ((trench_length_km / self._km_to_LF) / trenching_labor_daily_output) * \
-            (operation_data['Rate USD per unit'] * self.input_dict['operational_hrs_per_day'])
+            ((trench_length_km * self._km_to_LF) / trenching_labor_daily_output) * \
+            (operation_data['Rate USD per unit'] * self.input_dict['hour_day'])
 
         alpha = operation_data[operation_data['Type of cost'] == 'Labor']
         operation_data_id_days_crews_workers = alpha[['Operation ID',
@@ -513,24 +513,20 @@ class CollectionCost:
         per_diem = per_diem.dropna()
 
         self.output_dict['time_construct_days'] = \
-            (self.output_dict['trench_length_km'] / self._km_to_LF) / \
+            (self.output_dict['trench_length_km'] * self._km_to_LF) / \
             self.output_dict['trenching_labor_daily_output']
-
-        wind_delay_fraction = \
-            (self.output_dict['wind_delay_time'] / self.input_dict['operational_hrs_per_day']) \
-            / self.output_dict['time_construct_days']
 
         # weather based delays not yet implemented in SolarBOSSE
         self.output_dict['wind_multiplier'] = 1     # Placeholder
 
         #Calculating trenching cost:
-        output_dict['Days taken for trenching (equipment)'] = \
-            (self.output_dict['trench_length_km'] / self._km_to_LF) / \
+        self.output_dict['Days taken for trenching (equipment)'] = \
+            (self.output_dict['trench_length_km'] * self._km_to_LF) / \
             self.output_dict['trenching_equipment_daily_output']
 
         self.output_dict['Equipment cost of trenching per day {usd/day)'] = \
             self.output_dict['trenching_cable_equipment_usd_per_hr'] * \
-            self.input_dict['operational_hrs_per_day']
+            self.input_dict['hour_day']
 
         self.output_dict['Equipment Cost USD without weather delays'] = \
             self.output_dict['Days taken for trenching (equipment)'] * \
@@ -550,12 +546,12 @@ class CollectionCost:
 
         # Calculating labor cost:
         self.output_dict['Days taken for trenching (labor)'] = \
-            ((self.output_dict['trench_length_km'] / self._km_to_LF) /
+            ((self.output_dict['trench_length_km'] * self._km_to_LF) /
              self.output_dict['trenching_labor_daily_output'])
 
         self.output_dict['Labor cost of trenching per day (usd/day)'] = \
             (self.output_dict['trenching_labor_usd_per_hr'] *
-             self.input_dict['operational_hrs_per_day'] *
+             self.input_dict['hour_day'] *
              self.input_dict['overtime_multiplier'])
 
         self.output_dict['Total per diem costs (USD)'] = per_diem.sum()
@@ -580,21 +576,20 @@ class CollectionCost:
 
         # Calculate cable cost:
         cable_cost_usd_per_LF_df = pd.DataFrame([['Materials',
-                                                  self.['total_material_cost'],
+                                                  self.output_dict['total_material_cost'],
                                                   'Collection']],
                                                 columns=['Type of cost',
                                                          'Cost USD',
                                                          'Phase of construction'])
 
         # Combine all calculated cost items into the 'collection_cost' data frame:
-        collection_cost = pd.DataFrame([],columns = ['Type of cost',
-                                                     'Cost USD',
-                                                     'Phase of construction'])
+        collection_cost = pd.DataFrame([], columns=['Type of cost',
+                                                    'Cost USD',
+                                                    'Phase of construction'])
 
         collection_cost = collection_cost.append(trenching_equipment_rental_cost_df)
         collection_cost = collection_cost.append(trenching_labor_cost_df)
         collection_cost = collection_cost.append(cable_cost_usd_per_LF_df)
-
 
         # Calculate Mobilization Cost and add to collection_cost data frame:
         collection_mobilization_usd = collection_cost['Cost USD'].sum() * 0.05
@@ -607,9 +602,9 @@ class CollectionCost:
         collection_cost = collection_cost.append(mobilization_cost)
 
         self.output_dict['total_collection_cost_df'] = collection_cost
-        self.output_dict['total_collection_cost_df'] = collection_cost['Cost USD'].sum()
+        self.output_dict['total_collection_cost'] = collection_cost['Cost USD'].sum()
 
-        return collection_cost
+        return self.output_dict['total_collection_cost']
 
     def run_module(self):
         """
@@ -671,7 +666,7 @@ class CollectionCost:
             TOC_length_quadrant_m = total_out_circuit_length_m * 2
 
             # Trench length for project (all quadrants combined):
-            self.output_dict['trench_length_km'] = project_l_m * self.m_to_lf * 2
+            self.output_dict['trench_length_km'] = (project_l_m / 1000) * 2     # 2 trenches
 
             # Series of methods to select the right cable for output circuit:
             # Not using this set of implementations for now. That is, I'm assuming the
@@ -690,13 +685,15 @@ class CollectionCost:
                                                       'source_circuit',
                                                       self.input_dict['module_I_SC_DC'])
 
-            total_material_cost += TOC_length_quadrant_m * num_quadrants * \
+            total_material_cost += TOC_length_quadrant_m * self.m_to_lf * num_quadrants * \
                                     self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
                                                       'output_circuit',
                                                       output_circuit_ampacity)
 
             self.output_dict['total_material_cost'] = total_material_cost
-            self.output_dict['total_collection_cost'] = total_material_cost
+
+            self.estimate_construction_time()
+            self.output_dict['total_collection_cost'] = self.calculate_costs()
 
             return 0, 0   # module ran successfully
 
