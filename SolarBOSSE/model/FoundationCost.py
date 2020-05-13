@@ -521,8 +521,28 @@ class FoundationCost:
         foundation_cost = foundation_cost.append(material_costs)
 
         # calculate mobilization cost as percentage of total foundation cost and add to
-        # foundation_cost. Here, it's assumed to be 5%:
-        foundation_mob_cost = foundation_cost['Cost USD'].sum() * 0.05
+        # foundation_cost:
+        equip_material_mobilization_multiplier = \
+            0.16161 * (self.input_dict['system_size_MW_DC'] ** (-0.135))
+
+        material_mobilization_USD = material_costs_sum * \
+                                    equip_material_mobilization_multiplier
+
+        equipment_mobilization_USD = \
+            equipment_cost_usd_with_weather_delays * \
+            equip_material_mobilization_multiplier
+
+        labor_mobilization_multiplier = \
+            1.245 * (self.input_dict['system_size_MW_DC'] ** (-0.367))
+
+        labor_mobilization_USD = labor_cost_usd_with_management * \
+                                 labor_mobilization_multiplier
+
+        foundation_mobilization_usd = material_mobilization_USD + \
+                                      equipment_mobilization_USD + \
+                                      labor_mobilization_USD
+
+        foundation_mob_cost = foundation_mobilization_usd
         mob_cost = pd.DataFrame([['Mobilization', foundation_mob_cost, 'Foundation']],
                                 columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         foundation_cost = foundation_cost.append(mob_cost)

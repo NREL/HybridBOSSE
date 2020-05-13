@@ -428,9 +428,17 @@ class CollectionCost:
         operation_data = throughput_operations.where(
             throughput_operations['Module'] == 'Collection').dropna(thresh=4)
 
+        source_wiring_operations = throughput_operations.where(
+            throughput_operations['Module'] == 'Source circuit wiring').dropna(thresh=4)
+
+        output_wiring_operations = throughput_operations.where(
+            throughput_operations['Module'] == 'Output circuit wiring').dropna(thresh=4)
+
         # from construction_estimator data, only read in Collection related data and
         # filter out the rest:
         cable_trenching = throughput_operations[throughput_operations.Module == 'Collection']
+        source_wiring = throughput_operations[throughput_operations.Module == 'Source circuit wiring']
+        output_wiring = throughput_operations[throughput_operations.Module == 'Output circuit wiring']
 
         # Storing data with labor related inputs:
         trenching_labor = cable_trenching[cable_trenching.values == 'Labor']
@@ -441,6 +449,24 @@ class CollectionCost:
         # Units:  LF/day  -> where LF = Linear Foot
         trenching_labor_daily_output = trenching_labor['Daily output'].values[0]
         trenching_labor_num_workers = trenching_labor['Number of workers'].sum()
+
+        # Get labor daily output for source circuit wiring:
+
+        source_wiring_labor = source_wiring[source_wiring.Module == 'Source circuit wiring']
+
+        source_circuit_daily_output = source_wiring_labor.loc[
+            source_wiring_labor['Operation ID'] == 'Source circuit wiring', 'Daily output']
+        source_circuit_daily_output = source_circuit_daily_output.iloc[0]
+        self.output_dict['source_circuit_daily_output'] = source_circuit_daily_output
+
+        # Get labor daily output for output circuit wiring:
+
+        output_wiring_labor = output_wiring[output_wiring.Module == 'Output circuit wiring']
+
+        output_circuit_daily_output = output_wiring_labor.loc[
+            output_wiring_labor['Operation ID'] == 'Output circuit wiring', 'Daily output']
+        output_circuit_daily_output = output_circuit_daily_output.iloc[0]
+        self.output_dict['output_circuit_daily_output'] = output_circuit_daily_output
 
         # Storing data with equipment related inputs:
         trenching_equipment = cable_trenching[cable_trenching.values == 'Equipment']
@@ -465,11 +491,66 @@ class CollectionCost:
             ((trench_length_km * self._km_to_LF) / trenching_labor_daily_output) * \
             (operation_data['Rate USD per unit'] * self.input_dict['hour_day'])
 
+        # Repeat above steps, for cost of source circuit wiring
+
+        source_wiring_operations['Number of days taken by single crew'] = \
+            self.output_dict['source_circuit_wire_length_total_lf'] / source_circuit_daily_output
+
+        source_wiring_operations['Number of crews'] = \
+            np.ceil((source_wiring_operations['Number of days taken by single crew'] / 30) /
+                    collection_construction_time)
+
+        source_wiring_operations['Cost USD without weather delays'] = \
+            self.output_dict['source_circuit_wire_length_total_lf'] * \
+            source_wiring_operations['Rate USD per unit']
+
+        self.output_dict['source_wiring_USD_lf'] = \
+            source_wiring_operations['Rate USD per unit'].iloc[0]
+
+        # Repeat above steps, for cost of output circuit wiring
+
+        output_wiring_operations['Number of days taken by single crew'] = \
+            self.output_dict['output_circuit_wire_length_total_lf'] / output_circuit_daily_output
+
+        output_wiring_operations['Number of crews'] = \
+            np.ceil((output_wiring_operations['Number of days taken by single crew'] / 30) /
+                    collection_construction_time)
+
+        output_wiring_operations['Cost USD without weather delays'] = \
+            self.output_dict['output_circuit_wire_length_total_lf'] * \
+            output_wiring_operations['Rate USD per unit']
+
+        self.output_dict['output_wiring_USD_lf'] = \
+            output_wiring_operations['Rate USD per unit'].iloc[0]
+
         alpha = operation_data[operation_data['Type of cost'] == 'Labor']
         operation_data_id_days_crews_workers = alpha[['Operation ID',
                                                       'Number of days taken by single crew',
                                                       'Number of crews',
                                                       'Number of workers']]
+
+        source_wiring_alpha = source_wiring_operations[source_wiring_operations['Type of cost'] == 'Labor']
+        source_wiring_id_days_crews_workers = source_wiring_alpha[['Operation ID',
+                                                                    'Number of days taken by single crew',
+                                                                    'Number of crews',
+                                                                    'Number of workers']]
+
+        output_wiring_alpha = output_wiring_operations[output_wiring_operations['Type of cost'] == 'Labor']
+        output_wiring_id_days_crews_workers = output_wiring_alpha[['Operation ID',
+                                                                   'Number of days taken by single crew',
+                                                                   'Number of crews',
+                                                                   'Number of workers']]
+
+        operation_data_id_days_crews_workers = pd.merge(operation_data_id_days_crews_workers,
+                                                        source_wiring_id_days_crews_workers,
+                                                        how='outer')
+
+        operation_data_id_days_crews_workers = pd.merge(operation_data_id_days_crews_workers,
+                                                        output_wiring_id_days_crews_workers,
+                                                        how='outer')
+
+        operation_data = pd.merge(operation_data, source_wiring_operations, how='outer')
+        operation_data = pd.merge(operation_data, output_wiring_operations, how='outer')
 
         # if more than one crew needed to complete within construction duration then
         # assume that all construction happens within that window and use that timeframe
@@ -519,7 +600,7 @@ class CollectionCost:
         # weather based delays not yet implemented in SolarBOSSE
         self.output_dict['wind_multiplier'] = 1     # Placeholder
 
-        #Calculating trenching cost:
+        # Calculating trenching cost:
         self.output_dict['Days taken for trenching (equipment)'] = \
             (self.output_dict['trench_length_km'] * self._km_to_LF) / \
             self.output_dict['trenching_equipment_daily_output']
@@ -544,20 +625,48 @@ class CollectionCost:
                                     'Cost USD',
                                     'Phase of construction'])
 
-        # Calculating labor cost:
+        # Calculating trenching labor cost:
         self.output_dict['Days taken for trenching (labor)'] = \
             ((self.output_dict['trench_length_km'] * self._km_to_LF) /
              self.output_dict['trenching_labor_daily_output'])
+
+        self.output_dict['days_taken_source_wiring'] = \
+            self.output_dict['source_circuit_wire_length_total_lf'] / \
+            self.output_dict['source_circuit_daily_output']
+
+        self.output_dict['days_taken_output_wiring'] = \
+            self.output_dict['output_circuit_wire_length_total_lf'] / \
+            self.output_dict['output_circuit_daily_output']
 
         self.output_dict['Labor cost of trenching per day (usd/day)'] = \
             (self.output_dict['trenching_labor_usd_per_hr'] *
              self.input_dict['hour_day'] *
              self.input_dict['overtime_multiplier'])
 
+        self.output_dict['Labor cost of source wiring per day (usd/day)'] = \
+            (self.output_dict['source_circuit_daily_output'] *
+             self.output_dict['source_wiring_USD_lf'] *
+             self.input_dict['overtime_multiplier'])
+
+        self.output_dict['Labor cost of output wiring per day (usd/day)'] = \
+            (self.output_dict['output_circuit_daily_output'] *
+             self.output_dict['output_wiring_USD_lf'] *
+             self.input_dict['overtime_multiplier'])
+
         self.output_dict['Total per diem costs (USD)'] = per_diem.sum()
+
+        foo = self.output_dict['Labor cost of source wiring per day (usd/day)'] * \
+              self.output_dict['days_taken_source_wiring']
+
         self.output_dict['Labor Cost USD without weather delays'] = \
             ((self.output_dict['Days taken for trenching (labor)'] *
               self.output_dict['Labor cost of trenching per day (usd/day)']
+              ) +
+             (self.output_dict['Labor cost of source wiring per day (usd/day)'] *
+              self.output_dict['days_taken_source_wiring']
+              ) +
+             (self.output_dict['Labor cost of output wiring per day (usd/day)'] *
+              self.output_dict['days_taken_output_wiring']
               ) +
              (self.output_dict['Total per diem costs (USD)'] +
               self.output_dict['managament_crew_cost_before_wind_delay']
@@ -592,7 +701,27 @@ class CollectionCost:
         collection_cost = collection_cost.append(cable_cost_usd_per_LF_df)
 
         # Calculate Mobilization Cost and add to collection_cost data frame:
-        collection_mobilization_usd = collection_cost['Cost USD'].sum() * 0.05
+        equip_material_mobilization_multiplier = \
+            0.16161 * (self.input_dict['system_size_MW_DC'] ** (-0.135))
+
+        material_mobilization_USD = self.output_dict['total_material_cost'] * \
+                                          equip_material_mobilization_multiplier
+
+        equipment_mobilization_USD = \
+            self.output_dict['Equipment Cost USD with weather delays'] * \
+            equip_material_mobilization_multiplier
+
+        labor_mobilization_multiplier = \
+            1.245 * (self.input_dict['system_size_MW_DC'] ** (-0.367))
+
+        labor_mobilization_USD = \
+            self.output_dict['Labor Cost USD with weather delays'] * \
+            labor_mobilization_multiplier
+
+        collection_mobilization_usd = material_mobilization_USD + \
+                                      equipment_mobilization_USD + \
+                                      labor_mobilization_USD
+
         mobilization_cost = pd.DataFrame([['Mobilization',
                                            collection_mobilization_usd ,
                                            'Collection']],
@@ -640,6 +769,9 @@ class CollectionCost:
                 self.source_circuit_wire_length_total_lf(source_circuit_wire_length_lf,
                                                          num_quadrants)
 
+            self.output_dict['source_circuit_wire_length_total_lf'] = \
+                source_circuit_wire_length_total_lf
+
             # Begin output circuit calculations:
             num_strings_per_quadrant = \
                 self.number_strings_quadrant(num_strings_per_row,
@@ -664,6 +796,13 @@ class CollectionCost:
 
             # total output circuit length for quadrant (2 sub quadrants per quadrant):
             TOC_length_quadrant_m = total_out_circuit_length_m * 2
+
+            # Total output circuit length for entire farms (all quadrants combined):
+            output_circuit_wire_length_total_lf = \
+                TOC_length_quadrant_m * self.m_to_lf * num_quadrants
+
+            self.output_dict[
+                'output_circuit_wire_length_total_lf'] = output_circuit_wire_length_total_lf
 
             # Trench length for project (all quadrants combined):
             self.output_dict['trench_length_km'] = (project_l_m / 1000) * 2     # 2 trenches

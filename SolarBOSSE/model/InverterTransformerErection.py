@@ -146,6 +146,7 @@ class InverterTransformerErection:
                                                      'Phase of construction'])
 
         # Get mobilization + demobilization cost:
+        
         mob_cost = self.mobilization_cost()
         mob_cost_df = pd.DataFrame([['Mobilization',
                                      mob_cost,

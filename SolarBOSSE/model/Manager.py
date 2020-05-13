@@ -65,12 +65,6 @@ class Manager:
                                        project_name=project_name)
         substationcost.run_module()
 
-        # ManagementCost:
-        managementcost = ManagementCost(input_dict=self.input_dict,
-                                       output_dict=self.output_dict,
-                                       project_name=project_name)
-        managementcost.run_module()
-
         # GridConnectionCost:
         gridconnection = GridConnectionCost(input_dict=self.input_dict,
                                             output_dict=self.output_dict,
@@ -78,13 +72,23 @@ class Manager:
         gridconnection.run_module()
 
         # Sum all costs
-        self.output_dict['total_bos_cost'] = self.output_dict['total_racking_cost_USD'] + \
-                                             self.output_dict['total_road_cost'] + \
-                                             self.output_dict['total_substation_cost'] + \
-                                             self.output_dict['total_management_cost'] + \
-                                             self.output_dict['total_transdist_cost'] + \
-                                             self.output_dict['total_foundation_cost'] + \
-                                             self.output_dict['total_erection_cost'] + \
-                                             self.output_dict['total_collection_cost']
+        self.output_dict['total_bos_cost_before_mgmt'] = \
+            self.output_dict['total_racking_cost_USD'] + \
+            self.output_dict['total_road_cost'] + \
+            self.output_dict['total_substation_cost'] + \
+            self.output_dict['total_transdist_cost'] + \
+            self.output_dict['total_foundation_cost'] + \
+            self.output_dict['total_erection_cost'] + \
+            self.output_dict['total_collection_cost']
+
+        # ManagementCost:
+        managementcost = ManagementCost(input_dict=self.input_dict,
+                                        output_dict=self.output_dict,
+                                        project_name=project_name)
+        managementcost.run_module()
+
+        self.output_dict['total_bos_cost'] = \
+            self.output_dict['total_bos_cost_before_mgmt'] + \
+            self.output_dict['total_management_cost']
 
         return self.output_dict

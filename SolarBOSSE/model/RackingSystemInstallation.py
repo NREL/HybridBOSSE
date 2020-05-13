@@ -309,13 +309,30 @@ class RackingSystemInstallation:
         racking_cost = racking_cost.append(labor_costs)
         racking_cost = racking_cost.append(additional_costs)
 
-        # set mobilization cost equal to 5% of total road cost for utility scale model
+        # Calculate mobilization costs:
         # TODO: convert to user input:
         mob_cost_per_crew = 20000 # NCE 2017 : Pg 604
-        mobilization_costs = operation_data['Number of crews'][1] * mob_cost_per_crew
+        labor_mobilization_multiplier = \
+            1.245 * (self.input_dict['system_size_MW_DC'] ** (-0.367))
+
+        labor_mobilization_USD = operation_data['Number of crews'][1] * mob_cost_per_crew * \
+                                 labor_mobilization_multiplier
+
+        equip_material_mobilization_multiplier = \
+            0.16161 * (self.input_dict['system_size_MW_DC'] ** (-0.135))
+
+        material_mobilization_USD = self.output_dict['total_racking_material_cost_USD'] * \
+                                    equip_material_mobilization_multiplier
+
+        equipment_mobilization_USD = float(equip_racking_installation) * \
+                                     equip_material_mobilization_multiplier
+
+        racking_mobilization_usd = material_mobilization_USD + \
+                                    equipment_mobilization_USD + \
+                                    labor_mobilization_USD
 
         mobilization_costs = pd.DataFrame([['Mobilization',
-                                            mobilization_costs,
+                                            racking_mobilization_usd,
                                             'Racking System Installation']],
                                           columns=['Type of cost',
                                                    'Cost USD',

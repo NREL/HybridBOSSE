@@ -524,11 +524,30 @@ class SitePreparationCost:
         road_cost = road_cost.append(labor_costs)
         road_cost = road_cost.append(additional_costs)
 
-        # set mobilization cost equal to 5% of total road cost for utility scale model
-        mobilization_costs_new_roads = road_cost["Cost USD"].sum() * 0.05
+        # Calculate mobilization costs:
+
+        equip_material_mobilization_multiplier = \
+            0.16161 * (self.input_dict['system_size_MW_DC'] ** (-0.135))
+
+        material_mobilization_USD = material_cost_of_roads * \
+                                    equip_material_mobilization_multiplier
+
+        equipment_mobilization_USD = \
+            equip_for_new_roads_cost_usd * \
+            equip_material_mobilization_multiplier
+
+        labor_mobilization_multiplier = \
+            1.245 * (self.input_dict['system_size_MW_DC'] ** (-0.367))
+
+        labor_mobilization_USD = labor_for_inner_roads_cost_usd * \
+                                 labor_mobilization_multiplier
+
+        siteprep_mobilization_usd = material_mobilization_USD + \
+                                      equipment_mobilization_USD + \
+                                      labor_mobilization_USD
 
         mobilization_costs = pd.DataFrame([['Mobilization',
-                                            mobilization_costs_new_roads,
+                                            siteprep_mobilization_usd,
                                             'Inter-array roads (Solar)']],
                                           columns=['Type of cost',
                                                    'Cost USD',
