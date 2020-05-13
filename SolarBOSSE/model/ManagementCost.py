@@ -34,7 +34,8 @@ class ManagementCost:
         self.project_name = project_name
 
         # Project CAPEX before management costs (USD)
-        self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt']
+        self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt'] + \
+                                 (0.51 * self.input_dict['system_size_MW_DC'] * 1e6)
 
     def epc_developer_profit(self):
         """

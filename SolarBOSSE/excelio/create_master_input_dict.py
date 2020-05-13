@@ -214,9 +214,6 @@ class XlsxReader:
         else:
             incomplete_input_dict['new_switchyard'] = False
 
-        incomplete_input_dict['road_length_m'] = \
-            project_parameters['Road length adder (m)']
-
         incomplete_input_dict['road_quality'] = \
             project_parameters['Road Quality (0-1)']
 
@@ -225,6 +222,12 @@ class XlsxReader:
 
         incomplete_input_dict['site_prep_area_acres_mw_dc'] = \
             incomplete_input_dict['site_prep_area_acres_mw_ac'] * incomplete_input_dict['dc_ac_ratio']
+
+        site_area_in_m2 = \
+            (incomplete_input_dict['site_prep_area_acres_mw_dc'] *
+             incomplete_input_dict['system_size_MW_DC']) * 4046.86
+
+        incomplete_input_dict['road_length_m'] = 1.5 * ((site_area_in_m2 / 1.5) ** 0.5)
 
         incomplete_input_dict['site_prep_area_acres'] = \
             incomplete_input_dict['site_prep_area_acres_mw_dc'] * \

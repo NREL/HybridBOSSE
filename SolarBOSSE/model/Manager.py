@@ -61,8 +61,8 @@ class Manager:
 
         # SubstationCost:
         substationcost = SubstationCost(input_dict=self.input_dict,
-                                       output_dict=self.output_dict,
-                                       project_name=project_name)
+                                        output_dict=self.output_dict,
+                                        project_name=project_name)
         substationcost.run_module()
 
         # GridConnectionCost:
