@@ -136,15 +136,33 @@ class NegativeInputError(Error):
 
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
-input_dict = dict()
+
 sizes = [5, 50, 100]
-# sizes = [5]
+# sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 
 for size in sizes:
+    input_dict = dict()
     BOS_results = dict()
     BOS_results.update({str(size)+' MW scenario': ' '})
     input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
+
     print(input_dict)
+
+    input_dict['project_list'] = 'project_list_50MW'
+
+    input_dict['system_size_MW_DC'] = size
+
+    if size < 10:
+        input_dict['dist_interconnect_mi'] = 0
+    else:
+        input_dict['dist_interconnect_mi'] = (0.0263 * size) - 0.2632
+
+    if size <= 20:
+        input_dict['construction_time_months'] = 12
+        input_dict['interconnect_voltage_kV'] = 34.5
+    elif size <= 10:
+        input_dict['construction_time_months'] = 6
+
     BOS_results, detailed_results = run_solarbosse(input_dict)
     print(BOS_results)
     bos_capex = BOS_results['total_bos_cost'] / (size * 1e6)
