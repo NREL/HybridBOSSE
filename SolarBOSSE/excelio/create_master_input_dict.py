@@ -140,6 +140,7 @@ class XlsxReader:
         # incomplete_input_dict['fuel_cost'] = project_parameters['Fuel cost USD per gal']
 
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
+
         incomplete_input_dict['project_data_file'] = \
             project_parameters['Project data file']
 
@@ -151,9 +152,6 @@ class XlsxReader:
 
         incomplete_input_dict['system_size_MW_DC'] = \
             project_parameters['System Size (MW_DC)']
-
-        incomplete_input_dict['system_size_MW_AC'] = \
-            incomplete_input_dict['system_size_MW_DC'] / incomplete_input_dict['dc_ac_ratio']
 
         incomplete_input_dict['module_rating_W'] = \
             project_parameters['Module rating (Watts)']
@@ -207,30 +205,8 @@ class XlsxReader:
         incomplete_input_dict['switchyard_y_n'] = \
             project_parameters['New Switchyard (y/n)']
 
-        if incomplete_input_dict['switchyard_y_n'] == 'y':
-            incomplete_input_dict['new_switchyard'] = True
-        else:
-            incomplete_input_dict['new_switchyard'] = False
-
         incomplete_input_dict['site_prep_area_acres_mw_ac'] = \
             project_parameters['Project site prep area (Acres/MW_ac)']
-
-        incomplete_input_dict['site_prep_area_acres_mw_dc'] = \
-            incomplete_input_dict['site_prep_area_acres_mw_ac'] * incomplete_input_dict['dc_ac_ratio']
-
-        site_area_in_m2 = \
-            (incomplete_input_dict['site_prep_area_acres_mw_dc'] *
-             incomplete_input_dict['system_size_MW_DC']) * 4046.86
-
-        incomplete_input_dict['road_length_m'] = 1.5 * ((site_area_in_m2 / 1.5) ** 0.5)
-
-        incomplete_input_dict['site_prep_area_acres'] = \
-            incomplete_input_dict['site_prep_area_acres_mw_dc'] * \
-            incomplete_input_dict['system_size_MW_DC']
-
-        # 1 acre = 4046.86 m2:
-        incomplete_input_dict['site_prep_area_m2'] = \
-            incomplete_input_dict['site_prep_area_acres'] * 4046.86
 
         incomplete_input_dict['fraction_new_roads'] = \
             project_parameters['Percent of roads that will be constructed']
