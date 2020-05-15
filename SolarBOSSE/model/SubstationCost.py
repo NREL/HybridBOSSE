@@ -71,14 +71,17 @@ class SubstationCost(CostModule):
             (in USD)
 
         """
-        if input_dict['system_size_MW_AC'] >= 10:
+        if input_dict['system_size_MW_AC'] >= 15:
             output_dict['substation_cost_usd'] = \
                 11652 * (input_dict['interconnect_voltage_kV'] + input_dict['system_size_MW_AC']) + \
                 11795 * (input_dict['system_size_MW_AC'] ** 0.3549) + 1526800
 
         else:
-
-            output_dict['substation_cost_usd'] = 0
+            # TODO: make this a user input
+            if input_dict['system_size_MW_AC'] > 10:
+                output_dict['substation_cost_usd'] = 1000000
+            else:   # that is, < 10 MW_AC
+                output_dict['substation_cost_usd'] = 500000
 
         output_dict['substation_cost_output_df'] = pd.DataFrame([['Other',
                                                                   output_dict['substation_cost_usd'],

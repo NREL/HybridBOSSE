@@ -43,15 +43,15 @@ def run_solarbosse(input_dict_file_name):
             results['errors'].append(msg)
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
-        results['total_bos_cost'] = output_dict['total_bos_cost']
-        results['total_racking_cost'] = output_dict['total_racking_cost_USD']
-        results['siteprep_cost'] = output_dict['total_road_cost']
-        results['substation_cost'] = output_dict['total_substation_cost']
-        results['total_transdist_cost'] = output_dict['total_transdist_cost']
-        results['total_management_cost'] = output_dict['total_management_cost']
-        results['total_foundation_cost'] = output_dict['total_foundation_cost']
-        results['total_erection_cost'] = output_dict['total_erection_cost']
-        results['total_collection_cost'] = output_dict['total_collection_cost']
+        results['total_bos_cost'] = output_dict['total_bos_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['total_racking_cost'] = output_dict['total_racking_cost_USD'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['siteprep_cost'] = output_dict['total_road_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['substation_cost'] = output_dict['total_substation_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['total_transdist_cost'] = output_dict['total_transdist_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['total_management_cost'] = output_dict['total_management_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['total_foundation_cost'] = output_dict['total_foundation_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['total_erection_cost'] = output_dict['total_erection_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
+        results['total_collection_cost'] = output_dict['total_collection_cost'] / (master_input_dict['system_size_MW_DC'] * 1e6)
 
     return results, output_dict
 
@@ -161,15 +161,20 @@ for size in sizes:
         input_dict['construction_time_months'] = 24
     elif size <= 20:
         input_dict['construction_time_months'] = 12
-        input_dict['interconnect_voltage_kV'] = 34.5
+
     elif size <= 10:
         input_dict['construction_time_months'] = 6
 
+    if size <= 20:
+        input_dict['interconnect_voltage_kV'] = 34.5
+
     BOS_results, detailed_results = run_solarbosse(input_dict)
     print(BOS_results)
-    bos_capex = BOS_results['total_bos_cost'] / (size * 1e6)
+    bos_capex = BOS_results['total_bos_cost']
     capex = 0.51 + bos_capex
-    print(str(size) + ' MW BOS CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
+    # print(str(size) + ' MW BOS CAPEX (USD/Watt) = ' + str(round(bos_capex, 4)))
     print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(capex, 2)))
+    print('')
+    print('')
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
