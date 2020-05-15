@@ -26,6 +26,9 @@ def run_solarbosse(input_dict_file_name):
     # master_input_dict = dict()
     output_dict = dict()
 
+    for key, _ in input_dict.items():
+        master_input_dict[key] = input_dict[key]
+
     # Manager class (1) manages the distribution of inout data for all modules
     # and (2) executes landbosse
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
@@ -134,8 +137,8 @@ class NegativeInputError(Error):
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
 input_dict = dict()
-# sizes = [5, 50, 100]
-sizes = [5]
+sizes = [5, 50, 100]
+# sizes = [5]
 
 for size in sizes:
     BOS_results = dict()
