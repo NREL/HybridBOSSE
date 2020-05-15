@@ -103,8 +103,8 @@ class XlsxReader:
         incomplete_input_dict['construction_estimator'] = \
             project_data_dataframes['construction_estimator']
 
-        # TODO: add this as user input in project_list.xlsx:
-        incomplete_input_dict['hour_day'] = 10
+        incomplete_input_dict['hour_day'] = \
+            project_parameters['Hours per workday (hours)']
 
         incomplete_input_dict['solar_BOM'] = \
             project_data_dataframes['balance_of_material_1MW']
@@ -118,8 +118,12 @@ class XlsxReader:
         incomplete_input_dict['crew'] = project_data_dataframes['crew']
         incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
         incomplete_input_dict['equip_price'] = project_data_dataframes['equip_price']
-        incomplete_input_dict['pv_wire_DC_specs'] = project_data_dataframes['pv_wire_DC_specs']
-        incomplete_input_dict['power_cable_specs_MV_AC'] = project_data_dataframes['power_cable_specs']
+
+        incomplete_input_dict['pv_wire_DC_specs'] = \
+            project_data_dataframes['pv_wire_DC_specs']
+
+        incomplete_input_dict['power_cable_specs_MV_AC'] = \
+            project_data_dataframes['power_cable_specs']
 
         # Read development tab, if it exists (it is optional since development costs
         # can be placed in the project list):
@@ -194,9 +198,6 @@ class XlsxReader:
         incomplete_input_dict['line_freq_hz'] = \
             project_parameters['Line Frequency (Hz)']
 
-        incomplete_input_dict['user_trench_length'] = \
-            project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
-
         incomplete_input_dict['dist_interconnect_mi'] = \
             project_parameters['Distance to interconnect (miles)']
 
@@ -210,9 +211,6 @@ class XlsxReader:
             incomplete_input_dict['new_switchyard'] = True
         else:
             incomplete_input_dict['new_switchyard'] = False
-
-        incomplete_input_dict['road_quality'] = \
-            project_parameters['Road Quality (0-1)']
 
         incomplete_input_dict['site_prep_area_acres_mw_ac'] = \
             project_parameters['Project site prep area (Acres/MW_ac)']

@@ -149,10 +149,6 @@ class SitePreparationCost:
         self.output_dict = output_dict
         self.project_name = project_name
 
-        # Road quality and fraction of roads that are
-        self.fraction_new_roads = self.input_dict['fraction_new_roads']
-        self.road_quality  = self.input_dict['road_quality']
-
         # Conversion factors. Making this data private (hidden from outside of
         # this class):
         self._meters_per_foot = 0.3
