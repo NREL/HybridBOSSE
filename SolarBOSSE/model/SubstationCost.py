@@ -1,9 +1,10 @@
 import traceback
 import pandas as pd
 import math
+from .CostModule import CostModule
 
 
-class SubstationCost:
+class SubstationCost(CostModule):
     """
     **SubstationCost.py**
 
@@ -46,6 +47,7 @@ class SubstationCost:
             The output dictionary with key value pairs as found on the
             output documentation.
         """
+        super(SubstationCost, self).__init__(input_dict, output_dict, project_name)
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name

@@ -1,9 +1,10 @@
 import traceback
 import pandas as pd
 import math
+from .CostModule import CostModule
 
 
-class InverterTransformerErection:
+class InverterTransformerErection(CostModule):
     """
     Cost of erecting the inverter+transformer container once the concrete pad
     has been constructed and is cured. This module calculates the cost of
@@ -15,6 +16,7 @@ class InverterTransformerErection:
     """
 
     def __init__(self, input_dict, output_dict, project_name):
+        super(InverterTransformerErection, self).__init__(input_dict, output_dict, project_name)
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
@@ -146,7 +148,7 @@ class InverterTransformerErection:
                                                      'Phase of construction'])
 
         # Get mobilization + demobilization cost:
-        
+
         mob_cost = self.mobilization_cost()
         mob_cost_df = pd.DataFrame([['Mobilization',
                                      mob_cost,

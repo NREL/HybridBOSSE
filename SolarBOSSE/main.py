@@ -134,8 +134,8 @@ class NegativeInputError(Error):
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
 input_dict = dict()
-sizes = [5, 50, 100]
-# sizes = [5]
+# sizes = [5, 50, 100]
+sizes = [5]
 
 for size in sizes:
     BOS_results = dict()

@@ -2,9 +2,10 @@ import traceback
 import math
 import numpy as np
 import pandas as pd
+from .CostModule import CostModule
 
 
-class CollectionCost:
+class CollectionCost(CostModule):
     """
     Assumptions:
     1. System contains central inverters of 1 MW rating each. The inverter being
@@ -87,6 +88,7 @@ class CollectionCost:
     """
 
     def __init__(self, input_dict, output_dict, project_name):
+        super(CollectionCost, self).__init__(input_dict, output_dict, project_name)
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name

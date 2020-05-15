@@ -2,9 +2,10 @@ import math
 import traceback
 import pytest
 import traceback
+from .CostModule import CostModule
 
 
-class ManagementCost:
+class ManagementCost(CostModule):
     """
     Source for all multiplier costs explicitly mention:
     https://www.nrel.gov/docs/fy19osti/72133.pdf
@@ -29,6 +30,7 @@ class ManagementCost:
         output_dict : dict
             Dictionary with output key / value pairs.
         """
+        super(ManagementCost, self).__init__(input_dict, output_dict, project_name)
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name

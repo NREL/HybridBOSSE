@@ -1,9 +1,10 @@
 import traceback
 import pandas as pd
 import math
+from .CostModule import CostModule
 
 
-class GridConnectionCost:
+class GridConnectionCost(CostModule):
     """
     TransDistCost.py
      - Created by Annika Eberle and Owen Roberts on Dec. 17, 2018
@@ -41,6 +42,7 @@ class GridConnectionCost:
             The output dictionary with key value pairs as found on the
             output documentation.
         """
+        super(GridConnectionCost, self).__init__(input_dict, output_dict, project_name)
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name

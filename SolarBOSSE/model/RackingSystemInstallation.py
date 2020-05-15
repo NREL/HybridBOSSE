@@ -2,8 +2,10 @@ import traceback
 import pandas as pd
 import math
 import numpy as np
+from .CostModule import CostModule
 
-class RackingSystemInstallation:
+
+class RackingSystemInstallation(CostModule):
     """
     Class for simulating installation of utility scale ground-mount
     racking system and panel installation. This portion of the project
@@ -18,6 +20,7 @@ class RackingSystemInstallation:
 
     """
     def __init__(self, input_dict, output_dict, project_name):
+        super(RackingSystemInstallation, self).__init__(input_dict, output_dict, project_name)
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
