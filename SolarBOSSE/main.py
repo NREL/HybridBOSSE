@@ -137,8 +137,8 @@ class NegativeInputError(Error):
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
 
-sizes = [5, 50, 100]
-# sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+# sizes = [5, 50, 100]
+sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 
 for size in sizes:
     input_dict = dict()
@@ -157,7 +157,9 @@ for size in sizes:
     else:
         input_dict['dist_interconnect_mi'] = (0.0263 * size) - 0.2632
 
-    if size <= 20:
+    if size > 50:
+        input_dict['construction_time_months'] = 24
+    elif size <= 20:
         input_dict['construction_time_months'] = 12
         input_dict['interconnect_voltage_kV'] = 34.5
     elif size <= 10:
