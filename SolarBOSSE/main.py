@@ -152,7 +152,7 @@ for size in sizes:
 
     input_dict['system_size_MW_DC'] = size
 
-    if size < 10:
+    if size <= 10:
         input_dict['dist_interconnect_mi'] = 0
     else:
         input_dict['dist_interconnect_mi'] = (0.0263 * size) - 0.2632
