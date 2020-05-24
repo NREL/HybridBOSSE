@@ -2,21 +2,30 @@ import yaml
 import os
 from hybrids_shared_infrastructure.run_BOSSEs import run_BOSSEs
 from hybrids_shared_infrastructure.PostSimulationProcessing import PostSimulationProcessing
+import pandas as pd
 
 
 # Main API method to run a Hybrid BOS model:
 def run_hybrid_BOS(hybrids_input_dict):
     wind_BOS, solar_BOS = run_BOSSEs(hybrids_input_dict)
-    print('Wind BOS: ', wind_BOS)
-    print('Solar BOS: ', solar_BOS)
-
+    if hybrids_scenario_dict['wind_plant_size_MW'] > 0:
+        print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
+                             (hybrids_scenario_dict['wind_plant_size_MW'] * 1e6)))
+    if hybrids_scenario_dict['solar_system_size_MW_DC'] > 0:
+        print('Solar BOS: ', (solar_BOS['total_bos_cost'] /
+                              (hybrids_scenario_dict['solar_system_size_MW_DC'] * 1e6)))
     results = dict()
     hybrid_BOS = PostSimulationProcessing(hybrids_input_dict, wind_BOS, solar_BOS)
-    results['hybrid_BOS_usd'] = hybrid_BOS.hybrid_BOS_usd()
+    results['hybrid_BOS_usd'] = hybrid_BOS.hybrid_BOS_usd
+    results['hybrid_BOS_usd_watt'] = hybrid_BOS.hybrid_BOS_usd_watt
+    results['hybrid_gridconnection_usd'] = hybrid_BOS.hybrid_gridconnection_usd
+    results['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
+    results['Wind_BOS_results'] = hybrid_BOS.update_BOS_dict(wind_BOS, 'wind')
+    results['Solar_BOS_results'] = hybrid_BOS.update_BOS_dict(solar_BOS, 'solar')
     return results
 
 
-def read_hybrid_scenario():
+def read_hybrid_scenario(file_path):
     """
     [Optional method]
 
@@ -24,9 +33,14 @@ def read_hybrid_scenario():
     hybrids_shared_infrastructure, and returns a python dictionary with all required
     key:value pairs needed to run the hybrids_shared_infrastructure API.
     """
-    input_file_path = os.path.dirname(__file__)
-    with open(input_file_path + '/hybrid_inputs.yaml', 'r') as stream:
-        data_loaded = yaml.safe_load(stream)
+    if file_path:
+        input_file_path = file_path['input_file_path']
+        with open(input_file_path, 'r') as stream:
+            data_loaded = yaml.safe_load(stream)
+    else:
+        input_file_path = os.path.dirname(__file__)
+        with open(input_file_path + 'hybrid_inputs.yaml', 'r') as stream:
+            data_loaded = yaml.safe_load(stream)
 
     hybrids_scenario_dict = data_loaded['hybrids_input_dict']
     hybrids_scenario_dict['wind_plant_size_MW'] = hybrids_scenario_dict['num_turbines'] * \
@@ -34,5 +48,27 @@ def read_hybrid_scenario():
     return hybrids_scenario_dict
 
 
-hybrids_scenario_dict = read_hybrid_scenario()
-run_hybrid_BOS(hybrids_scenario_dict)
+yaml_file_path = dict()
+
+# Some preset scenarios:
+#
+# hybrid_inputs_5+5_5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_5+5_5.yaml'
+
+# hybrid_inputs_0+10_5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_0+10_5.yaml'
+
+
+# hybrid_inputs_5+5_10
+yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+                                    'Infrastructure/hybrids_shared_infra_tool/shared_' \
+                                    'infra_in_out_scenarios/hybrid_inputs_5+5_10.yaml'
+
+hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+outputs = run_hybrid_BOS(hybrids_scenario_dict)
+print(outputs)
+

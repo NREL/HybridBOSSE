@@ -5,6 +5,8 @@ hybrids_input_dict:
     grid_interconnection_rating_MW: 5
     interconnect_voltage_kV: 15
 
+    shared_substation: True
+
     # Wind farm required inputs
     wind_dist_interconnect_mi: 0    # Gets over-ridden when 'shared_interconnection' is True
     num_turbines: 5
