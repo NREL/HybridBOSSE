@@ -58,7 +58,7 @@ wind_input_dict['interconnect_voltage_kV'] = hybrids_input_dict['interconnect_vo
 wind_input_dict['distance_to_interconnect_mi'] = \
     hybrids_input_dict['wind_dist_interconnect_mi']
 
-wind_input_dict['project_id'] = 'foundation_validation_ge15'
+wind_input_dict['project_id'] = 'ge15_public_dist'
 wind_input_dict['turbine_spacing_rotor_diameters'] = 4
 wind_input_dict['row_spacing_rotor_diameters'] = 10
 wind_input_dict['rotor_diameter_m'] = 77
