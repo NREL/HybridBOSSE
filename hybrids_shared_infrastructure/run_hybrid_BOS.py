@@ -1,6 +1,5 @@
 from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
-from LandBOSSE.landbosse.model.GridConnectionCost import GridConnectionCost
 
 # <><><><><><><><><><><><><><><> RUNNING LandBOSSE API <><><><><><><><><><><><><><><><>
 # Required inputs to run hybrids_shared_infrastructure:
@@ -10,16 +9,16 @@ hybrids_input_dict['distance_to_interconnect_mi'] = 5
 hybrids_input_dict['new_switchyard'] = True
 
 # Wind farm required inputs
-hybrids_input_dict['interconnect_voltage_kV'] = 13.8
-hybrids_input_dict['wind_dist_interconnect_mi'] = 5
+hybrids_input_dict['interconnect_voltage_kV'] = 15
+hybrids_input_dict['wind_dist_interconnect_mi'] = 0
 hybrids_input_dict['num_turbines'] = 5
 hybrids_input_dict['turbine_rating_MW'] = 1.5
-hybrids_input_dict['wind_construction_time_months'] = 5
+# hybrids_input_dict['wind_construction_time_months'] = 5
 hybrids_input_dict['wind_plant_size_MW'] = hybrids_input_dict['num_turbines'] * \
                                            hybrids_input_dict['turbine_rating_MW']
 
 # Solar farm required inputs
-hybrids_input_dict['solar_system_size_MW_DC'] = 8
+hybrids_input_dict['solar_system_size_MW_DC'] = 0
 hybrids_input_dict['solar_construction_time_months'] = 10
 hybrids_input_dict['solar_dist_interconnect_mi'] = 5
 
@@ -53,22 +52,18 @@ if hybrids_input_dict['shared_interconnection']:
 wind_input_dict = dict()
 wind_input_dict['num_turbines'] = hybrids_input_dict['num_turbines']
 wind_input_dict['turbine_rating_MW'] = hybrids_input_dict['turbine_rating_MW']
-wind_input_dict['interconnect_voltage_kV'] = hybrids_input_dict['interconnect_voltage_kV']
+
+wind_input_dict['interconnect_voltage_kV'] =    \
+                                        hybrids_input_dict['interconnect_voltage_kV']
 
 wind_input_dict['distance_to_interconnect_mi'] = \
-    hybrids_input_dict['wind_dist_interconnect_mi']
+                                        hybrids_input_dict['wind_dist_interconnect_mi']
 
 wind_input_dict['project_id'] = 'ge15_public_dist'
-wind_input_dict['turbine_spacing_rotor_diameters'] = 4
-wind_input_dict['row_spacing_rotor_diameters'] = 10
-wind_input_dict['rotor_diameter_m'] = 77
-wind_input_dict['hub_height_meters'] = 80
-wind_input_dict['wind_shear_exponent'] = 0.20
-wind_input_dict['depth'] = 2.36  # Foundation depth in m
-wind_input_dict['rated_thrust_N'] = 589000
-wind_input_dict['labor_cost_multiplier'] = 1
-wind_input_dict['gust_velocity_m_per_s'] = 59.50
-# wind_input_dict['override_total_management_cost'] = 1519250
+
+wind_input_dict['path_to_project_list'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+                                          'Infrastructure/hybrids_shared_infra_tool/'
+wind_input_dict['name_of_project_list'] = 'project_list_ge15_dist_05'
 
 if hybrids_input_dict['wind_plant_size_MW'] < 1:
     LandBOSSE_BOS_results = dict()
