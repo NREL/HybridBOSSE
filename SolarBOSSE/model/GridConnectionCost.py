@@ -64,7 +64,7 @@ class GridConnectionCost(CostModule):
             raised that caused the failure.
         """
         # Switch between utility scale model and distributed model
-        # Run utility version of GridConnectionCost for project size > 15 MW:
+        # Run utility version of GridConnectionCost for project size > 10 MW:
         if input_dict['system_size_MW_AC'] > 10:
             if input_dict['dist_interconnect_mi'] == 0:
                 output_dict['trans_dist_usd'] = 0

@@ -113,6 +113,7 @@ class NegativeInputError(Error):
     pass
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
+# TODO: uncomment these lines to run SolarBOSSE as a standalone model.
 
 # sizes = [5, 50, 100]
 # sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
@@ -124,7 +125,7 @@ class NegativeInputError(Error):
 #     BOS_results.update({str(size)+' MW scenario': ' '})
 #     input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
 #
-#     print(input_dict)
+#     print(inp
 #
 #     input_dict['project_list'] = 'project_list_50MW'
 #
