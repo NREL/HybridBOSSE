@@ -18,7 +18,7 @@ hybrids_input_dict['wind_plant_size_MW'] = hybrids_input_dict['num_turbines'] * 
                                            hybrids_input_dict['turbine_rating_MW']
 
 # Solar farm required inputs
-hybrids_input_dict['solar_system_size_MW_DC'] = 0
+hybrids_input_dict['solar_system_size_MW_DC'] = 5
 hybrids_input_dict['solar_construction_time_months'] = 10
 hybrids_input_dict['solar_dist_interconnect_mi'] = 5
 
