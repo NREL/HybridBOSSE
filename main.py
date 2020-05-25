@@ -2,16 +2,20 @@ import yaml
 import os
 from hybrids_shared_infrastructure.run_BOSSEs import run_BOSSEs
 from hybrids_shared_infrastructure.PostSimulationProcessing import PostSimulationProcessing
-import pandas as pd
 
 
 # Main API method to run a Hybrid BOS model:
 def run_hybrid_BOS(hybrids_input_dict):
+    """
+    Returns a dictionary with detailed Shared Infrastructure BOS results.
+    """
     wind_BOS, solar_BOS = run_BOSSEs(hybrids_input_dict)
     if hybrids_scenario_dict['wind_plant_size_MW'] > 0:
+        # BOS of Wind only power plant:
         print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
                              (hybrids_scenario_dict['wind_plant_size_MW'] * 1e6)))
     if hybrids_scenario_dict['solar_system_size_MW_DC'] > 0:
+        # BOS of Solar only power plant:
         print('Solar BOS: ', (solar_BOS['total_bos_cost'] /
                               (hybrids_scenario_dict['solar_system_size_MW_DC'] * 1e6)))
     results = dict()
@@ -39,7 +43,7 @@ def read_hybrid_scenario(file_path):
             data_loaded = yaml.safe_load(stream)
     else:
         input_file_path = os.path.dirname(__file__)
-        with open(input_file_path + 'hybrid_inputs.yaml', 'r') as stream:
+        with open(input_file_path + '/hybrid_inputs.yaml', 'r') as stream:
             data_loaded = yaml.safe_load(stream)
 
     hybrids_scenario_dict = data_loaded['hybrids_input_dict']
@@ -52,7 +56,7 @@ yaml_file_path = dict()
 
 # Some preset scenarios:
 #
-# hybrid_inputs_5+5_5
+# hybrid_inputs_5_wind+5_solar_5_intereconnect
 # yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
 #                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
 #                                     'infra_in_out_scenarios/hybrid_inputs_5+5_5.yaml'
@@ -64,9 +68,9 @@ yaml_file_path = dict()
 
 
 # hybrid_inputs_5+5_10
-yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-                                    'Infrastructure/hybrids_shared_infra_tool/shared_' \
-                                    'infra_in_out_scenarios/hybrid_inputs_5+5_10.yaml'
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_5+5_10.yaml'
 
 hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 outputs = run_hybrid_BOS(hybrids_scenario_dict)
