@@ -19,13 +19,13 @@ def hybrid_substation(input_dict):
     """
     output_dict = dict()
 
-    if input_dict['system_size_MW'] >= 15:
+    if input_dict['hybrid_substation_rating_MW'] >= 15:
         output_dict['substation_cost_usd'] = \
-            11652 * (input_dict['interconnect_voltage_kV'] + input_dict['system_size_MW']) + \
-            11795 * (input_dict['system_size_MW'] ** 0.3549) + 1526800
+            11652 * (input_dict['interconnect_voltage_kV'] + input_dict['hybrid_substation_rating_MW']) + \
+            11795 * (input_dict['hybrid_substation_rating_MW'] ** 0.3549) + 1526800
 
     else:
-        if input_dict['system_size_MW'] > 10:
+        if input_dict['hybrid_substation_rating_MW'] > 10:
             output_dict['substation_cost_usd'] = 1000000
         else:  # that is, < 10 MW_AC
             output_dict['substation_cost_usd'] = 500000

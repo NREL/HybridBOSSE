@@ -10,8 +10,8 @@ def run_hybrid_BOS(hybrids_input_dict):
     Returns a dictionary with detailed Shared Infrastructure BOS results.
     """
     wind_BOS, solar_BOS = run_BOSSEs(hybrids_input_dict)
-    print('wind_BOS ', wind_BOS)
-    print('solar_BOS ', solar_BOS)
+    print('wind_only_BOS at ', hybrids_scenario_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
+    print('solar_only_BOS ', hybrids_scenario_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
     if hybrids_scenario_dict['wind_plant_size_MW'] > 0:
         # BOS of Wind only power plant:
         print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
@@ -34,7 +34,8 @@ def run_hybrid_BOS(hybrids_input_dict):
     results['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
 
     results['hybrid_management_development_usd'] = wind_BOS['total_management_cost'] + \
-                                                   solar_BOS['total_management_cost']
+                                                   solar_BOS['total_management_cost'] + \
+                                                   hybrid_BOS.site_facility_usd
 
     results['Wind_BOS_results'] = hybrid_BOS.update_BOS_dict(wind_BOS, 'wind')
     results['Solar_BOS_results'] = hybrid_BOS.update_BOS_dict(solar_BOS, 'solar')
@@ -60,7 +61,9 @@ def read_hybrid_scenario(file_path):
 
     hybrids_scenario_dict = data_loaded['hybrids_input_dict']
 
-    if hybrids_scenario_dict['num_turbines'] is None:
+    if hybrids_scenario_dict['num_turbines'] is None or \
+        hybrids_scenario_dict['num_turbines'] == 0:
+
         hybrids_scenario_dict['num_turbines'] = 0
 
     hybrids_scenario_dict['wind_plant_size_MW'] = hybrids_scenario_dict['num_turbines'] * \
@@ -68,6 +71,11 @@ def read_hybrid_scenario(file_path):
 
     hybrids_scenario_dict['hybrid_plant_size_MW'] = hybrids_scenario_dict['wind_plant_size_MW'] + \
                                                     hybrids_scenario_dict['solar_system_size_MW_DC']
+
+    hybrids_scenario_dict['hybrid_construction_months'] = \
+        hybrids_scenario_dict['wind_construction_time_months'] + \
+        hybrids_scenario_dict['solar_construction_time_months']
+
     return hybrids_scenario_dict
 
 
@@ -75,26 +83,19 @@ yaml_file_path = dict()
 
 # Some preset scenarios:
 #
-# hybrid_inputs_5_wind+5_solar_5_intereconnect
+# hybrid_inputs_7.5_7.5_7.5
 # yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
 #                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_5+5_5.yaml'
+#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
 
-# hybrid_inputs_0+10_5
+# hybrid_inputs_7.5_7.5_15
 # yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
 #                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_0+10_5.yaml'
-
-
-# hybrid_inputs_5+5_10
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_5+5_10.yaml'
-
-# hybrid_inputs_5+5_10
+#                                     'infra_in_out_scenarios/hybrid
+# hybrid_inputs_15_15_15
 yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-                                    'infra_in_out_scenarios/hybrid_inputs_0+7.5_7.5.yaml'
+                                    'infra_in_out_scenarios/hybrid_inputs_15_15_15.yaml'
 
 hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 outputs = run_hybrid_BOS(hybrids_scenario_dict)
