@@ -99,9 +99,113 @@ yaml_file_path = dict()
 #                                     'infra_in_out_scenarios/hybrid_inputs_15_15_15.yaml'
 
 # hybrid_inputs_22.5_22.5_22.5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_22.5.yaml'
+
+# hybrid_inputs_22.5_22.5_45
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_45.yaml'
+
+# hybrid_inputs_30_30_30
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_30_30_30.yaml'
+
+# # hybrid_inputs_30_30_60
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_30_30_60.yaml'
+#
+# # hybrid_inputs_37.5_37.5_37.5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_37.5_37.5_37.5.yaml'
+
+# # hybrid_inputs_37.5_37.5_75
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+
+# hybrid_inputs_45_45_45
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_45_45_45.yaml'
+
+# hybrid_inputs_45_45_90
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_45_45_90.yaml'
+
+# hybrid_inputs_52.5_52.5_52.5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_52.5_52.5_52.5.yaml'
+
+# hybrid_inputs_52.5_52.5_105
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_52.5_52.5_105.yaml'
+
+# hybrid_inputs_60_60_60
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_60_60_60.yaml'
+
+# hybrid_inputs_60_60_60
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_60_60_120.yaml'
+
+# hybrid_inputs_67.5_67.5_67.5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_67.5_67.5_67.5.yaml'
+
+# hybrid_inputs_67.5_67.5_130
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_67.5_67.5_130.yaml'
+
+# hybrid_inputs_75_75_75
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_75_75_75.yaml'
+
+# hybrid_inputs_75_75_150
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_75_75_150.yaml'
+
+# hybrid_inputs_82.5_82.5_82.5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_82.5_82.5_82.5.yaml'
+
+# hybrid_inputs_82.5_82.5_165
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_82.5_82.5_165.yaml'
+
+# hybrid_inputs_90_90_90
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_90_90_90.yaml'
+
+# hybrid_inputs_90_90_180
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_90_90_180.yaml'
+
+# hybrid_inputs_97.5_97.5_97.5
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_97.5.yaml'
+
+# hybrid_inputs_97.5_97.5_195
 yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-                                    'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_22.5.yaml'
+                                    'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_195.yaml'
 
 hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 outputs = run_hybrid_BOS(hybrids_scenario_dict)
