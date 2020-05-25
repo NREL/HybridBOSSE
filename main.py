@@ -91,11 +91,17 @@ yaml_file_path = dict()
 # hybrid_inputs_7.5_7.5_15
 # yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
 #                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid
+#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_15.yaml'
+
 # hybrid_inputs_15_15_15
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_15_15_15.yaml'
+
+# hybrid_inputs_22.5_22.5_22.5
 yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-                                    'infra_in_out_scenarios/hybrid_inputs_15_15_15.yaml'
+                                    'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_22.5.yaml'
 
 hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 outputs = run_hybrid_BOS(hybrids_scenario_dict)

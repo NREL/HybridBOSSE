@@ -59,8 +59,8 @@ def run_BOSSEs(hybrids_input_dict):
         elif solar_system_size <= 10:
             solar_input_dict['construction_time_months'] = 6
 
-        if solar_system_size <= 20:
-            solar_input_dict['interconnect_voltage_kV'] = 34.5
+    solar_input_dict['interconnect_voltage_kV'] = \
+                                        hybrids_input_dict['interconnect_voltage_kV']
 
     if hybrids_input_dict['solar_system_size_MW_DC'] < 1:
         SolarBOSSE_results = dict()
