@@ -84,4 +84,3 @@ yaml_file_path = dict()
 hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 outputs = run_hybrid_BOS(hybrids_scenario_dict)
 print(outputs)
-
