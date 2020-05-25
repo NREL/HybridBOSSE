@@ -139,37 +139,47 @@ class PostSimulationProcessing:
         landbosse_cost_before_mgmt = self.LandBOSSE_BOS_results['total_bos_cost'] - \
                                      self.LandBOSSE_BOS_results['total_management_cost']
 
+        # Calculate overhead savings from going hybrid, and subtract it from wind only
+        # BOS cost
         wind_overhead_savings = \
             development_overhead_cost_discount(hybrid_plant_size_MW,
                                                wind_plant_size_MW) * landbosse_cost_before_mgmt
 
+        self.LandBOSSE_BOS_results['total_bos_cost'] -= \
+            (wind_overhead_savings + self.LandBOSSE_BOS_results['site_facility_usd'])
 
-        self.LandBOSSE_BOS_results['total_bos_cost'] -= wind_overhead_savings
-        self.LandBOSSE_BOS_results['total_management_cost'] -= wind_overhead_savings
+        self.LandBOSSE_BOS_results['total_management_cost'] -= \
+            (wind_overhead_savings + self.LandBOSSE_BOS_results['site_facility_usd'])
+
+        # Remove site_facility_usd cost from wind's overhead cost (to prevent
+        # double counting)
+        self.LandBOSSE_BOS_results['site_facility_usd'] = 0
 
         if self.hybrids_input_dict['hybrid_plant_size_MW'] > 15:
             self.LandBOSSE_BOS_results['markup_contingency_usd'] -= wind_overhead_savings
 
-            # Remove site_facility_usd cost from wind's overhead cost (to prevent
-            # double counting)
-            self.LandBOSSE_BOS_results['site_facility_usd'] = 0
-
         solarbosse_cost_before_mgmt = self.SolarBOSSE_results['total_bos_cost'] - \
                                       self.SolarBOSSE_results['total_management_cost']
+
+        # Calculate overhead savings from going hybrid, and subtract it from solar only
+        # BOS cost
         solar_overhead_savings = \
             epc_developer_profit_discount(hybrid_plant_size_MW, solar_system_size_MW_DC) * \
             solarbosse_cost_before_mgmt
 
-        self.SolarBOSSE_results['total_bos_cost'] -= solar_overhead_savings
-        self.SolarBOSSE_results['total_management_cost'] -= solar_overhead_savings
+        self.SolarBOSSE_results['total_bos_cost'] -= (solar_overhead_savings +
+                                                      self.site_facility_usd)
+
+        self.SolarBOSSE_results['total_management_cost'] -= (solar_overhead_savings +
+                                                             self.site_facility_usd)
+
+        # Remove site_facility_usd cost from solar's overhead cost (to prevent
+        # double counting)
+        self.SolarBOSSE_results['development_overhead_cost'] -= self.site_facility_usd
 
         if self.hybrids_input_dict['hybrid_plant_size_MW'] > 15:
             self.SolarBOSSE_results['development_overhead_cost'] -= \
                 solar_overhead_savings
-
-            # Remove site_facility_usd cost from solar's overhead cost (to prevent
-            # double counting)
-            self.SolarBOSSE_results['development_overhead_cost'] -= self.site_facility_usd
 
     def site_facility_hybrid(self):
         """
