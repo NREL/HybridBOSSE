@@ -10,6 +10,8 @@ def run_hybrid_BOS(hybrids_input_dict):
     Returns a dictionary with detailed Shared Infrastructure BOS results.
     """
     wind_BOS, solar_BOS = run_BOSSEs(hybrids_input_dict)
+    print('wind_BOS ', wind_BOS)
+    print('solar_BOS ', solar_BOS)
     if hybrids_scenario_dict['wind_plant_size_MW'] > 0:
         # BOS of Wind only power plant:
         print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
@@ -24,6 +26,10 @@ def run_hybrid_BOS(hybrids_input_dict):
     results['hybrid_BOS_usd_watt'] = hybrid_BOS.hybrid_BOS_usd_watt
     results['hybrid_gridconnection_usd'] = hybrid_BOS.hybrid_gridconnection_usd
     results['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
+
+    results['hybrid_management_development_usd'] = wind_BOS['total_management_cost'] + \
+                                                   solar_BOS['total_management_cost']
+
     results['Wind_BOS_results'] = hybrid_BOS.update_BOS_dict(wind_BOS, 'wind')
     results['Solar_BOS_results'] = hybrid_BOS.update_BOS_dict(solar_BOS, 'solar')
     return results

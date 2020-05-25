@@ -164,7 +164,7 @@ class PostSimulationProcessing:
 
             # Remove site_facility_usd cost from solar's overhead cost (to prevent
             # double counting)
-            self.LandBOSSE_BOS_results['development_overhead_cost'] -= \
+            self.SolarBOSSE_results['development_overhead_cost'] -= \
                 self.LandBOSSE_BOS_results['site_facility_usd']
 
     def update_BOS_dict(self, BOS_dict, technology):
@@ -174,9 +174,22 @@ class PostSimulationProcessing:
         if technology == 'wind':
             BOS_dict.pop('total_substation_cost')
             BOS_dict.pop('total_gridconnection_cost')
+            BOS_dict.pop('total_management_cost')
+            BOS_dict.pop('insurance_usd')
+            BOS_dict.pop('construction_permitting_usd')
+            BOS_dict.pop('project_management_usd')
+            BOS_dict.pop('bonding_usd')
+            BOS_dict.pop('markup_contingency_usd')
+            BOS_dict.pop('engineering_usd')
+            BOS_dict.pop('site_facility_usd')
         else:
             BOS_dict.pop('substation_cost')
             BOS_dict.pop('total_transdist_cost')
+            BOS_dict.pop('total_management_cost')
+            BOS_dict.pop('epc_developer_profit')
+            BOS_dict.pop('bonding_usd')
+            BOS_dict.pop('development_overhead_cost')
+            BOS_dict.pop('total_sales_tax')
 
         return BOS_dict
 
