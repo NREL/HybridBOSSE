@@ -49,6 +49,9 @@ def read_hybrid_scenario(file_path):
     hybrids_scenario_dict = data_loaded['hybrids_input_dict']
     hybrids_scenario_dict['wind_plant_size_MW'] = hybrids_scenario_dict['num_turbines'] * \
                                                   hybrids_scenario_dict['turbine_rating_MW']
+
+    hybrids_scenario_dict['hybrid_plant_size_MW'] = hybrids_scenario_dict['wind_plant_size_MW'] + \
+                                                    hybrids_scenario_dict['solar_system_size_MW_DC']
     return hybrids_scenario_dict
 
 
