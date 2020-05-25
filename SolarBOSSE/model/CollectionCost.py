@@ -154,7 +154,7 @@ class CollectionCost(CostModule):
         """
         # Get number of inverters in the project
         number_of_inverters = self.input_dict['system_size_MW_DC']
-        inverter_list = [n for n in range(number_of_inverters)]
+        inverter_list = [n for n in range(round(number_of_inverters))]
         self.output_dict['inverter_list'] = inverter_list
         return inverter_list
 

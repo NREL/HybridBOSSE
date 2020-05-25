@@ -171,7 +171,7 @@ class PostSimulationProcessing:
         """
         Remove shared cost buckets from the individual BOS detailed outputs
         """
-        if technology == 'wind':
+        if technology == 'wind' and BOS_dict['total_bos_cost'] > 0:
             BOS_dict.pop('total_substation_cost')
             BOS_dict.pop('total_gridconnection_cost')
             BOS_dict.pop('total_management_cost')
@@ -182,7 +182,8 @@ class PostSimulationProcessing:
             BOS_dict.pop('markup_contingency_usd')
             BOS_dict.pop('engineering_usd')
             BOS_dict.pop('site_facility_usd')
-        else:
+
+        elif technology == 'solar' and BOS_dict['total_bos_cost'] > 0:
             BOS_dict.pop('substation_cost')
             BOS_dict.pop('total_transdist_cost')
             BOS_dict.pop('total_management_cost')
