@@ -167,15 +167,22 @@ class PostSimulationProcessing:
             epc_developer_profit_discount(hybrid_plant_size_MW, solar_system_size_MW_DC) * \
             solarbosse_cost_before_mgmt
 
+        solar_system_size_MW_DC = self.hybrids_input_dict['solar_system_size_MW_DC']
+        solar_construction_time_months = self.hybrids_input_dict['solar_construction_time_months']
+        num_turbines_solar_only = 0
+        solar_only_site_cost_usd = site_facility(solar_system_size_MW_DC,
+                                                 solar_construction_time_months,
+                                                 num_turbines_solar_only)
+
         self.SolarBOSSE_results['total_bos_cost'] -= (solar_overhead_savings +
-                                                      self.site_facility_usd)
+                                                      solar_only_site_cost_usd)
 
         self.SolarBOSSE_results['total_management_cost'] -= (solar_overhead_savings +
-                                                             self.site_facility_usd)
+                                                             solar_only_site_cost_usd)
 
         # Remove site_facility_usd cost from solar's overhead cost (to prevent
         # double counting)
-        self.SolarBOSSE_results['development_overhead_cost'] -= self.site_facility_usd
+        self.SolarBOSSE_results['development_overhead_cost'] -= solar_only_site_cost_usd
 
         if self.hybrids_input_dict['hybrid_plant_size_MW'] > 15:
             self.SolarBOSSE_results['development_overhead_cost'] -= \
