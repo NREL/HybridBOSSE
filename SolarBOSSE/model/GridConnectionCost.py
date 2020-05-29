@@ -63,9 +63,12 @@ class GridConnectionCost(CostModule):
             either returns a 0 if the module ran successfully, or it returns the error
             raised that caused the failure.
         """
+        # TODO: In the next version update of SolarBOSSE, change grid cost
+        #  calculation as a function of system_size_MW_AC, not system_size_MW_DC
+
         # Switch between utility scale model and distributed model
         # Run utility version of GridConnectionCost for project size > 10 MW:
-        if input_dict['system_size_MW_AC'] > 15:
+        if input_dict['system_size_MW_DC'] > 15:
             if input_dict['dist_interconnect_mi'] == 0:
                 output_dict['trans_dist_usd'] = 0
             else:

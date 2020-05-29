@@ -1,11 +1,11 @@
 hybrids_input_dict:
     shared_interconnection: True
-    distance_to_interconnect_mi: 5
+    distance_to_interconnect_mi: 1.5
     new_switchyard: True
-    grid_interconnection_rating_MW: 5
+    grid_interconnection_rating_MW: 7.5
     interconnect_voltage_kV: 15
-
     shared_substation: True
+    hybrid_substation_rating_MW: 7.5
 
     # Wind farm required inputs
     wind_dist_interconnect_mi: 0    # Gets over-ridden when 'shared_interconnection' is True
@@ -17,6 +17,7 @@ hybrids_input_dict:
     name_of_project_list: 'project_list_ge15_dist_05'
 
     # Solar farm required inputs
-    solar_system_size_MW_DC: 5
+    solar_system_size_MW_DC: 7.5
+    dc_ac_ratio: 1.2
     solar_construction_time_months: 5   # Optional. Overrides Has a scaling MW v. construction time relationship
     solar_dist_interconnect_mi: 5   # Gets over-ridden when 'shared_interconnection' is True

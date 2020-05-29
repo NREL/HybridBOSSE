@@ -245,6 +245,8 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict):
 
     return hybrids_df, hybrids_solar_df, hybrids_wind_df, solar_only_bos, wind_only_bos
 
-# hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
-# hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
-# print(hybrid_results)
+
+hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
+print(hybrid_results)
+display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only)
