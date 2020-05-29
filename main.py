@@ -2,6 +2,7 @@ import yaml
 import os
 from hybrids_shared_infrastructure.run_BOSSEs import run_BOSSEs
 from hybrids_shared_infrastructure.PostSimulationProcessing import PostSimulationProcessing
+import pandas as pd
 
 
 # Main API method to run a Hybrid BOS model:
@@ -10,36 +11,41 @@ def run_hybrid_BOS(hybrids_input_dict):
     Returns a dictionary with detailed Shared Infrastructure BOS results.
     """
     wind_BOS, solar_BOS = run_BOSSEs(hybrids_input_dict)
-    print('wind_only_BOS at ', hybrids_scenario_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
-    print('solar_only_BOS ', hybrids_scenario_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
-    if hybrids_scenario_dict['wind_plant_size_MW'] > 0:
+    # Store a copy of both solar only and wind only outputs dictionaries:
+    wind_only_BOS = wind_BOS.copy()
+    solar_only_BOS = solar_BOS.copy()
+
+    print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
+    print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
+    if hybrids_input_dict['wind_plant_size_MW'] > 0:
         # BOS of Wind only power plant:
         print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
-                             (hybrids_scenario_dict['wind_plant_size_MW'] * 1e6)))
+                             (hybrids_input_dict['wind_plant_size_MW'] * 1e6)))
     else:
         wind_BOS['total_management_cost'] = 0
 
-    if hybrids_scenario_dict['solar_system_size_MW_DC'] > 0:
+    if hybrids_input_dict['solar_system_size_MW_DC'] > 0:
         # BOS of Solar only power plant:
         print('Solar BOS: ', (solar_BOS['total_bos_cost'] /
-                              (hybrids_scenario_dict['solar_system_size_MW_DC'] * 1e6)))
+                              (hybrids_input_dict['solar_system_size_MW_DC'] * 1e6)))
     else:
         solar_BOS['total_management_cost'] = 0
 
     results = dict()
+    results['hybrid'] = dict()
     hybrid_BOS = PostSimulationProcessing(hybrids_input_dict, wind_BOS, solar_BOS)
-    results['hybrid_BOS_usd'] = hybrid_BOS.hybrid_BOS_usd
-    results['hybrid_BOS_usd_watt'] = hybrid_BOS.hybrid_BOS_usd_watt
-    results['hybrid_gridconnection_usd'] = hybrid_BOS.hybrid_gridconnection_usd
-    results['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
+    results['hybrid']['hybrid_BOS_usd'] = hybrid_BOS.hybrid_BOS_usd
+    results['hybrid']['hybrid_BOS_usd_watt'] = hybrid_BOS.hybrid_BOS_usd_watt
+    results['hybrid']['hybrid_gridconnection_usd'] = hybrid_BOS.hybrid_gridconnection_usd
+    results['hybrid']['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
 
-    results['hybrid_management_development_usd'] = wind_BOS['total_management_cost'] + \
-                                                   solar_BOS['total_management_cost'] + \
-                                                   hybrid_BOS.site_facility_usd
+    results['hybrid']['hybrid_management_development_usd'] = wind_BOS['total_management_cost'] + \
+                                                             solar_BOS['total_management_cost'] + \
+                                                             hybrid_BOS.site_facility_usd
 
     results['Wind_BOS_results'] = hybrid_BOS.update_BOS_dict(wind_BOS, 'wind')
     results['Solar_BOS_results'] = hybrid_BOS.update_BOS_dict(solar_BOS, 'solar')
-    return results
+    return results, wind_only_BOS, solar_only_BOS
 
 
 def read_hybrid_scenario(file_path):
@@ -203,10 +209,42 @@ yaml_file_path = dict()
 #                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_97.5.yaml'
 
 # hybrid_inputs_97.5_97.5_195
-yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-                                    'Infrastructure/hybrids_shared_infra_tool/shared_' \
-                                    'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_195.yaml'
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
+#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
+#                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_195.yaml'
 
-hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
-outputs = run_hybrid_BOS(hybrids_scenario_dict)
-print(outputs)
+
+def display_results(hybrid_dict, wind_only_dict, solar_only_dict):
+
+    hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
+
+    hybrids_solar_df = pd.DataFrame(
+        hybrid_dict['Solar_BOS_results'].items(), columns=['Type', 'USD'])
+
+    hybrids_wind_df = pd.DataFrame(
+        hybrid_dict['Wind_BOS_results'].items(), columns=['Type', 'USD'])
+
+    solar_only_bos = dict()
+    solar_only_bos['gridconnection_usd'] = solar_only_dict['total_transdist_cost']
+    solar_only_bos['substation_cost'] = solar_only_dict['substation_cost']
+    solar_only_bos['total_management_cost'] = solar_only_dict['total_management_cost']
+
+    solar_only_bos_df = pd.DataFrame(
+        solar_only_bos.items(), columns=['Solar Only BOS Component', 'USD'])
+
+    wind_only_bos = dict()
+    wind_only_bos['total_gridconnection_cost'] = wind_only_dict['total_gridconnection_cost']
+    wind_only_bos['total_substation_cost'] = wind_only_dict['total_substation_cost']
+    wind_only_bos['total_management_cost'] = wind_only_dict['total_management_cost']
+    wind_only_bos_df = pd.DataFrame(
+        wind_only_bos.items(), columns=['Wind Only BOS Component', 'USD'])
+
+    print(hybrids_df)
+    print(solar_only_bos_df)
+    print(wind_only_bos_df)
+
+    return hybrids_df, hybrids_solar_df, hybrids_wind_df, solar_only_bos, wind_only_bos
+
+# hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+# hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
+# print(hybrid_results)
