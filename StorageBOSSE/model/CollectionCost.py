@@ -12,7 +12,7 @@ class CollectionCost(CostModule):
     Calculates the cost of the collection system (cable runs that connect BESS containers to substation)
     Assumptions:
     1. Collection system extends in a straight line from substation to BESS location
-    2. BESS containers are in a rectangular grid, and cables run in a grid between them.
+    2. BESS containers are in a line, and cables run between them.
        Cables join before run to substation
     3. Cable cost is a constant $/m. Cable sizes are neglected, as the majority of cable costs are from trenching
     """

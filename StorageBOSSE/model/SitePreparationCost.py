@@ -532,10 +532,13 @@ class SitePreparationCost(CostModule):
 
     def calculate_area_to_prep(self, input_dict, output_dict):
         """calculates area that needs to be prepared"""
-        output_dict['site_prep_area_m2'] = output_dict['num_containers'] * \
-            (input_dict['container_length'] + 2 * input_dict['container_pad_buffer']) * \
-            (input_dict['container_width'] + 2 * input_dict['container_pad_buffer']) + \
-            output_dict['road_length'] * output_dict['road_width']
+        if 'site_prep_area_m2' in input_dict:
+            output_dict['site_prep_area_m2'] = input_dict['site_prep_area_m2']
+        else:
+            output_dict['site_prep_area_m2'] = output_dict['num_containers'] * \
+                (input_dict['container_length'] + 2 * input_dict['container_pad_buffer']) * \
+                (input_dict['container_width'] + 2 * input_dict['container_pad_buffer']) + \
+                output_dict['road_length'] * output_dict['road_width']
 
         return output_dict
 

@@ -66,9 +66,11 @@ class FoundationCost(CostModule):
     concrete_pad_buffer
         (float) extent of concrete pad beyond container [in m]
 
-    depth
-        (int) depth of foundation [in m]
+    container_pad_depth
+        (float) depth of foundation [in m]
 
+    container_pad_excavation_depth_
+        (float) depth of excavation [in m]
 
     duration_construction
         (int) estimated construction time in months

@@ -49,7 +49,10 @@ def run_storagebosse(input_dictionary):
             results['errors'].append(msg)
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
-        results['Name'] = str(master_input_dict['system_size_MW_DC'])+'MW_'+str(master_input_dict['system_size_MWh'])+'MWh'
+        results['Name'] = 'area undefined'
+        # results['Name'] = str(master_input_dict['system_size_MW_DC'])+'MW_'+str(master_input_dict['system_size_MWh'])+'MWh'
+        results['system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
+        results['system_size_MWh'] = master_input_dict['system_size_MWh']
         results['total_bos_cost'] = output_dict['total_bos_cost']
         results['total_road_cost'] = output_dict['total_road_cost']
         results['substation_cost'] = output_dict['total_substation_cost']
@@ -116,6 +119,9 @@ class NegativeInputError(Error):
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS StorageBOSSE API <><><><><><><><><><><>
 # TODO: uncomment these lines to run StorageBOSSE as a standalone model.
+# overwrite keys in input_dict. Can also modify keys in project_list excel file.
+# optional key: site_prep_area_m2: defined project area for site preparation. If unspecified, site prep area is
+# calculated based on number of containers and road length
 
 energies = [1, 5, 10, 50, 100, 500, 50, 50, 50, 50, 50, 50]  # MWh
 powers = [10, 10, 10, 10, 10, 10, 1, 2, 5, 10, 50, 100]  # MW
@@ -124,7 +130,6 @@ for i in range(0, len(energies)):
     input_dict = dict()
     BOS_results = dict()
     BOS_results.update({str(powers[i])+' MW, '+str(energies[i])+'MWh scenario': ' '})
-    input_dict['project_list'] = 'project_list_test'
     input_dict['system_size_MW_DC'] = powers[i]
     input_dict['system_size_MWh'] = energies[i]
 
@@ -136,26 +141,30 @@ for i in range(0, len(energies)):
     elif max(energies[i], powers[i]) <= 10:
         input_dict['construction_time_months'] = 6
 
+    # input_dict['site_prep_area_m2'] = 1e4
 
-    BOS_results, detailed_results = run_storagebosse(input_dict)
-    """ OUTPUT EXCEL FOR TESTING"""
+    input_dict['project_list'] = 'project_list_test'  # THE ESSENTIAL INPUT
+
+    BOS_results, detailed_results = run_storagebosse(input_dict)  # ALL I NEEEEED
+
+    """ OUTPUT TO EXCEL FOR TESTING"""
     headers = BOS_results.keys()
+    outfile = 'test_outputs.xlsx'
     # create excel file if it does not exist
-    if not os.path.isfile('test_outputs.xlsx'):
-        book = xlsxwriter.Workbook('test_outputs.xlsx')
+    if not os.path.isfile(outfile):
+        book = xlsxwriter.Workbook(outfile)
         sheet = book.add_worksheet("TestSheet")
         for (idx, header) in enumerate(headers):
             sheet.write(0, idx, header)
         book.close()
-
     # open the file
-    with open('test_outputs.xlsx', 'a+') as xl_file:
-        book = load_workbook('test_outputs.xlsx')
+    with open(outfile, 'a+') as xl_file:
+        book = load_workbook(outfile)
         sheet = book.get_sheet_by_name('TestSheet')
 
     values = [BOS_results[key] for key in headers]
     sheet.append(values)
-    book.save(filename='test_outputs.xlsx')
+    book.save(filename=outfile)
 
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

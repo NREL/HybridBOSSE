@@ -8,14 +8,6 @@ class XlsxReader:
     There are two sets of data to be read from .xlsx files. The first set
     of data is read from the following sheets:
 
-    - components
-
-    - equip
-
-    - crane_specs
-
-    - development
-
     - crew_price
 
     - crew
@@ -25,8 +17,6 @@ class XlsxReader:
     - material_price
 
     - construction_estimator
-
-    - site_facility_building_area
 
     - weather_window
 
@@ -111,12 +101,6 @@ class XlsxReader:
         incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
         incomplete_input_dict['equip_price'] = project_data_dataframes['equip_price']
 
-        # Read development tab, if it exists (it is optional since development costs
-        # can be placed in the project list):
-        if 'development' in project_data_dataframes:
-            incomplete_input_dict['development_df'] = \
-                project_data_dataframes['development']
-
         incomplete_input_dict['construction_estimator_per_diem'] = \
             project_parameters['Labor per diem (USD/day)']
 
@@ -184,10 +168,14 @@ class XlsxReader:
         incomplete_input_dict['interconnect_voltage_kV'] = \
             project_parameters['Interconnect Voltage (kV)']
 
+        if 'Site prep area (m^2)' in project_parameters:
+            incomplete_input_dict['site_prep_area_m2'] = \
+                project_parameters['Site prep area (m^2)']
+
         incomplete_input_dict['switchyard_y_n'] = \
             project_parameters['New Switchyard (y/n)']
         # TODO what's this all about?
-        incomplete_input_dict['site_prep_area_acres_mw_ac'] = 10
+        # incomplete_input_dict['site_prep_area_acres_mw_ac'] = 10
             # project_parameters['Project site prep area (Acres/MW_ac)']
 
         incomplete_input_dict['overtime_multiplier'] = \
@@ -195,19 +183,6 @@ class XlsxReader:
 
         incomplete_input_dict['labor_cost_multiplier'] = \
             project_parameters['Labor cost multiplier']
-
-
-        # For development cost, legacy input data will specify an itemized
-        # breakdown in the project data. Newer input data will specify the
-        # labor cost in the project list.
-        #
-        # In the DevelopmentCost module, this change will be detected by the
-        # absence of a development_labor_cost_usd key in the master input
-        # dictionary. In that case, the development cost will be pulled from
-        # the prject data.
-        if 'Development labor cost USD' in project_parameters:
-            incomplete_input_dict['development_labor_cost_usd'] = \
-                project_parameters['Development labor cost USD']
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']

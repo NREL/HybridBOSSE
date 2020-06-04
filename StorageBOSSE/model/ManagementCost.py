@@ -7,7 +7,7 @@ from .CostModule import CostModule
 
 class ManagementCost(CostModule):
     """
-    -Created by Ben Anderson on June 2, 2020
+    - Modified by Ben Anderson for StorageBOSSE on June 2, 2020
 
     Source of curve fit cost data:
     https://www.nrel.gov/docs/fy19osti/71714.pdf
