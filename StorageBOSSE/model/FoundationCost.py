@@ -10,11 +10,13 @@ class FoundationCost(CostModule):
 
     - Refactored by Parangat Bhaskar on May 10, 2020
 
-    -Refactored by Ben Anderson on June 2, 2020 for StorageBOSSE
+    -Modified by Ben Anderson on June 2, 2020 for StorageBOSSE
 
-    \nCalculates the costs of constructing foundations for utility scale storage projects.
+    Calculates the costs of constructing foundations for utility scale storage projects.
     Here, foundations is referring to the concrete pad that holds the battery + inverter +
     transformer (BESS) container.
+
+    Mobilization multipliers from https://www.nrel.gov/docs/fy19osti/71714.pdf
 
     * Get number of containers
     * Get duration of construction
@@ -264,7 +266,7 @@ class FoundationCost(CostModule):
 
     def estimate_construction_time(self, input_data, output_data):
         """
-        Function to estimate construction time on per turbine basis.
+        Function to estimate construction time on per container basis.
 
         Parameters
         -------
@@ -289,22 +291,22 @@ class FoundationCost(CostModule):
         throughput_operations = input_data['construction_estimator']
         material_needs_per_pad = output_data['material_needs_per_pad']
 
-        quantity_materials_entire_farm = \
+        quantity_materials_entire_plant = \
             material_needs_per_pad['Quantity of material'] * self.number_concrete_pads()
 
-        # Calculations for estimate construction time will be on entire solar farm
+        # Calculations for estimate construction time will be on entire BESS plant
         # basis:
-        output_data['material_needs_entire_farm'] = material_needs_per_pad.copy()
-        material_needs_entire_farm = output_data['material_needs_entire_farm']
+        output_data['material_needs_entire_plant'] = material_needs_per_pad.copy()
+        material_needs_entire_plant = output_data['material_needs_entire_plant']
 
-        material_needs_entire_farm['Quantity of material'] = \
-            quantity_materials_entire_farm
+        material_needs_entire_plant['Quantity of material'] = \
+            quantity_materials_entire_plant
 
         operation_data = throughput_operations.where(
             throughput_operations['Module'] == 'Foundations').dropna(thresh=4)
 
-        # operation data for entire solar farm:
-        operation_data = pd.merge(material_needs_entire_farm,
+        # operation data for entireBESS plant:
+        operation_data = pd.merge(material_needs_entire_plant,
                                   operation_data,
                                   on=['Material type ID'], how='outer')
 
@@ -338,12 +340,12 @@ class FoundationCost(CostModule):
         output_data['operation_data_id_days_crews_workers'] = \
             operation_data_id_days_crews_workers
 
-        output_data['operation_data_entire_farm'] = operation_data
+        output_data['operation_data_entire_plant'] = operation_data
 
-        # Management costs accounted for in ManagementCost module of SolarBOSSE
+        # Management costs accounted for in ManagementCost module of StorageBOSSE
         self.output_dict['managament_crew_cost_before_wind_delay'] = 0
 
-        return output_data['operation_data_entire_farm']
+        return output_data['operation_data_entire_plant']
 
     def calculate_costs(self, input_data, output_data):
         """
@@ -378,23 +380,23 @@ class FoundationCost(CostModule):
 
         """
 
-        material_vol_entire_farm = output_data['material_needs_entire_farm']
+        material_vol_entire_plant = output_data['material_needs_entire_plant']
         material_price = input_data['material_price']
 
-        material_data_entire_farm = pd.merge(material_vol_entire_farm,
+        material_data_entire_plant = pd.merge(material_vol_entire_plant,
                                              material_price,
                                              on=['Material type ID'])
 
-        # material data on a total solar farm basis
-        material_data_entire_farm['Cost USD'] = \
-            material_data_entire_farm['Quantity of material'] * \
-            pd.to_numeric(material_data_entire_farm['Material price USD per unit'])
+        # material data on a total BESS plant basis
+        material_data_entire_plant['Cost USD'] = \
+            material_data_entire_plant['Quantity of material'] * \
+            pd.to_numeric(material_data_entire_plant['Material price USD per unit'])
 
-        operation_data = output_data['operation_data_entire_farm']
+        operation_data = output_data['operation_data_entire_plant']
 
         construction_estimator = input_data['construction_estimator']
 
-        labor_equip_data = pd.merge(material_vol_entire_farm,
+        labor_equip_data = pd.merge(material_vol_entire_plant,
                                     construction_estimator,
                                     on=['Material type ID'])
 
@@ -457,10 +459,10 @@ class FoundationCost(CostModule):
                                                         'Cost USD'])
 
         material_cost_dataframe['Operation ID'] = \
-            material_data_entire_farm['Material type ID']
+            material_data_entire_plant['Material type ID']
 
         material_cost_dataframe['Type of cost'] = 'Materials'
-        material_cost_dataframe['Cost USD'] = material_data_entire_farm['Cost USD']
+        material_cost_dataframe['Cost USD'] = material_data_entire_plant['Cost USD']
         material_costs_sum = material_cost_dataframe['Cost USD'].sum()
         material_costs = pd.DataFrame([['Materials',
                                         material_costs_sum,
@@ -476,9 +478,7 @@ class FoundationCost(CostModule):
 
         # calculate mobilization cost as percentage of total foundation cost and add to
         # foundation_cost:
-        # TODO fix multiplier
-        equip_material_mobilization_multiplier = \
-            0.16161 * (max(self.input_dict['system_size_MW_DC'], self.input_dict['system_size_MWh']) ** (-0.135))
+        equip_material_mobilization_multiplier = 0.0867
 
         material_mobilization_USD = material_costs_sum * \
                                     equip_material_mobilization_multiplier
@@ -486,9 +486,8 @@ class FoundationCost(CostModule):
         equipment_mobilization_USD = \
             equipment_cost_usd_with_weather_delays * \
             equip_material_mobilization_multiplier
-        # TODO fix multiplier
-        labor_mobilization_multiplier = \
-            1.245 * (max(self.input_dict['system_size_MW_DC'], self.input_dict['system_size_MWh']) ** (-0.367))
+
+        labor_mobilization_multiplier = 0.46
 
         labor_mobilization_USD = labor_cost_usd_with_management * \
                                  labor_mobilization_multiplier

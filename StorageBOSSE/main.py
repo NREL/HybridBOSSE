@@ -8,8 +8,8 @@ from openpyxl import load_workbook
 
 def run_storagebosse(input_dictionary):
     input_output_path = os.path.dirname(__file__)
-    # SolarBOSSE uses LandBOSSE's Excel I/O library for reading in data from Excel
-    # files. Accordingly, the environment variables used in SolarBOSSE are called
+    # StorageBOSSE uses LandBOSSE's Excel I/O library for reading in data from Excel
+    # files. Accordingly, the environment variables used in StorageBOSSE are called
     # LANDBOSSE_INPUT_DIR & LANDBOSSE_OUTPUT_DIR:
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
@@ -114,24 +114,11 @@ class NegativeInputError(Error):
     """
     pass
 
-# <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
+# <><><><><><><><> EXAMPLE OF RUNNING THIS StorageBOSSE API <><><><><><><><><><><>
 # TODO: uncomment these lines to run StorageBOSSE as a standalone model.
 
-# input_dict = dict()
-# BOS_results = dict()
-# BOS_results.update({str('Test Scenario'): ' '})
-# input_dict['project_list'] = 'project_list_test'
-# BOS_results, detailed_results = run_storagebosse(input_dict)
-# # print(BOS_results)
-# # bos_capex = BOS_results['total_bos_cost']
-# # print('test_scenario' + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
-# # print('')
-# # print('')
-
-energies = [1, 5, 10, 50, 100, 500]  # MWh
-powers = [1, 2, 50, 100, 150, 200]  # MW
-# energies = [50, 50, 50, 50, 50, 50]  # MWh
-# powers = [1, 2, 5, 10, 50, 100]  # MW
+energies = [1, 5, 10, 50, 100, 500, 50, 50, 50, 50, 50, 50]  # MWh
+powers = [10, 10, 10, 10, 10, 10, 1, 2, 5, 10, 50, 100]  # MW
 
 for i in range(0, len(energies)):
     input_dict = dict()

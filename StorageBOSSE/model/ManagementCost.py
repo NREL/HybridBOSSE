@@ -7,6 +7,8 @@ from .CostModule import CostModule
 
 class ManagementCost(CostModule):
     """
+    -Created by Ben Anderson on June 2, 2020
+
     Source of curve fit cost data:
     https://www.nrel.gov/docs/fy19osti/71714.pdf
 
@@ -59,7 +61,7 @@ class ManagementCost(CostModule):
         if 'total_management_cost' in self.input_dict:
             self.output_dict['total_management_cost'] = self.input_dict['total_management_cost']
         else:
-            self.output_dict['total_management_cost'] = 774272 * self.input_dict['system_size_MWh'] * self.input_dict['system_size_MWh'] ** -0.441
+            self.output_dict['total_management_cost'] = 500085 * self.input_dict['system_size_MWh'] * self.input_dict['system_size_MWh'] ** -0.393
         return self.output_dict['total_management_cost']
 
     def run_module(self):

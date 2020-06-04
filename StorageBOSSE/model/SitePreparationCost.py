@@ -12,11 +12,13 @@ class SitePreparationCost(CostModule):
 
     - Refactored by Parangat Bhaskar and Alicia Key on Jun 3, 2019
 
-    -Refactored by Ben Anderson on Jun 3, 2020 for StorageBOSSE
+    -Modified by Ben Anderson on Jun 3, 2020 for StorageBOSSE
 
 
 
-    **Calculates cost of constructing roads for land-based storage projects:**
+    **Calculates cost of constructing roads for land-based BESS projects:**
+
+    Mobilization multipliers from https://www.nrel.gov/docs/fy19osti/71714.pdf
 
     - Get terrain complexity
 
@@ -141,10 +143,6 @@ class SitePreparationCost(CostModule):
         self._cubic_yards_per_cubic_meter = 1.30795
         self._square_feet_per_square_meter = 10.7639
 
-        # cubic meters for crane pad and maintenance ring for each turbine
-        # (from old BOS model - AI - Access Roads & Site Imp. tab cell J33)
-        self._crane_pad_volume = 125
-
         # conversion factor for converting packed cubic yards to loose cubic
         # yards material volume is about 1.4 times greater than road volume
         # due to compaction
@@ -201,8 +199,7 @@ class SitePreparationCost(CostModule):
                                      input_dict['road_width_m'] * input_dict['road_thickness_m']
 
         # in cubic meters
-        output_dict['road_volume_m3'] = output_dict['road_volume'] + \
-                                        self._crane_pad_volume
+        output_dict['road_volume_m3'] = output_dict['road_volume']
 
         output_dict['depth_to_subgrade_m'] = 0.1
 
@@ -258,7 +255,6 @@ class SitePreparationCost(CostModule):
         # TODO: Find new multiplier to replace 20%
         output_dict['road_construction_time'] = input_dict['construction_time_months'] * 0.20
 
-        # Main switch between small DW wind and (utility scale + distributed wind)
         # select operations for roads module that have data
         operation_data = throughput_operations.where(
             throughput_operations['Module'] == 'Roads (Storage)').dropna(thresh=4) #TODO a;lksdjfa;lsdkfja;osfj
@@ -503,10 +499,7 @@ class SitePreparationCost(CostModule):
         road_cost = road_cost.append(additional_costs)
 
         # Calculate mobilization costs:
-        # TODO fix multiplier
-        equip_material_mobilization_multiplier = \
-            0.16161 * (max(self.input_dict['system_size_MW_DC'], self.input_dict['system_size_MWh']) ** (-0.135))
-        # equip_material_mobilization_multiplier = 1
+        equip_material_mobilization_multiplier = 0.0867
 
         material_mobilization_USD = material_cost_of_roads * \
                                     equip_material_mobilization_multiplier
@@ -514,10 +507,8 @@ class SitePreparationCost(CostModule):
         equipment_mobilization_USD = \
             equip_for_new_roads_cost_usd * \
             equip_material_mobilization_multiplier
-        # TODO fix multiplier
-        labor_mobilization_multiplier = \
-            1.245 * (max(self.input_dict['system_size_MW_DC'], self.input_dict['system_size_MWh']) ** (-0.367))
-        # labor_mobilization_multiplier = 1
+
+        labor_mobilization_multiplier = 0.46
 
         labor_mobilization_USD = labor_for_inner_roads_cost_usd * \
                                  labor_mobilization_multiplier
@@ -553,17 +544,13 @@ class SitePreparationCost(CostModule):
         Runs the SitePreparation module and populates the IO dictionaries with calculated values.
 
         """
-        self.calculate_road_properties(self.input_dict, self.output_dict)
-        self.calculate_area_to_prep(self.input_dict, self.output_dict)
-        self.estimate_construction_time(self.input_dict, self.output_dict)
-        self.calculate_costs(self.input_dict, self.output_dict)
-        # try:
-        #     self.calculate_road_properties(self.input_dict, self.output_dict)
-        #     self.calculate_area_to_prep(self.input_dict, self.output_dict)
-        #     self.estimate_construction_time(self.input_dict, self.output_dict)
-        #     self.calculate_costs(self.input_dict, self.output_dict)
-        #     return 0, 0  # module ran successfully
-        # except Exception as error:
-        #     traceback.print_exc()
-        #     print(f"Fail {self.project_name} SitePreparationCost")
-        #     return 1, error  # module did not run successfully
+        try:
+            self.calculate_road_properties(self.input_dict, self.output_dict)
+            self.calculate_area_to_prep(self.input_dict, self.output_dict)
+            self.estimate_construction_time(self.input_dict, self.output_dict)
+            self.calculate_costs(self.input_dict, self.output_dict)
+            return 0, 0  # module ran successfully
+        except Exception as error:
+            traceback.print_exc()
+            print(f"Fail {self.project_name} SitePreparationCost")
+            return 1, error  # module did not run successfully

@@ -7,6 +7,8 @@ from .CostModule import CostModule
 
 class CollectionCost(CostModule):
     """
+    - Created by Ben Anderson on June 3, 2020
+
     Calculates the cost of the collection system (cable runs that connect BESS containers to substation)
     Assumptions:
     1. Collection system extends in a straight line from substation to BESS location

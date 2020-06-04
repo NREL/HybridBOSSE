@@ -9,10 +9,10 @@ class GridConnectionCost(CostModule):
     TransDistCost.py
      - Created by Annika Eberle and Owen Roberts on Dec. 17, 2018
      - Refactored by Parangat Bhaskar and Alicia Key on June 3, 2019
-     - Refactored by Ben Anderson for StorageBOSSE on June 2, 2020
+     - Modified by Ben Anderson for StorageBOSSE on June 2, 2020
 
     Calculates the costs associated with transmission and distribution for land-based
-    wind projects (module is currently based on curve fit of empirical data)
+    BESS projects (module is currently based on curve fit of empirical data)
 
     * Get distance to interconnection
     * Get interconnection voltage
@@ -83,10 +83,9 @@ class GridConnectionCost(CostModule):
                      input_dict['dist_interconnect_mi']
                      ) + output_dict['interconnect_adder_USD']
 
-        # Run distributed wind version of GridConnectionCost for project size < 15 MW:
+        # Run distributed version of GridConnectionCost for project size < 15 MW:
         else:
-            # Code below is for newer version of LandBOSSE which incorporates
-            # distributed wind into the model. Here POI refers to point of
+            # Here POI refers to point of
             # interconnection.
             output_dict['array_to_POI_usd_per_kw'] = \
                 1736.7 * ((input_dict['system_size_MW_AC'] * 1000) ** (-0.272))

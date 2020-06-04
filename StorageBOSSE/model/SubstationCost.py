@@ -12,9 +12,9 @@ class SubstationCost(CostModule):
 
     - Refactored by Parangat Bhaskar and Alicia Key on  June 3, 2019
 
-    - Refactored for StorageBOSSE by Ben Anderson on June 2, 2020
+    - Modified by Ben Anderson on June 2, 2020
 
-    Calculates the costs associated with substations for land-based wind projects *(module is currently based on curve fit of empirical data)*
+    Calculates the costs associated with substations for land-based BESS projects *(module is currently based on curve fit of empirical data)*
 
 
     Get project size from inputs
