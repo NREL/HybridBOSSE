@@ -8,7 +8,7 @@ def run_BOSSEs(hybrids_input_dict):
     Runs 1) LandBOSSE, and 2) SolarBOSSE as mutually exclusive BOS models.
 
     """
-    # <><><><><><><><><><><><><><><> RUNNING LandBOSSE API <><><><><><><><><><><><><><><><>
+    # <><><><><><><><><><><><><><><> RUNNING LandBOSSE APRI <><><><><><><><><><><><><><><><>
     wind_input_dict = dict()
     wind_input_dict['num_turbines'] = hybrids_input_dict['num_turbines']
     wind_input_dict['turbine_rating_MW'] = hybrids_input_dict['turbine_rating_MW']

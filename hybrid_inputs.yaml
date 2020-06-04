@@ -6,15 +6,16 @@ hybrids_input_dict:
     interconnect_voltage_kV: 15
 
     shared_substation: True
+    hybrid_substation_rating_MW: 15
 
     # Wind farm required inputs
     wind_dist_interconnect_mi: 0    # Gets over-ridden when 'shared_interconnection' is True
     num_turbines: 5
     turbine_rating_MW: 1.5
     wind_construction_time_months: 5
-    project_id: 'ge15_public_dist'
-    path_to_project_list: '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
-    name_of_project_list: 'project_list_ge15_dist_05'
+    project_id: 'ge15_public'
+    path_to_project_list: '/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/LandBOSSE/landbosse/landbosse_api/'
+    name_of_project_list: 'project_list'
 
     # Solar farm required inputs
     solar_system_size_MW_DC: 5
