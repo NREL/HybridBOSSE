@@ -49,7 +49,7 @@ def run_storagebosse(input_dictionary):
             results['errors'].append(msg)
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
-        results['Name'] = 'area undefined'
+        results['Name'] = 'area defined'
         # results['Name'] = str(master_input_dict['system_size_MW_DC'])+'MW_'+str(master_input_dict['system_size_MWh'])+'MWh'
         results['system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
         results['system_size_MWh'] = master_input_dict['system_size_MWh']
@@ -62,6 +62,14 @@ def run_storagebosse(input_dictionary):
         results['total_collection_cost'] = output_dict['total_collection_cost']
         results['total_bos_cost_before_mgmt'] = output_dict['total_bos_cost_before_mgmt']
         results['total_management_cost'] = output_dict['total_management_cost']
+        results['total_container_cost'] = output_dict['total_container_cost']
+        # assume share substation, transdist, mgmt costs
+        results['shared_cost_L1'] = results['substation_cost'] + results['total_transdist_cost'] + results['total_management_cost']
+        results['%_shared_cost_L1'] = results['shared_cost_L1']/results['total_bos_cost']*100
+        results['shared_cost_L2'] = results['shared_cost_L1'] + results['total_road_cost']
+        results['%_shared_cost_L2'] = results['shared_cost_L2']/results['total_bos_cost']*100
+        # results['shared_cost_L3'] = results['shared_cost_L2'] + output_dict['total_erection_cost_df'].loc['Mobilization']['Cost USD']
+        # results['%_shared_cost_L3'] = results['shared_cost_L3']/results['total_bos_cost']*100
 
     return results, output_dict
 
@@ -141,7 +149,7 @@ for i in range(0, len(energies)):
     elif max(energies[i], powers[i]) <= 10:
         input_dict['construction_time_months'] = 6
 
-    # input_dict['site_prep_area_m2'] = 1e4
+    input_dict['site_prep_area_m2'] = 100*max(max(energies),max(powers)) + 100
 
     input_dict['project_list'] = 'project_list_test'  # THE ESSENTIAL INPUT
 
@@ -149,7 +157,7 @@ for i in range(0, len(energies)):
 
     """ OUTPUT TO EXCEL FOR TESTING"""
     headers = BOS_results.keys()
-    outfile = 'test_outputs.xlsx'
+    outfile = 'shared_cost_outputs.xlsx'
     # create excel file if it does not exist
     if not os.path.isfile(outfile):
         book = xlsxwriter.Workbook(outfile)

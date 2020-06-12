@@ -37,11 +37,6 @@ class ManagementCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
-        # Project CAPEX before management costs (USD)
-        # TODO battery costs in here?
-        self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt'] + \
-                                 (self.output_dict['num_containers'] * self.input_dict['container_cost'])
-
     def total_management_cost(self):
         """
         Calculates the total management cost based on curve fit, unless provided by user. Management cost scales with
