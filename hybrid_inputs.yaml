@@ -21,3 +21,9 @@ hybrids_input_dict:
     dc_ac_ratio: 1.2
     solar_construction_time_months: 5   # Optional. Overrides Has a scaling MW v. construction time relationship
     solar_dist_interconnect_mi: 5   # Gets over-ridden when 'shared_interconnection' is True
+
+    # Storage required inputs
+    storage_system_size_MW_DC: 10
+    storage_system_size_MWh: 10
+    path_to_storage_project_list: '/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/StorageBOSSE/project_list_test.xlsx'
+    storage_project_list: 'project_list_test'

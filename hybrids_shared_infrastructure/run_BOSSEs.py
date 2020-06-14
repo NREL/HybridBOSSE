@@ -1,7 +1,7 @@
 from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
 from hybrids_shared_infrastructure.GridConnectionCost import hybrid_gridconnection
-
+from StorageBOSSE.main import run_storagebosse
 
 def run_BOSSEs(hybrids_input_dict):
     """
@@ -69,4 +69,28 @@ def run_BOSSEs(hybrids_input_dict):
         SolarBOSSE_results, detailed_results = run_solarbosse(solar_input_dict)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
-    return LandBOSSE_BOS_results, SolarBOSSE_results
+    # <><><><><><><><><><><><><><><> RUNNING StorageBOSSE API <><><><><><><><><><><><><><><><>
+
+    # Establish 'storage_input_dict' using relevant parameters from hybrids_input_dict
+    storage_input_dict = dict()
+    storage_input_dict['system_size_MW_DC'] = hybrids_input_dict['storage_system_size_MW_DC']
+    storage_input_dict['system_size_MWh'] = hybrids_input_dict['storage_system_size_MWh']
+    storage_input_dict['project_list'] = hybrids_input_dict['storage_project_list']
+    storage_input_dict['construction_time_months'] = 6
+
+    if max(storage_input_dict['system_size_MW_DC'], storage_input_dict['system_size_MWh']) > 50:
+        storage_input_dict['construction_time_months'] = 24
+    elif max(storage_input_dict['system_size_MW_DC'], storage_input_dict['system_size_MWh']) <= 20:
+        storage_input_dict['construction_time_months'] = 12
+    elif max(storage_input_dict['system_size_MW_DC'], storage_input_dict['system_size_MWh']) <= 10:
+        storage_input_dict['construction_time_months'] = 6
+
+    if hybrids_input_dict['storage_system_size_MW_DC'] == 0:
+        StorageBOSSE_BOS_results = dict()
+        StorageBOSSE_BOS_results['total_bos_cost'] = 0
+    else:
+        StorageBOSSE_BOS_results, detailed_results = run_storagebosse(storage_input_dict)
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+
+
+    return LandBOSSE_BOS_results, SolarBOSSE_results, StorageBOSSE_BOS_results

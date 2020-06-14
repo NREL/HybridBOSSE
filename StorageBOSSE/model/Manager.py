@@ -69,6 +69,8 @@ class Manager:
         gridconnection.run_module()
 
         # Sum all costs
+        print(self.output_dict)
+        self.output_dict['total_road_cost'] = 0
         self.output_dict['total_bos_cost_before_mgmt'] = \
             self.output_dict['total_road_cost'] + \
             self.output_dict['total_collection_cost'] + \

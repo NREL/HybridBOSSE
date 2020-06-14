@@ -8,6 +8,7 @@ from openpyxl import load_workbook
 
 def run_storagebosse(input_dictionary):
     input_output_path = os.path.dirname(__file__)
+    print('StorageBOSSE assumed input path: {}'.format(input_output_path))
     # StorageBOSSE uses LandBOSSE's Excel I/O library for reading in data from Excel
     # files. Accordingly, the environment variables used in StorageBOSSE are called
     # LANDBOSSE_INPUT_DIR & LANDBOSSE_OUTPUT_DIR:
@@ -15,6 +16,8 @@ def run_storagebosse(input_dictionary):
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
 
     project_data = read_data(input_dictionary['project_list'])
+    print('StorageBOSSE project data: {}'.format(project_data))
+
     xlsx_reader = XlsxReader()
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
@@ -50,6 +53,8 @@ def run_storagebosse(input_dictionary):
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
         results['Name'] = str(master_input_dict['system_size_MW_DC'])+'MW_'+str(master_input_dict['system_size_MWh'])+'MWh'
+        results['system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
+        results['system_size_MWh'] = master_input_dict['system_size_MWh']
         results['total_bos_cost'] = output_dict['total_bos_cost']
         results['total_road_cost'] = output_dict['total_road_cost']
         results['substation_cost'] = output_dict['total_substation_cost']
@@ -138,6 +143,9 @@ for i in range(0, len(energies)):
 
 
     BOS_results, detailed_results = run_storagebosse(input_dict)
+
+
+
     """ OUTPUT EXCEL FOR TESTING"""
     headers = BOS_results.keys()
     # create excel file if it does not exist
