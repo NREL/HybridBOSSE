@@ -415,7 +415,8 @@ class SitePreparationCost(CostModule):
 
         # Material cost of inter-array roads:
         material_cost_of_roads = material_data['Quantity of material'].iloc[0] * \
-                    pd.to_numeric(material_data['Material price USD per unit'].iloc[0])
+                    pd.to_numeric(material_data['Material price USD per unit'].iloc[0]) * \
+                    input_dict['material_cost_multiplier']
 
         material_costs = pd.DataFrame([['Materials',
                                         float(material_cost_of_roads),

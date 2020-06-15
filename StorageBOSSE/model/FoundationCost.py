@@ -465,7 +465,7 @@ class FoundationCost(CostModule):
 
         material_cost_dataframe['Type of cost'] = 'Materials'
         material_cost_dataframe['Cost USD'] = material_data_entire_plant['Cost USD']
-        material_costs_sum = material_cost_dataframe['Cost USD'].sum()
+        material_costs_sum = material_cost_dataframe['Cost USD'].sum() * self.input_dict['material_cost_multiplier']
         material_costs = pd.DataFrame([['Materials',
                                         material_costs_sum,
                                         'Foundation']],

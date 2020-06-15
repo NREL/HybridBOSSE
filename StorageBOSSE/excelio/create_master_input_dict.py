@@ -97,6 +97,9 @@ class XlsxReader:
         incomplete_input_dict['material_price'] = \
             project_data_dataframes['material_price']
 
+        incomplete_input_dict['material_cost_multiplier'] = \
+            project_parameters['Material cost multiplier']
+
         incomplete_input_dict['crew'] = project_data_dataframes['crew']
         incomplete_input_dict['crew_cost'] = project_data_dataframes['crew_price']
         incomplete_input_dict['equip_price'] = project_data_dataframes['equip_price']
