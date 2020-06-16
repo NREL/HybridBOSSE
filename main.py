@@ -40,7 +40,9 @@ def run_hybrid_BOS(hybrids_input_dict):
     if hybrids_input_dict['storage_system_size_MW_DC'] > 0:
         # BOS of Storage only power plant:
         print('Storage BOS: ', (storage_BOS['total_bos_cost'] /
-                             (hybrids_input_dict['storage_system_size_MW_DC'] * 1e6)))
+                                (hybrids_input_dict['storage_system_size_MW_DC'] * 1e6)))
+    else:
+        storage_BOS['total_management_cost'] = 0
 
     results = dict()
     results['hybrid'] = dict()

@@ -189,6 +189,7 @@ class SitePreparationCost(CostModule):
         """calculates road length. Assumes road runs from substation to containers, and then along the containers
         (same as collection system)"""
 
+        print('In ROAD PROPERTIES CALCULATION')
         output_dict['road_length'] = input_dict['distance_to_substation'] + \
                                            output_dict['num_containers'] * (
                                                input_dict['container_width'] + 2 * input_dict[
@@ -394,29 +395,30 @@ class SitePreparationCost(CostModule):
 
 
         """
+        print('In Site Prep Cost Calculator')
         construction_estimator = input_dict['construction_estimator']
-
+        print('Construction Estimator: {}', format(construction_estimator))
         material_name = construction_estimator['Material type ID'].\
             where(construction_estimator['Module'] == 'Roads (Storage)').dropna().unique()
-
+        print('Material Name: {}', format(material_name))
         material_vol = pd.DataFrame([[material_name[0],
                                       output_dict['material_volume_cubic_yards'],
                                       'Loose cubic yard']],
                                     columns=['Material type ID',
                                              'Quantity of material',
                                              'Units'])
-
+        print('Material Vol: {}', format(material_vol))
         material_data = pd.merge(material_vol,
                                  input_dict['material_price'],
                                  on=['Material type ID'])
-
+        print('Material Data: {}', format(material_data))
         material_data['Cost USD'] = material_data['Quantity of material'] * \
                             pd.to_numeric(material_data['Material price USD per unit'])
-
+        print('Material Data Cost: {}', format(material_data['Cost USD']))
         # Material cost of inter-array roads:
         material_cost_of_roads = material_data['Quantity of material'].iloc[0] * \
                     pd.to_numeric(material_data['Material price USD per unit'].iloc[0])
-
+        print('Material Cost of Roads: {}', format(material_cost_of_roads))
         material_costs = pd.DataFrame([['Materials',
                                         float(material_cost_of_roads),
                                         'Roads (Storage)']],

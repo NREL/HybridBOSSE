@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from StorageBOSSE.excelio.create_master_input_dict import XlsxReader
 from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
-from StorageBOSSE.model.Manager import Manager
+from StorageBOSSE.model.Manager import Manager as StorageManager
 import xlsxwriter
 from openpyxl import load_workbook
 
@@ -38,9 +38,9 @@ def run_storagebosse(input_dictionary):
     for key, _ in input_dictionary.items():
         master_input_dict[key] = input_dictionary[key]
 
-    # Manager class (1) manages the distribution of inout data for all modules
+    # Manager class (1) manages the distribution of input data for all modules
     # and (2) executes landbosse
-    mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
+    mc = StorageManager(input_dict=master_input_dict, output_dict=output_dict)
     mc.execute_storagebosse()
 
     # results dictionary that gets returned by this function:
@@ -56,6 +56,7 @@ def run_storagebosse(input_dictionary):
         results['system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
         results['system_size_MWh'] = master_input_dict['system_size_MWh']
         results['total_bos_cost'] = output_dict['total_bos_cost']
+        print('Total road cost: {}'.format(output_dict['total_road_cost']))
         results['total_road_cost'] = output_dict['total_road_cost']
         results['substation_cost'] = output_dict['total_substation_cost']
         results['total_transdist_cost'] = output_dict['total_transdist_cost']
