@@ -33,6 +33,9 @@ class Manager:
         # calculate number of containers based on desired system sizes
         self.output_dict['num_containers'] = np.ceil(max(self.input_dict['system_size_MW_DC'] / self.input_dict['battery_power_MW'], \
                                                          self.input_dict['system_size_MWh'] / self.input_dict['battery_capacity_MWh']))
+        # Project CAPEX  (USD)
+        # TODO battery costs in here?
+        self.output_dict['total_container_cost'] = self.output_dict['num_containers'] * self.input_dict['container_cost']
 
     def execute_storagebosse(self):
 
@@ -81,15 +84,16 @@ class Manager:
             self.output_dict['total_erection_cost']
 
 
+
         # ManagementCost:
         managementcost = ManagementCost(input_dict=self.input_dict,
                                         output_dict=self.output_dict,
                                         project_name=project_name)
         managementcost.run_module()
 
-        # TODO this BOS cost includes battery capital cost...
         self.output_dict['total_bos_cost'] = \
             self.output_dict['total_bos_cost_before_mgmt'] + \
             self.output_dict['total_management_cost']
+        self.output_dict['total_cost'] = self.output_dict['total_container_cost'] + self.output_dict['total_bos_cost']
 
         return self.output_dict

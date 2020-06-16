@@ -66,9 +66,11 @@ class FoundationCost(CostModule):
     concrete_pad_buffer
         (float) extent of concrete pad beyond container [in m]
 
-    depth
-        (int) depth of foundation [in m]
+    container_pad_depth
+        (float) depth of foundation [in m]
 
+    container_pad_excavation_depth_
+        (float) depth of excavation [in m]
 
     duration_construction
         (int) estimated construction time in months
@@ -463,7 +465,7 @@ class FoundationCost(CostModule):
 
         material_cost_dataframe['Type of cost'] = 'Materials'
         material_cost_dataframe['Cost USD'] = material_data_entire_plant['Cost USD']
-        material_costs_sum = material_cost_dataframe['Cost USD'].sum()
+        material_costs_sum = material_cost_dataframe['Cost USD'].sum() * self.input_dict['material_cost_multiplier']
         material_costs = pd.DataFrame([['Materials',
                                         material_costs_sum,
                                         'Foundation']],

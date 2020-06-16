@@ -7,7 +7,7 @@ from .CostModule import CostModule
 
 class ManagementCost(CostModule):
     """
-    -Created by Ben Anderson on June 2, 2020
+    - Modified by Ben Anderson for StorageBOSSE on June 2, 2020
 
     Source of curve fit cost data:
     https://www.nrel.gov/docs/fy19osti/71714.pdf
@@ -36,11 +36,6 @@ class ManagementCost(CostModule):
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
-
-        # Project CAPEX before management costs (USD)
-        # TODO battery costs in here?
-        self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt'] + \
-                                 (self.output_dict['num_containers'] * self.input_dict['container_cost'])
 
     def total_management_cost(self):
         """
