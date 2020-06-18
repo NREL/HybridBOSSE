@@ -160,7 +160,7 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
     return hybrids_df, hybrids_solar_df, hybrids_wind_df, hybrids_storage_df, solar_only_bos, wind_only_bos,\
            storage_only_bos
 
-if __name__ == '__main__':
+def hybrid_bosse(wind_size, solar_size, hybrid_size):
 
     #Add Some Paths
     path = os.path.abspath(os.path.dirname(__file__))
@@ -230,3 +230,6 @@ if __name__ == '__main__':
     # print(hybrid_results)
     display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only,
                     storage_only_dict=storage_only)
+
+    return hybrid_results['hybrid']['hybrid_BOS_usd'], hybrid_results['Wind_BOS_results']['total_bos_cost'],\
+           hybrid_results['Solar_BOS_results']['total_bos_cost']
