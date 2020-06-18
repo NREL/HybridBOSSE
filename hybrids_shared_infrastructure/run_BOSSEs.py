@@ -33,7 +33,8 @@ def run_BOSSEs(hybrids_input_dict):
     wind_input_dict['project_id'] = hybrids_input_dict['project_id']
     wind_input_dict['path_to_project_list'] = hybrids_input_dict['path_to_project_list']
     wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_project_list']
-    wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
+    if 'development_labor_cost_usd' in hybrids_input_dict:
+        wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
 
     if hybrids_input_dict['wind_plant_size_MW'] < 1:
         LandBOSSE_BOS_results = dict()
@@ -77,8 +78,11 @@ def run_BOSSEs(hybrids_input_dict):
     solar_input_dict['grid_system_size_MW_DC'] = \
                                     hybrids_input_dict['grid_interconnection_rating_MW'] / 2
 
-    solar_input_dict['grid_size_MW_AC'] = \
-        solar_input_dict['grid_system_size_MW_DC'] / hybrids_input_dict['dc_ac_ratio']
+    if 'dc_ac_ratio' in hybrids_input_dict:
+        solar_input_dict['grid_size_MW_AC'] = \
+            solar_input_dict['grid_system_size_MW_DC'] / hybrids_input_dict['dc_ac_ratio']
+    else:
+        solar_input_dict['grid_size_MW_AC'] = solar_input_dict['grid_system_size_MW_DC']
 
     # delete line once finished debugging:
     print('solar grid rating : ', solar_input_dict['grid_size_MW_AC'])
