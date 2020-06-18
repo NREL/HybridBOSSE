@@ -71,7 +71,11 @@ class SubstationCost(CostModule):
             (in USD)
 
         """
-        if input_dict['system_size_MW_AC'] >= 15:
+        if 'substation_rating_MW' in input_dict:
+            input_dict['system_size_MW_AC'] = \
+                input_dict['substation_rating_MW'] / input_dict['dc_ac_ratio']
+
+        if input_dict['system_size_MW_AC'] > 15:
             output_dict['substation_cost_usd'] = \
                 11652 * (input_dict['interconnect_voltage_kV'] + input_dict['system_size_MW_AC']) + \
                 11795 * (input_dict['system_size_MW_AC'] ** 0.3549) + 1526800

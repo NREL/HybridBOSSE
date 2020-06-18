@@ -12,12 +12,12 @@ hybrids_input_dict:
     num_turbines: 5
     turbine_rating_MW: 1.5
     wind_construction_time_months: 5
-    project_id: 'ge15_public_dist'
+    project_id: 'foundation_validation_ge15'
     path_to_project_list: '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
-    name_of_project_list: 'project_list_ge15_dist_05'
+    name_of_project_list: 'project_list_'
 
     # Solar farm required inputs
     solar_system_size_MW_DC: 7.5
-    dc_ac_ratio: 1.2
+    dc_ac_ratio: 1
     solar_construction_time_months: 5   # Optional. Overrides Has a scaling MW v. construction time relationship
     solar_dist_interconnect_mi: 5   # Gets over-ridden when 'shared_interconnection' is True
