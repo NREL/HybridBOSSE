@@ -868,7 +868,7 @@ class CollectionCost(CostModule):
                 fraction_site_prep_area_regions = site_prep_area_regions - \
                                                   math.floor(site_prep_area_regions)
 
-                region_iter = round(site_prep_area_regions)
+                region_iter = math.floor(site_prep_area_regions)
 
                 for i in range(region_iter):
                     regions_list.append(150)    # Stores size (in MW) of the region

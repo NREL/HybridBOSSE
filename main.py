@@ -275,9 +275,9 @@ def display_results(size_MW, hybrid_dict, wind_only_dict, solar_only_dict):
     return hybrids_df, solar_only_bos_df, wind_only_bos_df
 
 
-size = 500
+size = 151.5
 min_size = size
-max_size = 500
+max_size = 499.5
 
 grid_size_multiplier = 1
 
