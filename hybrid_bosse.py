@@ -224,6 +224,21 @@ def hybrid_bosse(wind_size, solar_size, hybrid_size):
     hybrids_scenario_dict['path_to_project_list'] = os.path.abspath(os.path.dirname(__file__))
     hybrids_scenario_dict['path_to_storage_project_list'] = os.path.join(os.path.abspath(os.path.dirname(__file__))
                                                                          , 'StorageBOSSE')
+    #Setting inteconnect sizes based on project size
+    grid_size_multiplier = 1
+    grid_size = wind_size #* grid_size_multiplier * 2
+    if grid_size > 15:
+        hybrids_scenario_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
+    else:
+        hybrids_scenario_dict['distance_to_interconnect_mi'] = 0
+    if grid_size < 20:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 15
+    elif 20 < grid_size < 40:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 34.5
+    elif 40 <= grid_size < 75:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 69  # should be 69
+    elif grid_size >= 75:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 138  # should be 138
 
     hybrid_results, wind_only, solar_only, storage_only = run_hybrid_BOS(hybrids_scenario_dict)
     print("<++++++++ HYBRID RESULTS++++++++>")
