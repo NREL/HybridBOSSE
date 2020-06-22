@@ -87,6 +87,8 @@ class Manager:
                                         output_dict=self.output_dict,
                                         project_name=project_name)
         managementcost.run_module()
+        if 'management_cost_multiplier' in self.input_dict:
+            self.output_dict['total_management_cost'] *= self.input_dict['management_cost_multiplier']
 
         self.output_dict['total_bos_cost'] = \
             self.output_dict['total_bos_cost_before_mgmt'] + \

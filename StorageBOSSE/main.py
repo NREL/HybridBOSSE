@@ -51,7 +51,8 @@ def run_storagebosse(input_dictionary):
         # that are 3 layers deep (but 1-D)
         results['Name'] = 'area undefined'
         # results['Name'] = str(master_input_dict['system_size_MW_DC'])+'MW_'+str(master_input_dict['system_size_MWh'])+'MWh'
-        results['labor_cost_multiplier'] = master_input_dict['labor_cost_multiplier']
+        # results['labor_cost_multiplier'] = master_input_dict['labor_cost_multiplier']
+        # results['material_cost_multiplier'] = master_input_dict['material_cost_multiplier']
         results['system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
         results['system_size_MWh'] = master_input_dict['system_size_MWh']
         results['total_cost'] = output_dict['total_cost']
@@ -139,70 +140,69 @@ class NegativeInputError(Error):
 # optional key: site_prep_area_m2: defined project area for site preparation. If unspecified, site prep area is
 # calculated based on number of containers and road length
 
-# ##### loop through various project sizes. Find % shared #####
-#
-# energies = [1, 5, 10, 50, 100, 500, 20, 20, 20, 20, 20, 20]  # MWh
-# powers = [20, 20, 20, 20, 20, 20, 1, 5, 10, 50, 100, 500]  # MW
+##### loop through various project sizes. Find % shared #####
 
-# for i in range(0, len(energies)):
-#     input_dict = dict()
-#     BOS_results = dict()
-#     BOS_results.update({str(powers[i])+' MW, '+str(energies[i])+'MWh scenario': ' '})
-#     input_dict['system_size_MW_DC'] = powers[i]
-#     input_dict['system_size_MWh'] = energies[i]
-#
-#     if max(energies[i], powers[i]) > 50:
-#         input_dict['construction_time_months'] = 24
-#     elif max(energies[i], powers[i]) <= 20:
-#         input_dict['construction_time_months'] = 12
-#
-#     elif max(energies[i], powers[i]) <= 10:
-#         input_dict['construction_time_months'] = 6
+energies = [1, 5, 10, 50, 100, 150, 20, 20, 20, 20, 20, 20]  # MWh
+powers = [20, 20, 20, 20, 20, 20, 1, 5, 10, 50, 100, 150]  # MW
+
+for i in range(0, len(energies)):
+    input_dict = dict()
+    BOS_results = dict()
+    BOS_results.update({str(powers[i])+' MW, '+str(energies[i])+'MWh scenario': ' '})
+    input_dict['system_size_MW_DC'] = powers[i]
+    input_dict['system_size_MWh'] = energies[i]
+
+    if max(energies[i], powers[i]) > 50:
+        input_dict['construction_time_months'] = 24
+    elif max(energies[i], powers[i]) <= 20:
+        input_dict['construction_time_months'] = 12
+
+    elif max(energies[i], powers[i]) <= 10:
+        input_dict['construction_time_months'] = 6
 
 # ##### loop through various material multipliers ##########
 # energies = 100
 # powers = 100
 # input_dict = dict()
 # BOS_results = dict()
-# mcx = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
+# mcx = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
 # for i in mcx:
 #     input_dict['material_cost_multiplier'] = i
 
-###### loop through various labor multipliers #########
-energies = 100
-powers = 100
-input_dict = dict()
-BOS_results = dict()
-# lcx = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
-# for i in lcx:
-#     input_dict['labor_cost_multiplier'] = i
+# ###### loop through various management multipliers #########
+# energies = 100
+# powers = 100
+# input_dict = dict()
+# BOS_results = dict()
+# mcx = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
+# for i in mcx:
+#     input_dict['management_cost_multiplier'] = i
 
+    ####################################### KEEP (in loop) ####################################
+    # input_dict['site_prep_area_m2'] = 100*max(max(energies),max(powers)) + 100
 
-####################################### KEEP (in loop) ####################################
-# input_dict['site_prep_area_m2'] = 100*max(max(energies),max(powers)) + 100
+    input_dict['project_list'] = 'project_list_test'  # THE ESSENTIAL INPUT
 
-input_dict['project_list'] = 'project_list_test'  # THE ESSENTIAL INPUT
+    BOS_results, detailed_results = run_storagebosse(input_dict)  # ALL I NEEEEED
 
-BOS_results, detailed_results = run_storagebosse(input_dict)  # ALL I NEEEEED
+    """ OUTPUT TO EXCEL FOR TESTING"""
+    headers = BOS_results.keys()
+    outfile = 'shared_cost_outputs_MW.xlsx'
+    # create excel file if it does not exist
+    if not os.path.isfile(outfile):
+        book = xlsxwriter.Workbook(outfile)
+        sheet = book.add_worksheet("TestSheet")
+        for (idx, header) in enumerate(headers):
+            sheet.write(0, idx, header)
+        book.close()
+    # open the file
+    with open(outfile, 'a+') as xl_file:
+        book = load_workbook(outfile)
+        sheet = book.get_sheet_by_name('TestSheet')
 
-""" OUTPUT TO EXCEL FOR TESTING"""
-headers = BOS_results.keys()
-outfile = 'labor_cost_sensitivity_outputs.xlsx'
-# create excel file if it does not exist
-if not os.path.isfile(outfile):
-    book = xlsxwriter.Workbook(outfile)
-    sheet = book.add_worksheet("TestSheet")
-    for (idx, header) in enumerate(headers):
-        sheet.write(0, idx, header)
-    book.close()
-# open the file
-with open(outfile, 'a+') as xl_file:
-    book = load_workbook(outfile)
-    sheet = book.get_sheet_by_name('TestSheet')
-
-values = [BOS_results[key] for key in headers]
-sheet.append(values)
-book.save(filename=outfile)
+    values = [BOS_results[key] for key in headers]
+    sheet.append(values)
+    book.save(filename=outfile)
 
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
