@@ -62,8 +62,8 @@ class Manager:
         foundation_cost.run_module()
 
         container_erection = ContainerErection(input_dict=self.input_dict,
-                                                         output_dict=self.output_dict,
-                                                         project_name=project_name)
+                                               output_dict=self.output_dict,
+                                               project_name=project_name)
         container_erection.run_module()
 
         substationcost = SubstationCost(input_dict=self.input_dict,
@@ -77,6 +77,9 @@ class Manager:
         gridconnection.run_module()
 
         # Sum all costs
+        print('Manager Output Dict:')
+        print(self.output_dict)
+        # self.output_dict['total_road_cost'] = 0
         self.output_dict['total_bos_cost_before_mgmt'] = \
             self.output_dict['total_road_cost'] + \
             self.output_dict['total_collection_cost'] + \

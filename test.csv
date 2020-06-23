@@ -1,0 +1,38 @@
+,Hybrid_BOS_results,Wind_BOS_results,Solar_BOS_results
+hybrid_BOS_usd," $11,712,071.80 ",,
+hybrid_BOS_usd_watt, $0.94 ,,
+hybrid_gridconnection_usd," $856,199.50 ",,
+hybrid_substation_usd," $1,907,198.46 ",,
+hybrid_management_development_usd," $4,267,188.77 ",,
+errors,, [] , [] 
+total_bos_cost,," $7,553,689.02 "," $4,294,949.45 "
+total_development_cost,," $150,000.00 ",
+development_labor_usd,, $-   ,
+development_material_usd,, $-   ,
+development_mobilization_usd,, $-   ,
+total_sitepreparation_cost,," $868,887.78 ",
+sitepreparation_equipment_rental_usd,," $64,524.96 ",
+sitepreparation_labor_usd,," $292,255.09 ",
+sitepreparation_material_usd,," $117,343.49 ",
+sitepreparation_mobilization_usd,," $73,592.61 ",
+sitepreparation_other_usd,," $321,171.63 ",
+total_foundation_cost,," $1,131,222.09 "," $23,625.13 "
+foundation_equipment_rental_usd,," $15,377.68 ",
+foundation_labor_usd,," $799,094.12 ",
+foundation_material_usd,," $278,651.56 ",
+foundation_mobilization_usd,," $38,098.73 ",
+total_erection_cost,," $1,081,904.28 "," $16,696.75 "
+erection_equipment_rental_usd,," $33,957.62 ",
+erection_labor_usd,," $276,706.66 ",
+erection_material_usd,, $-   ,
+erection_other_usd,, $-   ,
+erection_mobilization_usd,," $769,752.00 ",
+erection_fuel_usd,," $1,488.00 ",
+total_collection_cost,," $106,971.27 "," $207,082.99 "
+collection_equipment_rental_usd,," $10,697.21 ",
+collection_labor_usd,," $50,084.16 ",
+collection_material_usd,," $30,314.96 ",
+collection_mobilization_usd,," $15,874.94 ",
+total_racking_cost,,," $1,254,645.38 "
+siteprep_cost,,," $223,399.39 "
+total_bos_cost_before_mgmt,,," $2,975,224.75 "

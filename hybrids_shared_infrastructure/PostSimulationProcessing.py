@@ -8,10 +8,11 @@ class PostSimulationProcessing:
     Collection of methods to parse through detailed BOS outputs and 'smart' combine the
     outputs of the BOS models into a single, Hybrid BOS detailed output.
     """
-    def __init__(self, hybrids_input_dict, LandBOSSE_BOS_results, SolarBOSSE_results):
+    def __init__(self, hybrids_input_dict, LandBOSSE_BOS_results, SolarBOSSE_results, StorageBOSSE_results):
         self.hybrids_input_dict = hybrids_input_dict
         self.LandBOSSE_BOS_results = LandBOSSE_BOS_results
         self.SolarBOSSE_results = SolarBOSSE_results
+        self.StorageBOSSE_results = StorageBOSSE_results
         self.hybrid_gridconnection_usd = self.hybrid_gridconnection_usd()
         self.hybrid_substation_usd = self.hybrid_substation_usd()
         self.site_facility_usd = self.site_facility_hybrid()
@@ -26,7 +27,8 @@ class PostSimulationProcessing:
         """
 
         total_hybrids_BOS_USD = self.LandBOSSE_BOS_results['total_bos_cost'] + \
-                                self.SolarBOSSE_results['total_bos_cost']
+                                self.SolarBOSSE_results['total_bos_cost'] + \
+                                self.StorageBOSSE_results['total_bos_cost']
 
         if self.hybrids_input_dict['wind_plant_size_MW'] == 0:
             self.LandBOSSE_BOS_results['total_gridconnection_cost'] = 0
@@ -36,6 +38,10 @@ class PostSimulationProcessing:
             self.SolarBOSSE_results['total_transdist_cost'] = 0
             self.SolarBOSSE_results['substation_cost'] = 0
 
+        if self.hybrids_input_dict['storage_system_size_MW_DC'] == 0:
+            self.StorageBOSSE_results['total_transdist_cost'] = 0
+            self.StorageBOSSE_results['substation_cost'] = 0
+
         if self.hybrids_input_dict['shared_interconnection']:
             total_hybrids_BOS_USD = total_hybrids_BOS_USD + \
                                     self.hybrid_gridconnection_usd + \
@@ -43,24 +49,32 @@ class PostSimulationProcessing:
                                     self.LandBOSSE_BOS_results['total_gridconnection_cost'] - \
                                     self.SolarBOSSE_results['total_transdist_cost'] - \
                                     self.LandBOSSE_BOS_results['total_substation_cost'] - \
-                                    self.SolarBOSSE_results['substation_cost']
+                                    self.SolarBOSSE_results['substation_cost'] - \
+                                    self.StorageBOSSE_results['total_transdist_cost'] - \
+                                    self.StorageBOSSE_results['substation_cost']
 
         return total_hybrids_BOS_USD
 
     def hybrid_BOS_usd_watt(self):
         if self.SolarBOSSE_results['total_bos_cost'] == 0:
-            total_hybrids_BOS_USD_Watt = (self.LandBOSSE_BOS_results['total_bos_cost'] /
+            # total_hybrids_BOS_USD_Watt = (self.LandBOSSE_BOS_results['total_bos_cost'] /
+            #                               (self.hybrids_input_dict['wind_plant_size_MW'] * 1e6))
+            total_hybrids_BOS_USD_Watt = (self.hybrid_BOS_usd /
                                           (self.hybrids_input_dict['wind_plant_size_MW'] * 1e6))
 
         elif self.LandBOSSE_BOS_results['total_bos_cost'] == 0:
-            total_hybrids_BOS_USD_Watt = (self.SolarBOSSE_results['total_bos_cost'] /
+            # total_hybrids_BOS_USD_Watt = (self.SolarBOSSE_results['total_bos_cost'] /
+            #                               (self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6))
+
+            total_hybrids_BOS_USD_Watt = (self.hybrid_BOS_usd /
                                           (self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6))
 
         else:
             total_hybrids_BOS_USD = self.hybrid_BOS_usd
+
             total_hybrids_BOS_USD_Watt = total_hybrids_BOS_USD / \
-                                         ((self.hybrids_input_dict['wind_plant_size_MW'] * 1e6) +
-                                          (self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6))
+                                         ((self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6) +
+                                          (self.hybrids_input_dict['wind_plant_size_MW'] * 1e6))
 
         return total_hybrids_BOS_USD_Watt
 
@@ -68,16 +82,19 @@ class PostSimulationProcessing:
         """
 
         """
+        grid = dict()
+        grid['new_switchyard'] = self.hybrids_input_dict['new_switchyard']
+        grid['interconnect_voltage_kV'] = self.hybrids_input_dict['interconnect_voltage_kV']
+
         if self.hybrids_input_dict['shared_interconnection']:
 
-            self.hybrids_input_dict['dist_interconnect_mi'] = \
+            grid['dist_interconnect_mi'] = \
                 self.hybrids_input_dict['distance_to_interconnect_mi']
 
-            self.hybrids_input_dict['system_size_MW'] = \
-                self.hybrids_input_dict['grid_interconnection_rating_MW']
+            grid['system_size_MW'] = self.hybrids_input_dict['grid_interconnection_rating_MW']
 
             # Shared hybrids Grid Interconnection Cost (USD):
-            hybrid_gridconnection_usd = hybrid_gridconnection(self.hybrids_input_dict)
+            hybrid_gridconnection_usd = hybrid_gridconnection(grid)
 
         else:
             hybrid_gridconnection_usd = 0
@@ -102,6 +119,7 @@ class PostSimulationProcessing:
         hybrid_plant_size_MW = self.hybrids_input_dict['hybrid_plant_size_MW']
         wind_plant_size_MW = self.hybrids_input_dict['wind_plant_size_MW']
         solar_system_size_MW_DC = self.hybrids_input_dict['solar_system_size_MW_DC']
+        storage_system_size_MW_DC = self.hybrids_input_dict['storage_system_size_MW_DC']
 
         landbosse_cost_before_mgmt = self.LandBOSSE_BOS_results['total_bos_cost'] - \
                                      self.LandBOSSE_BOS_results['total_management_cost']
@@ -225,6 +243,12 @@ class PostSimulationProcessing:
             BOS_dict.pop('bonding_usd')
             BOS_dict.pop('development_overhead_cost')
             BOS_dict.pop('total_sales_tax')
+
+        elif technology == 'storage' and BOS_dict['total_bos_cost'] > 0:
+            # Remove the appropriate cost buckets for a system involving storage
+            # BOS_dict.pop('substation_cost')
+            BOS_dict.pop('total_transdist_cost')
+            BOS_dict.pop('substation_cost')
 
         return BOS_dict
 

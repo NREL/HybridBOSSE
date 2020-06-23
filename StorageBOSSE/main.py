@@ -2,12 +2,13 @@ import os
 import pandas as pd
 from StorageBOSSE.excelio.create_master_input_dict import XlsxReader
 from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
-from StorageBOSSE.model.Manager import Manager
+from StorageBOSSE.model.Manager import Manager as StorageManager
 import xlsxwriter
 from openpyxl import load_workbook
 
 def run_storagebosse(input_dictionary):
     input_output_path = os.path.dirname(__file__)
+    print('StorageBOSSE assumed input path: {}'.format(input_output_path))
     # StorageBOSSE uses LandBOSSE's Excel I/O library for reading in data from Excel
     # files. Accordingly, the environment variables used in StorageBOSSE are called
     # LANDBOSSE_INPUT_DIR & LANDBOSSE_OUTPUT_DIR:
@@ -15,6 +16,8 @@ def run_storagebosse(input_dictionary):
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
 
     project_data = read_data(input_dictionary['project_list'])
+    print('StorageBOSSE project data: {}'.format(project_data))
+
     xlsx_reader = XlsxReader()
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
@@ -35,9 +38,9 @@ def run_storagebosse(input_dictionary):
     for key, _ in input_dictionary.items():
         master_input_dict[key] = input_dictionary[key]
 
-    # Manager class (1) manages the distribution of inout data for all modules
+    # Manager class (1) manages the distribution of input data for all modules
     # and (2) executes landbosse
-    mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
+    mc = StorageManager(input_dict=master_input_dict, output_dict=output_dict)
     mc.execute_storagebosse()
 
     # results dictionary that gets returned by this function:
