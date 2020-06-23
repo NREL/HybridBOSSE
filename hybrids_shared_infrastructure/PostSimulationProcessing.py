@@ -71,9 +71,15 @@ class PostSimulationProcessing:
 
         else:
             total_hybrids_BOS_USD = self.hybrid_BOS_usd
+
             total_hybrids_BOS_USD_Watt = total_hybrids_BOS_USD / \
+<<<<<<< HEAD
                                           ((self.hybrids_input_dict['wind_plant_size_MW'] * 1e6) +
                                           (self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6))
+=======
+                                         ((self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6) +
+                                          (self.hybrids_input_dict['wind_plant_size_MW'] * 1e6))
+>>>>>>> storage_develop
 
         return total_hybrids_BOS_USD_Watt
 
@@ -81,16 +87,19 @@ class PostSimulationProcessing:
         """
 
         """
+        grid = dict()
+        grid['new_switchyard'] = self.hybrids_input_dict['new_switchyard']
+        grid['interconnect_voltage_kV'] = self.hybrids_input_dict['interconnect_voltage_kV']
+
         if self.hybrids_input_dict['shared_interconnection']:
 
-            self.hybrids_input_dict['dist_interconnect_mi'] = \
+            grid['dist_interconnect_mi'] = \
                 self.hybrids_input_dict['distance_to_interconnect_mi']
 
-            self.hybrids_input_dict['system_size_MW'] = \
-                self.hybrids_input_dict['grid_interconnection_rating_MW']
+            grid['system_size_MW'] = self.hybrids_input_dict['grid_interconnection_rating_MW']
 
             # Shared hybrids Grid Interconnection Cost (USD):
-            hybrid_gridconnection_usd = hybrid_gridconnection(self.hybrids_input_dict)
+            hybrid_gridconnection_usd = hybrid_gridconnection(grid)
 
         else:
             hybrid_gridconnection_usd = 0

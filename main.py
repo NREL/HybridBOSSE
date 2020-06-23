@@ -11,18 +11,30 @@ def run_hybrid_BOS(hybrids_input_dict):
     """
     Returns a dictionary with detailed Shared Infrastructure BOS results.
     """
+<<<<<<< HEAD
 
+=======
+>>>>>>> storage_develop
     wind_BOS, solar_BOS, storage_BOS = run_BOSSEs(hybrids_input_dict)
     # Store a copy of both solar only and wind only outputs dictionaries:
     wind_only_BOS = wind_BOS.copy()
     solar_only_BOS = solar_BOS.copy()
     storage_only_BOS = storage_BOS.copy()
+<<<<<<< HEAD
 
     print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ', wind_BOS)
     print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ', solar_BOS)
     print('storage_only_BOS at ', hybrids_input_dict['storage_system_size_MW_DC'], ' MW and ',
           hybrids_input_dict['storage_system_size_MWh'], ' MWh', storage_BOS)
 
+=======
+
+    print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
+    print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
+    print('storage_only_BOS at ', hybrids_input_dict['storage_system_size_MW_DC'], ' MW and ',
+          hybrids_input_dict['storage_system_size_MWh'], ' MWh', storage_BOS)
+
+>>>>>>> storage_develop
     if hybrids_input_dict['wind_plant_size_MW'] > 0:
         # BOS of Wind only power plant:
         print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
@@ -46,7 +58,10 @@ def run_hybrid_BOS(hybrids_input_dict):
 
     results = dict()
     results['hybrid'] = dict()
+<<<<<<< HEAD
 
+=======
+>>>>>>> storage_develop
     hybrid_BOS = PostSimulationProcessing(hybrids_input_dict, wind_BOS, solar_BOS, storage_BOS)
     results['hybrid']['hybrid_BOS_usd'] = hybrid_BOS.hybrid_BOS_usd
     results['hybrid']['hybrid_BOS_usd_watt'] = hybrid_BOS.hybrid_BOS_usd_watt
@@ -54,7 +69,11 @@ def run_hybrid_BOS(hybrids_input_dict):
     results['hybrid']['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
     results['hybrid']['hybrid_management_development_usd'] = wind_BOS['total_management_cost'] + \
                                                              solar_BOS['total_management_cost'] + \
+<<<<<<< HEAD
                                                              storage_BOS['total_management_cost'] +\
+=======
+                                                             storage_BOS['total_management_cost'] + \
+>>>>>>> storage_develop
                                                              hybrid_BOS.site_facility_usd
 
 
@@ -211,8 +230,13 @@ if __name__ == '__main__':
     if hybrids_scenario_dict['num_turbines'] is None or hybrids_scenario_dict['num_turbines'] == 0:
         hybrids_scenario_dict['num_turbines'] = 0
 
+<<<<<<< HEAD
     hybrids_scenario_dict['wind_plant_size_MW'] = hybrids_scenario_dict['num_turbines'] * \
                                                   hybrids_scenario_dict['turbine_rating_MW']
+=======
+    return hybrids_df, hybrids_solar_df, hybrids_wind_df, solar_only_bos, wind_only_bos, \
+           storage_only_bos
+>>>>>>> storage_develop
 
     hybrids_scenario_dict['hybrid_plant_size_MW'] = hybrids_scenario_dict['wind_plant_size_MW'] + \
                                                     hybrids_scenario_dict['solar_system_size_MW_DC']

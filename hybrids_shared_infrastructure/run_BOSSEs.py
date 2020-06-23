@@ -2,6 +2,10 @@ from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
 from hybrids_shared_infrastructure.GridConnectionCost import hybrid_gridconnection
 from StorageBOSSE.main import run_storagebosse
+<<<<<<< HEAD
+=======
+
+>>>>>>> storage_develop
 
 def run_BOSSEs(hybrids_input_dict):
     """
@@ -19,6 +23,7 @@ def run_BOSSEs(hybrids_input_dict):
     wind_input_dict['distance_to_interconnect_mi'] = \
                                             hybrids_input_dict['wind_dist_interconnect_mi']
 
+<<<<<<< HEAD
     # --Parangat Additions-- #
     wind_input_dict['grid_system_size_MW'] = hybrids_input_dict['grid_interconnection_rating_MW'] / 2
     # delete line once finished debugging:
@@ -28,9 +33,24 @@ def run_BOSSEs(hybrids_input_dict):
         wind_input_dict['override_total_management_cost'] = \
                                         hybrids_input_dict['override_total_management_cost']
     # --/Parangat Additions-- #
+=======
+    wind_input_dict['grid_system_size_MW'] = hybrids_input_dict['grid_interconnection_rating_MW'] / 2
+
+    # delete line once finished debugging:
+    print('wind grid rating : ', wind_input_dict['grid_system_size_MW'])
+
+    wind_input_dict['substation_rating_MW'] = hybrids_input_dict['hybrid_substation_rating_MW'] / 2
+
+    if 'override_total_management_cost' in hybrids_input_dict:
+        wind_input_dict['override_total_management_cost'] = \
+                                        hybrids_input_dict['override_total_management_cost']
+
+>>>>>>> storage_develop
     wind_input_dict['project_id'] = hybrids_input_dict['project_id']
     wind_input_dict['path_to_project_list'] = hybrids_input_dict['path_to_project_list']
     wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_project_list']
+    if 'development_labor_cost_usd' in hybrids_input_dict:
+        wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
 
     # --Parangat Additions 2-- #
     if 'development_labor_cost_usd' in hybrids_input_dict:
@@ -87,6 +107,20 @@ def run_BOSSEs(hybrids_input_dict):
     solar_input_dict['substation_rating_MW'] = hybrids_input_dict['hybrid_substation_rating_MW'] / 2
     #---/Parangat Additions 3--- #
 
+    solar_input_dict['grid_system_size_MW_DC'] = \
+                                    hybrids_input_dict['grid_interconnection_rating_MW'] / 2
+
+    if 'dc_ac_ratio' in hybrids_input_dict:
+        solar_input_dict['grid_size_MW_AC'] = \
+            solar_input_dict['grid_system_size_MW_DC'] / hybrids_input_dict['dc_ac_ratio']
+    else:
+        solar_input_dict['grid_size_MW_AC'] = solar_input_dict['grid_system_size_MW_DC']
+
+    # delete line once finished debugging:
+    print('solar grid rating : ', solar_input_dict['grid_size_MW_AC'])
+
+    solar_input_dict['substation_rating_MW'] = hybrids_input_dict['hybrid_substation_rating_MW'] / 2
+
     if hybrids_input_dict['solar_system_size_MW_DC'] < 1:
         SolarBOSSE_results = dict()
         SolarBOSSE_results['total_bos_cost'] = 0
@@ -117,5 +151,8 @@ def run_BOSSEs(hybrids_input_dict):
         StorageBOSSE_BOS_results, detailed_results = run_storagebosse(storage_input_dict)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> storage_develop
     return LandBOSSE_BOS_results, SolarBOSSE_results, StorageBOSSE_BOS_results
