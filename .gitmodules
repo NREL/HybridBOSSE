@@ -1,0 +1,3 @@
+[submodule "LandBOSSE"]
+	path = LandBOSSE
+	url = https://github.com/WISDEM/LandBOSSE.git
