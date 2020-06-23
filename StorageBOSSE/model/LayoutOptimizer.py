@@ -90,7 +90,7 @@ class LayoutOptimizer():
             self.calc_road_len()
             self.cable_grid_len = self.cable_grid_len # optimal layout length
             self.road_grid_len = self.road_grid_len
-        else:
+        else:  # custom
             self.num_full_row = self.input_dict['num_full_row']
             self.pad_per_row = self.input_dict['pad_per_row']
             self.num_left = self.input_dict['num_left']

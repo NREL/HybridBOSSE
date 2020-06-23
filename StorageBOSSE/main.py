@@ -69,7 +69,6 @@ def run_storagebosse(input_dictionary):
         results['total_collection_cost'] = output_dict['total_collection_cost']
         results['total_management_cost'] = output_dict['total_management_cost']
 
-
         # L1: assume share substation, transdist, mgmt costs
         results['%_bos_cost'] = results['total_bos_cost']/results['total_cost']*100
         results['shared_cost_L1'] = results['substation_cost'] + results['total_transdist_cost'] + results['total_management_cost']
