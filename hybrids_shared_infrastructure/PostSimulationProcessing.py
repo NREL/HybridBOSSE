@@ -73,13 +73,8 @@ class PostSimulationProcessing:
             total_hybrids_BOS_USD = self.hybrid_BOS_usd
 
             total_hybrids_BOS_USD_Watt = total_hybrids_BOS_USD / \
-<<<<<<< HEAD
-                                          ((self.hybrids_input_dict['wind_plant_size_MW'] * 1e6) +
-                                          (self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6))
-=======
                                          ((self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6) +
                                           (self.hybrids_input_dict['wind_plant_size_MW'] * 1e6))
->>>>>>> storage_develop
 
         return total_hybrids_BOS_USD_Watt
 
