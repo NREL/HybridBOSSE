@@ -26,7 +26,7 @@ class SitePreparationCost(CostModule):
 
     - Get duration of construction*  #todo: add to process diagram
 
-    - Get road length
+    - Get road length.
 
     - Get weather data
 
@@ -155,6 +155,8 @@ class SitePreparationCost(CostModule):
         """
         Calculates the volume of road materials need based on length, width,
         and thickness of road to substation
+        Calculates road length. Assumes road runs from substation to containers, and then forms a grid defined in
+        LayoutOptimizer
 
         Parameters
         ----------
@@ -186,14 +188,9 @@ class SitePreparationCost(CostModule):
 
 
         """
-        """calculates road length. Assumes road runs from substation to containers, and then along the containers
-        (same as collection system)"""
 
-        output_dict['road_length'] = input_dict['distance_to_substation'] + \
-                                           output_dict['num_containers'] * (
-                                               input_dict['container_width'] + 2 * input_dict[
-                                               'container_pad_buffer'])
 
+        output_dict['road_length'] = input_dict['distance_to_substation'] + output_dict['road_grid_len']
         # units of cubic meters
         output_dict['road_volume'] = output_dict['road_length'] * \
                                      input_dict['road_width_m'] * input_dict['road_thickness_m']

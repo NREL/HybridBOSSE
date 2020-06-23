@@ -12,8 +12,7 @@ class CollectionCost(CostModule):
     Calculates the cost of the collection system (cable runs that connect BESS containers to substation)
     Assumptions:
     1. Collection system extends in a straight line from substation to BESS location
-    2. BESS containers are in a line, and cables run between them.
-       Cables join before run to substation
+    2. BESS containers are connected by a cable grid defined in LayoutOptimizer
     3. Cable cost is a constant $/m. Cable sizes are neglected, as the majority of cable costs are from trenching
     """
 
@@ -33,7 +32,7 @@ class CollectionCost(CostModule):
 
     def calculate_costs(self):
         self.output_dict['total_collection_length'] = self.input_dict['distance_to_substation'] + \
-                                                    self.output_dict['num_containers'] * (self.input_dict['container_width'] + 2*self.input_dict['container_pad_buffer'])
+                                                    self.output_dict['cable_grid_len']
         self.output_dict['total_collection_cost'] = self.output_dict['total_collection_length'] * self.input_dict['collection_cost_per_m']
 
     def run_module(self):

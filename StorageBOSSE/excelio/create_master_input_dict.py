@@ -171,6 +171,14 @@ class XlsxReader:
         incomplete_input_dict['interconnect_voltage_kV'] = \
             project_parameters['Interconnect Voltage (kV)']
 
+        incomplete_input_dict['layout'] = \
+            project_parameters['Layout']
+
+        if incomplete_input_dict['layout'] == 'custom':
+            incomplete_input_dict['num_full_row'] = project_parameters['Number of rows']
+            incomplete_input_dict['pad_per_row'] = project_parameters['Containers per row']
+            incomplete_input_dict['num_left'] = project_parameters['Containers left']
+
         if 'Site prep area (m^2)' in project_parameters:
             incomplete_input_dict['site_prep_area_m2'] = \
                 project_parameters['Site prep area (m^2)']

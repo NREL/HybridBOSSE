@@ -5,6 +5,7 @@ from .GridConnectionCost import GridConnectionCost
 from .FoundationCost import FoundationCost
 from .ContainerErection import ContainerErection
 from .CollectionCost import CollectionCost
+from.LayoutOptimizer import LayoutOptimizer
 import numpy as np
 
 
@@ -40,6 +41,10 @@ class Manager:
     def execute_storagebosse(self):
 
         project_name = 'storage_run'
+
+        layout_optimizer = LayoutOptimizer(input_dict=self.input_dict,
+                                       output_dict=self.output_dict)
+        layout_optimizer.run_module()
 
         siteprep = SitePreparationCost(input_dict=self.input_dict,
                                        output_dict=self.output_dict,
@@ -79,7 +84,6 @@ class Manager:
             self.output_dict['total_transdist_cost'] + \
             self.output_dict['total_foundation_cost'] + \
             self.output_dict['total_erection_cost']
-
 
 
         # ManagementCost:
