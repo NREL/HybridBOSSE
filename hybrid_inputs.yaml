@@ -15,6 +15,8 @@ hybrids_input_dict:
     project_id: 'foundation_validation_ge15'
     path_to_project_list: '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
     name_of_project_list: 'project_list_'
+    # override_total_management_cost: 1500000
+    # development_labor_cost_usd: 1500000
 
     # Solar farm required inputs
     solar_system_size_MW_DC: 7.5
