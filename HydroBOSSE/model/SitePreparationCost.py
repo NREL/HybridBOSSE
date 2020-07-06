@@ -14,9 +14,10 @@ class SitePreparationCost(CostModule):
 
     - Refactored by Parangat Bhaskar and Alicia Key on Jun 3, 2019
 
+    - Modified for use with HydroBOSSE by Aaron Barker on Jul. 6, 2020
 
 
-    **Calculates cost of constructing roads for land-based wind projects:**
+    **Calculates cost of constructing roads for hydro projects:**
 
     - Get terrain complexity
 
