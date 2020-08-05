@@ -1,7 +1,7 @@
 import yaml
 import os
-from hybrids_shared_infrastructure.run_BOSSEs import run_BOSSEs
-from hybrids_shared_infrastructure.PostSimulationProcessing import PostSimulationProcessing
+from hybrids_shared_infrastructure.hybrids_shared_infrastructure.run_BOSSEs import run_BOSSEs
+from hybrids_shared_infrastructure.hybrids_shared_infrastructure.PostSimulationProcessing import PostSimulationProcessing
 import pandas as pd
 import sys
 
@@ -160,7 +160,8 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
     return hybrids_df, hybrids_solar_df, hybrids_wind_df, hybrids_storage_df, solar_only_bos, wind_only_bos,\
            storage_only_bos
 
-def hybrid_bosse(wind_size, solar_size, hybrid_size):
+
+def hybrid_bosse(interconnect_size, wind_size, solar_size, hybrid_size):
 
     #Add Some Paths
     path = os.path.abspath(os.path.dirname(__file__))
@@ -173,40 +174,22 @@ def hybrid_bosse(wind_size, solar_size, hybrid_size):
     # hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 
     # Create hybrid_scenario_dict manually
-    hybrids_scenario_dict = {
-            "shared_interconnection": True,
-            "distance_to_interconnect_mi": 1.5,
-            "new_switchyard": True,
-            "grid_interconnection_rating_MW": 7.5,
-            "interconnect_voltage_kV": 15,
-            "shared_substation": True,
-            "hybrid_substation_rating_MW": 7.5,
-            "wind_dist_interconnect_mi": 0,
-            "num_turbines": 5,
-            "turbine_rating_MW": 1.5,
-            "wind_construction_time_months": 5,
-            "project_id": "ge15_public_dist",
-            "path_to_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure",
-            "name_of_project_list": "project_list_ge15_dist_05",
-            "solar_system_size_MW_DC": 7.5,
-            "dc_ac_ratio": 1.2,
-            "solar_construction_time_months": 5,
-            "solar_dist_interconnect_mi": 5,
-            "storage_system_size_MW_DC": 10,
-            "storage_system_size_MWh": 1,
-            "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/StorageBOSSE/project_list_test.xlsx",
-            "storage_project_list": "project_list_test"
-    }
+    hybrids_scenario_dict = {"shared_interconnection": True, "distance_to_interconnect_mi": 1.5, "new_switchyard": True,
+                             "grid_interconnection_rating_MW": interconnect_size, "interconnect_voltage_kV": 15,
+                             "shared_substation": True, "hybrid_substation_rating_MW": wind_size,
+                             "wind_dist_interconnect_mi": 0, "num_turbines": 5, "turbine_rating_MW": 1.5,
+                             "wind_construction_time_months": 5, "project_id": "ge15_public_dist",
+                             "path_to_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure",
+                             "name_of_project_list": "project_list_ge15_dist_05", "solar_system_size_MW_DC": solar_size,
+                             "dc_ac_ratio": 1.2, "solar_construction_time_months": 5, "solar_dist_interconnect_mi": 5,
+                             "storage_system_size_MW_DC": 10, "storage_system_size_MWh": 1,
+                             "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/StorageBOSSE/project_list_test.xlsx",
+                             "storage_project_list": "project_list_test", 'wind_plant_size_MW': wind_size,
+                             'num_turbines': wind_size / 1.5, 'hybrid_plant_size_MW': hybrid_size,
+                             "hybrid_construction_months": wind_size}
+
     #Set custom HybridBOSSE parameters
-    wind_size = 150
-    hybrids_scenario_dict['wind_plant_size_MW'] = wind_size
-    hybrids_scenario_dict['num_turbines'] = wind_size / 1.5
-    hybrids_scenario_dict["grid_interconnection_rating_MW"] = wind_size
-    hybrids_scenario_dict['hybrid_plant_size_MW'] = wind_size * 2
-    hybrids_scenario_dict["hybrid_substation_rating_MW"] = wind_size
-    hybrids_scenario_dict["hybrid_construction_months"] = wind_size
-    hybrids_scenario_dict["interconnect_voltage_kV"] = 15
-    hybrids_scenario_dict["solar_system_size_MW_DC"] = wind_size
+    # wind_size = 150
 
     if hybrids_scenario_dict['num_turbines'] is None or hybrids_scenario_dict['num_turbines'] == 0:
         hybrids_scenario_dict['num_turbines'] = 0
@@ -240,11 +223,37 @@ def hybrid_bosse(wind_size, solar_size, hybrid_size):
     elif grid_size >= 75:
         hybrids_scenario_dict['interconnect_voltage_kV'] = 138  # should be 138
 
+
     hybrid_results, wind_only, solar_only, storage_only = run_hybrid_BOS(hybrids_scenario_dict)
     print("<++++++++ HYBRID RESULTS++++++++>")
     # print(hybrid_results)
     display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only,
                     storage_only_dict=storage_only)
+
+    print('Pause for Debugging')
+    import csv
+
+    writer = csv.writer(open('Wind Only_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in wind_only.keys():
+        writer.writerow([key, wind_only[key]])
+    writer = csv.writer(open('Solar Only_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in solar_only.keys():
+        writer.writerow([key, solar_only[key]])
+    writer = csv.writer(open('Storage Only_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in storage_only.keys():
+        writer.writerow([key, storage_only[key]])
+    writer = csv.writer(open('Wind (hybrid)_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in hybrid_results['Wind_BOS_results'].keys():
+        writer.writerow([key, hybrid_results['Wind_BOS_results'][key]])
+    writer = csv.writer(open('Solar (hybrid)_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in hybrid_results['Solar_BOS_results'].keys():
+        writer.writerow([key, hybrid_results['Solar_BOS_results'][key]])
+    writer = csv.writer(open('Storage (hybrid)_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in hybrid_results['Storage_BOS_results'].keys():
+        writer.writerow([key, hybrid_results['Storage_BOS_results'][key]])
+    writer = csv.writer(open('Hybrid_' + str(wind_size) + '_MW.csv', 'w'))
+    for key in hybrid_results['hybrid'].keys():
+        writer.writerow([key, hybrid_results['hybrid'][key]])
 
     return hybrid_results['hybrid']['hybrid_BOS_usd'], hybrid_results['Wind_BOS_results']['total_bos_cost'],\
            hybrid_results['Solar_BOS_results']['total_bos_cost']

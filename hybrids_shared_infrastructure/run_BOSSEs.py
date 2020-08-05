@@ -1,3 +1,4 @@
+import LandBOSSE
 from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
 from hybrids_shared_infrastructure.GridConnectionCost import hybrid_gridconnection
@@ -20,7 +21,7 @@ def run_BOSSEs(hybrids_input_dict):
     wind_input_dict['distance_to_interconnect_mi'] = \
                                             hybrids_input_dict['wind_dist_interconnect_mi']
 
-    wind_input_dict['grid_system_size_MW'] = hybrids_input_dict['grid_interconnection_rating_MW'] / 2
+    wind_input_dict['grid_system_size_MW'] = hybrids_input_dict['grid_interconnection_rating_MW'] / 2 #Grid rating of Hybrid power plant
 
     # delete line once finished debugging:
     print('wind grid rating : ', wind_input_dict['grid_system_size_MW'])

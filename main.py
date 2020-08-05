@@ -241,6 +241,19 @@ if __name__ == '__main__':
 
     hybrid_results, wind_only, solar_only, storage_only = run_hybrid_BOS(hybrids_scenario_dict)
     print("<++++++++ HYBRID RESULTS++++++++>")
-    # print(hybrid_results)
+    output_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'Results')
+    outputs_df_wind_only = pd.DataFrame.from_dict(wind_only.items())
+    outputs_df_solar_only = pd.DataFrame.from_dict(solar_only.items())
+    outputs_df_wind_hybrid = pd.DataFrame.from_dict(hybrid_results['Wind_BOS_results'])
+    outputs_df_solar_hybrid = pd.DataFrame.from_dict(hybrid_results['Solar_BOS_results'])
+    outputs_df_hybrid = pd.DataFrame.from_dict(hybrid_results['hybrid'].items())
+    outputs_df = pd.DataFrame.from_dict(hybrid_results)
+
+    outputs_df_wind_only.to_csv(os.path.join(output_dir, 'Wind Only.csv'))
+    outputs_df_solar_only.to_csv(os.path.join(output_dir, 'Solar Only.csv'))
+    outputs_df_wind_hybrid.to_csv(os.path.join(output_dir, 'Wind (Hybrid).csv'))
+    outputs_df_solar_hybrid.to_csv(os.path.join(output_dir, 'Solar (Hybrid).csv'))
+    outputs_df_hybrid.to_csv(os.path.join(output_dir, 'Hybrid.csv'))
+
     display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only,
                     storage_only_dict=storage_only)
