@@ -1,5 +1,5 @@
 =============================
-hybrids_shared_infrastructure
+HybridBOSSE
 =============================
 
 
@@ -11,7 +11,7 @@ hybrids_shared_infrastructure
         :alt: Documentation Status
 
 
-Tool for estimating BOS costs for hybrid power plants that share infrastructure
+Hybrids Balance-of-System System Engineering (HybridBOSSE) is tool for estimating BOS costs for hybrid power plants that share infrastructure. The development of this tool was funded by the Department of Energy, and developed by researchers at the National Renewable Energy Laboratory (NREL).
 
 
 * Free software: MIT license
@@ -22,3 +22,4 @@ Features
 --------
 
 * TODO
+
