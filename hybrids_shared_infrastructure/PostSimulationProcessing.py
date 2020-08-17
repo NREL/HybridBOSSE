@@ -41,7 +41,7 @@ class PostSimulationProcessing:
                                     self.hybrid_gridconnection_usd + \
                                     self.hybrid_substation_usd - \
                                     self.LandBOSSE_BOS_results['total_gridconnection_cost'] - \
-                                    self.SolarBOSSE_results['total_transdist_cost'] - \
+                                    self.SolarBOSSE_results['total_gridconnection_cost'] - \
                                     self.LandBOSSE_BOS_results['total_substation_cost'] - \
                                     self.SolarBOSSE_results['substation_cost']
 
@@ -223,7 +223,7 @@ class PostSimulationProcessing:
 
         elif technology == 'solar' and BOS_dict['total_bos_cost'] > 0:
             BOS_dict.pop('substation_cost')
-            BOS_dict.pop('total_transdist_cost')
+            BOS_dict.pop('total_gridconnection_cost')
             BOS_dict.pop('total_management_cost')
             BOS_dict.pop('epc_developer_profit')
             BOS_dict.pop('bonding_usd')

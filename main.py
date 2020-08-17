@@ -245,7 +245,7 @@ def display_results(size_MW, hybrid_dict, wind_only_dict, solar_only_dict):
     hybrids_df = hybrids_df.append(hybrids_wind_df, ignore_index=True)
 
     solar_only_bos = dict()
-    solar_only_bos['gridconnection_usd'] = solar_only_dict['total_transdist_cost']
+    solar_only_bos['gridconnection_usd'] = solar_only_dict['total_gridconnection_cost']
     solar_only_bos['substation_cost'] = solar_only_dict['substation_cost']
     solar_only_bos['total_management_cost'] = solar_only_dict['total_management_cost']
 
@@ -275,148 +275,166 @@ def display_results(size_MW, hybrid_dict, wind_only_dict, solar_only_dict):
     return hybrids_df, solar_only_bos_df, wind_only_bos_df
 
 
-size = 151.5
-min_size = size
-max_size = 499.5
+# size = 5
+# min_size = size
+# max_size = 10
+#
+grid_size_multiplier = 0.5
+max_grid = 1
+#
+# x = np.arange(size, (max_size + 2.5), 2.5)
+# solar_only_BOS_results = dict()
+# wind_only_BOS_results = dict()
+# hybrid_BOS_results = dict()
+#
+# hybrid_csv = pd.DataFrame()
+# solar_csv = pd.DataFrame()
+# wind_csv = pd.DataFrame()
 
-grid_size_multiplier = 1
-
-x = np.arange(size, (max_size + 1.5), 1.5)
-solar_only_BOS_results = dict()
-wind_only_BOS_results = dict()
-hybrid_BOS_results = dict()
-
-hybrid_csv = pd.DataFrame()
-solar_csv = pd.DataFrame()
-wind_csv = pd.DataFrame()
 # hybrid_csv = pd.DataFrame(columns=['Project Rating (MW)', 'BOS Component', 'USD'])
 # solar_csv = pd.DataFrame(columns=['Project Rating (MW)', 'BOS Component', 'USD'])
 # wind_csv = pd.DataFrame(columns=['Project Rating (MW)', 'BOS Component', 'USD'])
 
-while size <= max_size:
-    override_dict = dict()
+while grid_size_multiplier <= max_grid:
+    size = 5
+    min_size = size
+    max_size = 500
 
-    # Grid Connection, and Substation rating
-    grid_size = size * grid_size_multiplier * 2
-    override_dict['grid_interconnection_rating_MW'] = grid_size
-    if grid_size > 15:
-        override_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
-    else:
-        override_dict['distance_to_interconnect_mi'] = 0
+    x = np.arange(size, (max_size + 2.5), 2.5)
+    solar_only_BOS_results = dict()
+    wind_only_BOS_results = dict()
+    hybrid_BOS_results = dict()
 
-    if grid_size < 20:
-        override_dict['interconnect_voltage_kV'] = 15
-    elif 20 < grid_size < 40:
-        override_dict['interconnect_voltage_kV'] = 34.5
-    elif 40 <= grid_size < 75:
-        override_dict['interconnect_voltage_kV'] = 69       # should be 69
-    elif grid_size >= 75:
-        override_dict['interconnect_voltage_kV'] = 138      # should be 138
+    hybrid_csv = pd.DataFrame()
+    solar_csv = pd.DataFrame()
+    wind_csv = pd.DataFrame()
+    print('grid rating: ', grid_size_multiplier)
+    while size <= max_size:
 
-    override_dict['hybrid_substation_rating_MW'] = grid_size
+        override_dict = dict()
 
-    override_dict['num_turbines'] = size / 1.5
-    override_dict['solar_system_size_MW_DC'] = size
-    override_dict['wind_plant_size_MW'] = size
-    override_dict['wind_construction_time_months'] = (0.2745 * size) + 2.8235
-    override_dict['solar_construction_time_months'] = (0.2745 * size) + 2.8235
+        # Grid Connection, and Substation rating
+        grid_size = size * grid_size_multiplier * 2
+        override_dict['grid_interconnection_rating_MW'] = grid_size
+        if grid_size > 15:
+            override_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
+        else:
+            override_dict['distance_to_interconnect_mi'] = 0
 
-    # Assign override_dict to hybrids_scenario_dict:
-    hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+        if grid_size < 20:
+            override_dict['interconnect_voltage_kV'] = 15
+        elif 20 <= grid_size < 40:
+            override_dict['interconnect_voltage_kV'] = 34.5
+        elif 40 <= grid_size < 75:
+            override_dict['interconnect_voltage_kV'] = 69       # should be 69
+        elif grid_size >= 75:
+            override_dict['interconnect_voltage_kV'] = 138      # should be 138
 
-    # project list file for utility scale
-    if size > 15:
-        hybrids_scenario_dict['name_of_project_list'] = 'project_list_ copy'
-    else:
-        hybrids_scenario_dict[
-            'override_total_management_cost'] = (191304 * size) + 1000000
+        override_dict['hybrid_substation_rating_MW'] = grid_size
 
-    hybrids_scenario_dict['development_labor_cost_usd'] = 170000 * size
-    hybrids_scenario_dict['hybrid_plant_size_MW'] = override_dict['wind_plant_size_MW'] + \
-                                                    override_dict['solar_system_size_MW_DC']
+        override_dict['num_turbines'] = size / 2.5
+        override_dict['solar_system_size_MW_DC'] = size
+        override_dict['wind_plant_size_MW'] = size
+        override_dict['wind_construction_time_months'] = ((0.2745 * size) + 2.8235) * 2
+        override_dict['solar_construction_time_months'] = ((0.2745 * size) + 2.8235) * 2
 
-    hybrids_scenario_dict['wind_construction_time_months'] = \
-                                    override_dict['wind_construction_time_months']
+        # Assign override_dict to hybrids_scenario_dict:
+        hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 
-    hybrids_scenario_dict['solar_construction_time_months'] = \
-                                    override_dict['solar_construction_time_months']
+        # project list file for utility scale
+        if size > 15:
+            hybrids_scenario_dict['name_of_project_list'] = 'project_list_hybrid_baseline'
+        else:
+            hybrids_scenario_dict[
+                'override_total_management_cost'] = (191304 * size) + 1000000
 
-    hybrids_scenario_dict['hybrid_construction_months'] = \
-        hybrids_scenario_dict['wind_construction_time_months'] + \
-        hybrids_scenario_dict['solar_construction_time_months']
+        hybrids_scenario_dict['development_labor_cost_usd'] = 17000 * size
+        hybrids_scenario_dict['hybrid_plant_size_MW'] = override_dict['wind_plant_size_MW'] + \
+                                                        override_dict['solar_system_size_MW_DC']
 
-    hybrids_scenario_dict['grid_interconnection_rating_MW'] = \
-                                        override_dict['grid_interconnection_rating_MW']
+        hybrids_scenario_dict['wind_construction_time_months'] = \
+                                        override_dict['wind_construction_time_months']
 
-    hybrids_scenario_dict['wind_dist_interconnect_mi'] = override_dict['distance_to_interconnect_mi']
-    hybrids_scenario_dict['solar_dist_interconnect_mi'] = override_dict['distance_to_interconnect_mi']
-    hybrids_scenario_dict['distance_to_interconnect_mi'] = override_dict['distance_to_interconnect_mi']
+        hybrids_scenario_dict['solar_construction_time_months'] = \
+                                        override_dict['solar_construction_time_months']
 
-    hybrids_scenario_dict['hybrid_substation_rating_MW'] = override_dict['hybrid_substation_rating_MW']
+        hybrids_scenario_dict['hybrid_construction_months'] = \
+            hybrids_scenario_dict['wind_construction_time_months'] + \
+            hybrids_scenario_dict['solar_construction_time_months']
 
-    hybrids_scenario_dict['interconnect_voltage_kV'] = override_dict['interconnect_voltage_kV']
+        hybrids_scenario_dict['grid_interconnection_rating_MW'] = \
+                                            override_dict['grid_interconnection_rating_MW']
 
-    hybrids_scenario_dict['num_turbines'] = override_dict['num_turbines']
-    hybrids_scenario_dict['solar_system_size_MW_DC'] = override_dict['solar_system_size_MW_DC']
-    hybrids_scenario_dict['wind_plant_size_MW'] = override_dict['wind_plant_size_MW']
+        hybrids_scenario_dict['wind_dist_interconnect_mi'] = override_dict['distance_to_interconnect_mi']
+        hybrids_scenario_dict['solar_dist_interconnect_mi'] = override_dict['distance_to_interconnect_mi']
+        hybrids_scenario_dict['distance_to_interconnect_mi'] = override_dict['distance_to_interconnect_mi']
 
-    hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
-    # print(hybrid_results)
-    hybrid_df, solar_df, wind_df = display_results(size,
-                                                   hybrid_results,
-                                                   wind_only_dict=wind_only,
-                                                   solar_only_dict=solar_only)
+        hybrids_scenario_dict['hybrid_substation_rating_MW'] = override_dict['hybrid_substation_rating_MW']
 
-    hybrid_csv = hybrid_csv.append(hybrid_df)
-    solar_csv = solar_csv.append(solar_df)
-    wind_csv = wind_csv.append(wind_df)
+        hybrids_scenario_dict['interconnect_voltage_kV'] = override_dict['interconnect_voltage_kV']
 
-    hybrid_BOS_results[str(size)] = hybrid_results['hybrid']['hybrid_BOS_usd_watt']
-    wind_only_BOS_results[str(size)] = wind_only['total_bos_cost'] / (size * 1e6)
-    solar_only_BOS_results[str(size)] = solar_only['total_bos_cost'] / (size * 1e6)
+        hybrids_scenario_dict['num_turbines'] = override_dict['num_turbines']
+        hybrids_scenario_dict['solar_system_size_MW_DC'] = override_dict['solar_system_size_MW_DC']
+        hybrids_scenario_dict['wind_plant_size_MW'] = override_dict['wind_plant_size_MW']
 
-    size += 1.5  # 1.5 because turbine rating is 1.5 MW
+        hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
+        # print(hybrid_results)
+        hybrid_df, solar_df, wind_df = display_results(size,
+                                                       hybrid_results,
+                                                       wind_only_dict=wind_only,
+                                                       solar_only_dict=solar_only)
 
-# print(hybrid_BOS_results)
-# print(wind_only_BOS_results)
-# print(solar_only_BOS_results)
-path = '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/' \
-       'shared_infra_outputs/'
-hybrid_csv.to_csv(path + 'hybrids.csv', index=False)
-solar_csv.to_csv(path + 'solar.csv', index=False)
-wind_csv.to_csv(path + 'wind.csv', index=False)
+        hybrid_csv = hybrid_csv.append(hybrid_df)
+        solar_csv = solar_csv.append(solar_df)
+        wind_csv = wind_csv.append(wind_df)
 
-writer = pd.ExcelWriter(path + 'BOS_results.xlsx',
-                        engine='xlsxwriter',
-                        options={'strings_to_numbers': True})
+        hybrid_BOS_results[str(size)] = hybrid_results['hybrid']['hybrid_BOS_usd_watt']
+        wind_only_BOS_results[str(size)] = wind_only['total_bos_cost'] / (size * 1e6)
+        solar_only_BOS_results[str(size)] = solar_only['total_bos_cost'] / (size * 1e6)
 
-df = pd.read_csv(path + 'hybrids.csv')
-df.to_excel(writer, sheet_name='hybrids', index=False)
+        size += 2.5  # 2.5 because turbine rating is 2.5 MW
 
-df = pd.read_csv(path + 'solar.csv')
-df.to_excel(writer, sheet_name='solar', index=False)
+    # print(hybrid_BOS_results)
+    # print(wind_only_BOS_results)
+    # print(solar_only_BOS_results)
+    path = '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/' \
+           'shared_infra_outputs/'
+    hybrid_csv.to_csv(path + 'hybrids_' + str(100*grid_size_multiplier) + '_percent_grid.csv', index=False)
+    solar_csv.to_csv(path + 'solar_' + str(100*grid_size_multiplier) + '_percent_grid.csv', index=False)
+    wind_csv.to_csv(path + 'wind_' + str(100*grid_size_multiplier) + '_percent_grid.csv', index=False)
 
-df = pd.read_csv(path + 'wind.csv')
-df.to_excel(writer, sheet_name='wind', index=False)
+    writer = pd.ExcelWriter(path + 'BOS_results_' + str(100*grid_size_multiplier) + '_percent_grid.xlsx',
+                            engine='xlsxwriter',
+                            options={'strings_to_numbers': True})
 
-writer.save()
+    df = pd.read_csv(path + 'hybrids_' + str(100*grid_size_multiplier) + '_percent_grid.csv')
+    df.to_excel(writer, sheet_name='hybrids', index=False)
 
-# hybrid_y = np.asarray(list(hybrid_BOS_results.values()))
-# wind_y = np.asarray(list(wind_only_BOS_results.values()))
-# solar_y = np.asarray(list(solar_only_BOS_results.values()))
-#
-# plt.plot(x, hybrid_y, '-g', label='Hybrid BOS CAPEX - Interconnection Rating = Project Rating '
-#                                   '($/Watt)')
-#
-# plt.plot(x, wind_y, '-b', label='Wind Only BOS CAPEX ($/Watt)')
-# plt.plot(x, solar_y, '#FF4500', label='Solar Only BOS CAPEX ($/Watt)')
-# plt.ylabel('$/Watt')
-# plt.xlabel('Project Rating (MW)')
-# # plt.xticks(np.arange(min_size, max_size+1, 1), rotation=70)
-# plt.legend()
-# # plt.legend(loc='upper center', bbox_to_anchor=(1, 0), ncol=3)
-# plt.show()
-#
-# width = 3.5
-# plt.bar(x, wind_y, width)
-# plt.show()
+    df = pd.read_csv(path + 'solar_' + str(100*grid_size_multiplier) + '_percent_grid.csv')
+    df.to_excel(writer, sheet_name='solar', index=False)
+
+    df = pd.read_csv(path + 'wind_' + str(100*grid_size_multiplier) + '_percent_grid.csv')
+    df.to_excel(writer, sheet_name='wind', index=False)
+
+    writer.save()
+
+    # hybrid_y = np.asarray(list(hybrid_BOS_results.values()))
+    # wind_y = np.asarray(list(wind_only_BOS_results.values()))
+    # solar_y = np.asarray(list(solar_only_BOS_results.values()))
+    #
+    # plt.plot(x, hybrid_y, '-g', label='Hybrid BOS CAPEX - Interconnection Rating = Project Rating '
+    #                                   '($/Watt)')
+    #
+    # plt.plot(x, wind_y, '-b', label='Wind Only BOS CAPEX ($/Watt)')
+    # plt.plot(x, solar_y, '#FF4500', label='Solar Only BOS CAPEX ($/Watt)')
+    # plt.ylabel('$/Watt')
+    # plt.xlabel('Project Rating (MW)')
+    # # plt.xticks(np.arange(min_size, max_size+1, 1), rotation=70)
+    # plt.legend()
+    # # plt.legend(loc='upper center', bbox_to_anchor=(1, 0), ncol=3)
+    # plt.show()
+    #
+    # width = 3.5
+    # plt.bar(x, wind_y, width)
+    # plt.show()
+    grid_size_multiplier += 0.1

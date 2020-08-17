@@ -57,9 +57,9 @@ def run_solarbosse(input_dictionary):
         # that are 3 layers deep (but 1-D)
         results['total_bos_cost'] = output_dict['total_bos_cost']
         results['total_racking_cost'] = output_dict['total_racking_cost_USD']
-        results['siteprep_cost'] = output_dict['total_road_cost']
+        results['total_sitepreparation_cost'] = output_dict['total_road_cost']
         results['substation_cost'] = output_dict['total_substation_cost']
-        results['total_transdist_cost'] = output_dict['total_transdist_cost']
+        results['total_gridconnection_cost'] = output_dict['total_transdist_cost']
 
         results['total_management_cost'] = output_dict['total_management_cost']
         results['epc_developer_profit'] = output_dict['epc_developer_profit']
