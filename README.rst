@@ -21,5 +21,4 @@ Hybrids Balance-of-System System Engineering (HybridBOSSE) is a tool for estimat
 Features
 --------
 
-* TODO
-![system_architecture](https://github.com/parangat94/HybridBOSSE/blob/develop/images/hybrid%20infrastructure.png)
+![image](https://github.com/parangat94/HybridBOSSE/blob/develop/images/hybrid%20infrastructure.png)
