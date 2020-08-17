@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+# requirements = ['Click>=7.0', ]
 
 setup_requirements = ['pytest-runner', ]
 
@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    description="Tool for estimating BOS costs for hybrid power plants that share infrastructure",
+    description="Tool for estimating BOS costs for hybrid power plants that share a physical infrastructure",
     entry_points={
         'console_scripts': [
             'hybrids_shared_infrastructure=hybrids_shared_infrastructure.cli:main',
