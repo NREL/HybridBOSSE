@@ -49,7 +49,7 @@ setup(
         'scipy==1.3.1',
         'xlsxwriter==1.2.1',
         'xlrd==1.2.0',
-        'pytest==5.3.5'
+        'pytest==5.3.5',
         'PyYaml==5.1.2'
     ],
     packages=['hybridbosse', 'hybridbosse.hybrids_shared_infrastructure',
@@ -67,6 +67,6 @@ setup(
     # test_suite='tests',
     # tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='0.9.7',
+    version='0.9.8',
     # zip_safe=False,
 )
