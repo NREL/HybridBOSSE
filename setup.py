@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+# requirements = ['Click>=7.0', ]
 
 setup_requirements = ['pytest-runner', ]
 
@@ -34,7 +34,7 @@ setup(
             'hybrids_shared_infrastructure=hybrids_shared_infrastructure.cli:main',
         ],
     },
-    install_requires=requirements,
+    # install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
@@ -45,6 +45,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='1.2',
+    version='1.3',
     zip_safe=False,
 )
