@@ -31,11 +31,11 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description="Tool for estimating BOS costs for hybrid power plants that share a physical infrastructure",
-    entry_points={
-        'console_scripts': [
-            'hybrids_shared_infrastructure=hybrids_shared_infrastructure.cli:main',
-        ],
-    },
+    # entry_points={
+    #     'console_scripts': [
+    #         'hybrids_shared_infrastructure=hybrids_shared_infrastructure.cli:main',
+    #     ],
+    # },
     # install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
@@ -48,6 +48,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='0.3',
+    version='0.4',
     zip_safe=False,
 )
