@@ -5,6 +5,7 @@ from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from HydroBOSSE.model.Manager import Manager
 
 
+
 def run_hydrobosse(input_dictionary):
     input_output_path = os.path.dirname(__file__)
     # HydroBOSSE uses LandBOSSE's Excel I/O library for reading in data from Excel
@@ -152,6 +153,7 @@ input_dict['grid_size_MW_AC'] = size
 input_dict['head_height_ft'] = head_height
 input_dict['greenfield_or_existing'] = 'existing infrastructure'
 
+df_out = pd.DataFrame()
 for project_type in project_types:
     input_dict['project_type'] = project_type  # Non-powered Dam, New Stream-reach Development,\
     # Canal/Conduit Project, Pumped Storage Hydropower Project, Unit Addition Project, Generator Rewind Project
@@ -159,11 +161,12 @@ for project_type in project_types:
     # Run HydroBOSSE
     BOS_results, detailed_results = run_hydrobosse(input_dict)
 
+    df_out = df_out.append(BOS_results, sort=False)
     # Print Results
     print(BOS_results)
     bos_capex_total = BOS_results['total_bos_cost']
     bos_capex = bos_capex_total / (size * 1e6)
     print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
 
-
+print(df_out)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
