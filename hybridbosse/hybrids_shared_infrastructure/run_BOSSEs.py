@@ -22,7 +22,7 @@ def run_BOSSEs(hybrids_input_dict):
     wind_input_dict['grid_system_size_MW'] = hybrids_input_dict['grid_interconnection_rating_MW'] / 2
 
     # delete line once finished debugging:
-    print('wind grid rating : ', wind_input_dict['grid_system_size_MW'])
+    # print('wind grid rating : ', wind_input_dict['grid_system_size_MW'])
 
     wind_input_dict['substation_rating_MW'] = hybrids_input_dict['hybrid_substation_rating_MW'] / 2
 
@@ -87,7 +87,7 @@ def run_BOSSEs(hybrids_input_dict):
         solar_input_dict['grid_size_MW_AC'] = solar_input_dict['grid_system_size_MW_DC']
 
     # delete line once finished debugging:
-    print('solar grid rating : ', solar_input_dict['grid_size_MW_AC'])
+    # print('solar grid rating : ', solar_input_dict['grid_size_MW_AC'])
 
     solar_input_dict['substation_rating_MW'] = hybrids_input_dict['hybrid_substation_rating_MW'] / 2
 
