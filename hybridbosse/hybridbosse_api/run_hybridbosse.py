@@ -15,19 +15,21 @@ def run(hybrids_input_dict):
     wind_only_BOS = wind_BOS.copy()
     solar_only_BOS = solar_BOS.copy()
 
-    print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
-    print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
+    # print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
+    # print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
     if hybrids_input_dict['wind_plant_size_MW'] > 0:
         # BOS of Wind only power plant:
-        print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
-                             (hybrids_input_dict['wind_plant_size_MW'] * 1e6)))
+        print('')
+        # print('Wind BOS: ', (wind_BOS['total_bos_cost'] /
+        #                      (hybrids_input_dict['wind_plant_size_MW'] * 1e6)))
     else:
         wind_BOS['total_management_cost'] = 0
 
     if hybrids_input_dict['solar_system_size_MW_DC'] > 0:
         # BOS of Solar only power plant:
-        print('Solar BOS: ', (solar_BOS['total_bos_cost'] /
-                              (hybrids_input_dict['solar_system_size_MW_DC'] * 1e6)))
+        print('')
+        # print('Solar BOS: ', (solar_BOS['total_bos_cost'] /
+        #                       (hybrids_input_dict['solar_system_size_MW_DC'] * 1e6)))
     else:
         solar_BOS['total_management_cost'] = 0
 
