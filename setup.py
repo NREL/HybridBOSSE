@@ -42,6 +42,7 @@ setup(
     # include_package_data=True,
     keywords='HybridBOSSE',
     name='hybridbosse',
+    include_package_data=True,
     install_requires=[
         'pandas==1.0.3',
         'numpy==1.17.2',
@@ -67,6 +68,6 @@ setup(
     # test_suite='tests',
     # tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='0.9.9.1',
+    version='0.9.9.2',
     # zip_safe=False,
 )
