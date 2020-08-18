@@ -12,9 +12,9 @@ with open('HISTORY.rst') as history_file:
 
 # requirements = ['Click>=7.0', ]
 
-setup_requirements = ['pytest-runner', ]
+# setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest>=3', ]
+# test_requirements = ['pytest>=3', ]
 
 setup(
     author="Parangat Bhaskar",
@@ -39,7 +39,7 @@ setup(
     # install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
-    include_package_data=True,
+    # include_package_data=True,
     keywords='HybridBOSSE',
     name='hybridbosse',
     packages=['hybrids_shared_infrastructure', 'LandBOSSE', 'LandBOSSE.landbosse.model',
@@ -51,10 +51,10 @@ setup(
     #                                 'SolarBOSSE', 'SolarBOSSE.*', 'LandBOSSE', 'LandBOSSE.*', 'hybridbosse_api',
     #                                 'hybridbosse_api.*']),
 
-    setup_requires=setup_requirements,
-    test_suite='tests',
-    tests_require=test_requirements,
+    # setup_requires=setup_requirements,
+    # test_suite='tests',
+    # tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='0.8',
+    version='0.9',
     # zip_safe=False,
 )
