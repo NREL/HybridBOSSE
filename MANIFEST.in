@@ -3,10 +3,10 @@ include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
-include LandBOSSE/landbosse/landbosse_api/project_list.xlsx
-include LandBOSSE/landbosse/landbosse_api/project_data/ge15_public.xlsx
-include SolarBOSSE/project_list_50MW.xlsx
-include SolarBOSSE/project_data/project_data_defaults.xlsx
+include hybridbosse/LandBOSSE/landbosse/landbosse_api/project_list.xlsx
+include hybridbosse/LandBOSSE/landbosse/landbosse_api/project_data/ge15_public.xlsx
+include hybridbosse/SolarBOSSE/project_list_50MW.xlsx
+include hybridbosse/SolarBOSSE/project_data/project_data_defaults.xlsx
 
 recursive-include tests *
 recursive-exclude * __pycache__
