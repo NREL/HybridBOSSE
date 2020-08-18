@@ -7,7 +7,6 @@ include LandBOSSE/landbosse/landbosse_api/project_list.xlsx
 include LandBOSSE/landbosse/landbosse_api/project_data/ge15_public.xlsx
 include SolarBOSSE/project_list_50MW.xlsx
 include SolarBOSSE/project_data/project_data_defaults.xlsx
-include main.py
 
 recursive-include tests *
 recursive-exclude * __pycache__

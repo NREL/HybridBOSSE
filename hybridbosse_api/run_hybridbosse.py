@@ -85,11 +85,11 @@ def read_hybrid_scenario(file_path):
     return hybrids_scenario_dict
 
 
-yaml_file_path = dict()
-
-# Some preset scenarios:
+# yaml_file_path = dict()
 #
-# hybrid_inputs_7.5_7.5_7.5
+# # Some preset scenarios:
+# #
+# # hybrid_inputs_7.5_7.5_7.5
 # yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
 #                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
 #                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
@@ -214,39 +214,39 @@ yaml_file_path = dict()
 #                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_195.yaml'
 
 
-def display_results(hybrid_dict, wind_only_dict, solar_only_dict):
+# def display_results(hybrid_dict, wind_only_dict, solar_only_dict):
+#
+#     hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
+#
+#     hybrids_solar_df = pd.DataFrame(
+#         hybrid_dict['Solar_BOS_results'].items(), columns=['Type', 'USD'])
+#
+#     hybrids_wind_df = pd.DataFrame(
+#         hybrid_dict['Wind_BOS_results'].items(), columns=['Type', 'USD'])
+#
+#     solar_only_bos = dict()
+#     solar_only_bos['gridconnection_usd'] = solar_only_dict['total_transdist_cost']
+#     solar_only_bos['substation_cost'] = solar_only_dict['substation_cost']
+#     solar_only_bos['total_management_cost'] = solar_only_dict['total_management_cost']
+#
+#     solar_only_bos_df = pd.DataFrame(
+#         solar_only_bos.items(), columns=['Solar Only BOS Component', 'USD'])
+#
+#     wind_only_bos = dict()
+#     wind_only_bos['total_gridconnection_cost'] = wind_only_dict['total_gridconnection_cost']
+#     wind_only_bos['total_substation_cost'] = wind_only_dict['total_substation_cost']
+#     wind_only_bos['total_management_cost'] = wind_only_dict['total_management_cost']
+#     wind_only_bos_df = pd.DataFrame(
+#         wind_only_bos.items(), columns=['Wind Only BOS Component', 'USD'])
+#
+#     print(hybrids_df)
+#     print(solar_only_bos_df)
+#     print(wind_only_bos_df)
+#
+#     return hybrids_df, hybrids_solar_df, hybrids_wind_df, solar_only_bos, wind_only_bos
 
-    hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
 
-    hybrids_solar_df = pd.DataFrame(
-        hybrid_dict['Solar_BOS_results'].items(), columns=['Type', 'USD'])
-
-    hybrids_wind_df = pd.DataFrame(
-        hybrid_dict['Wind_BOS_results'].items(), columns=['Type', 'USD'])
-
-    solar_only_bos = dict()
-    solar_only_bos['gridconnection_usd'] = solar_only_dict['total_transdist_cost']
-    solar_only_bos['substation_cost'] = solar_only_dict['substation_cost']
-    solar_only_bos['total_management_cost'] = solar_only_dict['total_management_cost']
-
-    solar_only_bos_df = pd.DataFrame(
-        solar_only_bos.items(), columns=['Solar Only BOS Component', 'USD'])
-
-    wind_only_bos = dict()
-    wind_only_bos['total_gridconnection_cost'] = wind_only_dict['total_gridconnection_cost']
-    wind_only_bos['total_substation_cost'] = wind_only_dict['total_substation_cost']
-    wind_only_bos['total_management_cost'] = wind_only_dict['total_management_cost']
-    wind_only_bos_df = pd.DataFrame(
-        wind_only_bos.items(), columns=['Wind Only BOS Component', 'USD'])
-
-    print(hybrids_df)
-    print(solar_only_bos_df)
-    print(wind_only_bos_df)
-
-    return hybrids_df, hybrids_solar_df, hybrids_wind_df, solar_only_bos, wind_only_bos
-
-
-hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
-hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
-print(hybrid_results)
-display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only)
+# hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+# hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
+# print(hybrid_results)
+# display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only)
