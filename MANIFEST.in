@@ -5,11 +5,6 @@ include LICENSE
 include README.rst
 include hybridbosse/LandBOSSE/landbosse/landbosse_api/project_list.xlsx
 include hybridbosse/LandBOSSE/landbosse/landbosse_api/project_data/ge15_public.xlsx
+include hybridbosse/LandBOSSE/landbosse/landbosse_api/project_data/az_rolling.srw
 include hybridbosse/SolarBOSSE/project_list_50MW.xlsx
 include hybridbosse/SolarBOSSE/project_data/project_data_defaults.xlsx
-
-recursive-include tests *
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
-
-recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif
