@@ -31,8 +31,10 @@ def run_BOSSEs(hybrids_input_dict):
                                         hybrids_input_dict['override_total_management_cost']
 
     wind_input_dict['project_id'] = hybrids_input_dict['project_id']
-    wind_input_dict['path_to_project_list'] = hybrids_input_dict['path_to_project_list']
-    wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_project_list']
+    if 'path_to_project_list' in hybrids_input_dict:
+        wind_input_dict['path_to_project_list'] = hybrids_input_dict['path_to_project_list']
+    if 'name_of_project_list' in hybrids_input_dict:
+        wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_project_list']
     if 'development_labor_cost_usd' in hybrids_input_dict:
         wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
 
