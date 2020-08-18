@@ -48,6 +48,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='0.4e',
+    version='0.4',
     zip_safe=False,
 )
