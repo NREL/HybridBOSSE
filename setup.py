@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-# requirements = ['Click>=7.0', ]
+requirements = ['Click>=7.0', ]
 
 setup_requirements = ['pytest-runner', ]
 
@@ -40,11 +40,11 @@ setup(
     include_package_data=True,
     keywords='HybridBOSSE',
     name='hybridbosse',
-    packages=find_packages(include=['hybrids_shared_infrastructure', 'hybrids_shared_infrastructure.*', 'landbosse']),
+    packages=find_packages(include=['hybrids_shared_infrastructure', 'hybrids_shared_infrastructure.*', 'SolarBOSSE', 'LandBOSSE']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/parangat94/hybridbosse',
-    version='1.1',
+    version='1.2',
     zip_safe=False,
 )
