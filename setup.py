@@ -42,6 +42,16 @@ setup(
     # include_package_data=True,
     keywords='HybridBOSSE',
     name='hybridbosse',
+    install_requires=[
+        'pandas==1.0.3',
+        'numpy==1.17.2',
+        'sympy==1.4',
+        'scipy==1.3.1',
+        'xlsxwriter==1.2.1',
+        'xlrd==1.2.0',
+        'pytest==5.3.5'
+        'PyYaml==5.1.2'
+    ],
     packages=['hybridbosse', 'hybridbosse.hybrids_shared_infrastructure',
               'hybridbosse.LandBOSSE', 'hybridbosse.LandBOSSE.landbosse.model',
               'hybridbosse.LandBOSSE.landbosse.excelio', 'hybridbosse.LandBOSSE.landbosse.tests',
