@@ -87,168 +87,52 @@ def read_hybrid_scenario(file_path):
     return hybrids_scenario_dict
 
 
-# yaml_file_path = dict()
-#
-# # Some preset scenarios:
-# #
-# # hybrid_inputs_7.5_7.5_7.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
+hybrids_input_dict = dict()
+hybrids_input_dict['shared_interconnection'] = True
+hybrids_input_dict['distance_to_interconnect_mi'] = 1  # Input not used for projects <= 15 MW
+hybrids_input_dict['new_switchyard'] = True
+hybrids_input_dict['grid_interconnection_rating_MW'] = 7.5
+hybrids_input_dict['interconnect_voltage_kV'] = 15
+hybrids_input_dict['shared_substation'] = True
+hybrids_input_dict['hybrid_substation_rating_MW'] = 7.5
 
-# hybrid_inputs_7.5_7.5_15
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_15.yaml'
+# Wind farm required inputs
+hybrids_input_dict['num_turbines'] = 5
+hybrids_input_dict['turbine_rating_MW'] = 1.5
+hybrids_input_dict['wind_dist_interconnect_mi'] = 0    # Only used for calculating grid cost of wind only. Input not used for projects <= 15 MW
+hybrids_input_dict['wind_construction_time_months'] = 5
+hybrids_input_dict['project_id'] = 'hybrids'
+# hybrids_input_dict['path_to_project_list'] = '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
+# hybrids_input_dict['name_of_project_list'] = 'project_list_ge15_dist_05'
 
-# hybrid_inputs_15_15_15
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_15_15_15.yaml'
+# Solar farm required inputs
+hybrids_input_dict['solar_system_size_MW_DC'] = 7.5
+hybrids_input_dict['solar_construction_time_months'] = 5   # Optional. Overrides the internal scaling MW vs. construction time relationship
+hybrids_input_dict['solar_dist_interconnect_mi'] = 0   # Only
 
-# hybrid_inputs_22.5_22.5_22.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_22.5.yaml'
+# pre-processed input data:
+hybrids_input_dict['wind_plant_size_MW'] = hybrids_input_dict['num_turbines'] * \
+                                           hybrids_input_dict['turbine_rating_MW']
 
-# hybrid_inputs_22.5_22.5_45
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_45.yaml'
+hybrids_input_dict['hybrid_plant_size_MW'] = hybrids_input_dict['wind_plant_size_MW'] + \
+                                             hybrids_input_dict['solar_system_size_MW_DC']
 
-# hybrid_inputs_30_30_30
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_30_30_30.yaml'
-
-# # hybrid_inputs_30_30_60
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_30_30_60.yaml'
-#
-# # hybrid_inputs_37.5_37.5_37.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_37.5_37.5_37.5.yaml'
-
-# # hybrid_inputs_37.5_37.5_75
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-
-# hybrid_inputs_45_45_45
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_45_45_45.yaml'
-
-# hybrid_inputs_45_45_90
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_45_45_90.yaml'
-
-# hybrid_inputs_52.5_52.5_52.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_52.5_52.5_52.5.yaml'
-
-# hybrid_inputs_52.5_52.5_105
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_52.5_52.5_105.yaml'
-
-# hybrid_inputs_60_60_60
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_60_60_60.yaml'
-
-# hybrid_inputs_60_60_60
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_60_60_120.yaml'
-
-# hybrid_inputs_67.5_67.5_67.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_67.5_67.5_67.5.yaml'
-
-# hybrid_inputs_67.5_67.5_130
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_67.5_67.5_130.yaml'
-
-# hybrid_inputs_75_75_75
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_75_75_75.yaml'
-
-# hybrid_inputs_75_75_150
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_75_75_150.yaml'
-
-# hybrid_inputs_82.5_82.5_82.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_82.5_82.5_82.5.yaml'
-
-# hybrid_inputs_82.5_82.5_165
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_82.5_82.5_165.yaml'
-
-# hybrid_inputs_90_90_90
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_90_90_90.yaml'
-
-# hybrid_inputs_90_90_180
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_90_90_180.yaml'
-
-# hybrid_inputs_97.5_97.5_97.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_97.5.yaml'
-
-# hybrid_inputs_97.5_97.5_195
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_195.yaml'
+hybrids_input_dict['hybrid_construction_months'] = \
+    hybrids_input_dict['wind_construction_time_months'] + \
+    hybrids_input_dict['solar_construction_time_months']
 
 
-# def display_results(hybrid_dict, wind_only_dict, solar_only_dict):
-#
-#     hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
-#
-#     hybrids_solar_df = pd.DataFrame(
-#         hybrid_dict['Solar_BOS_results'].items(), columns=['Type', 'USD'])
-#
-#     hybrids_wind_df = pd.DataFrame(
-#         hybrid_dict['Wind_BOS_results'].items(), columns=['Type', 'USD'])
-#
-#     solar_only_bos = dict()
-#     solar_only_bos['gridconnection_usd'] = solar_only_dict['total_transdist_cost']
-#     solar_only_bos['substation_cost'] = solar_only_dict['substation_cost']
-#     solar_only_bos['total_management_cost'] = solar_only_dict['total_management_cost']
-#
-#     solar_only_bos_df = pd.DataFrame(
-#         solar_only_bos.items(), columns=['Solar Only BOS Component', 'USD'])
-#
-#     wind_only_bos = dict()
-#     wind_only_bos['total_gridconnection_cost'] = wind_only_dict['total_gridconnection_cost']
-#     wind_only_bos['total_substation_cost'] = wind_only_dict['total_substation_cost']
-#     wind_only_bos['total_management_cost'] = wind_only_dict['total_management_cost']
-#     wind_only_bos_df = pd.DataFrame(
-#         wind_only_bos.items(), columns=['Wind Only BOS Component', 'USD'])
-#
-#     print(hybrids_df)
-#     print(solar_only_bos_df)
-#     print(wind_only_bos_df)
-#
-#     return hybrids_df, hybrids_solar_df, hybrids_wind_df, solar_only_bos, wind_only_bos
+hybrid_results, wind_only, solar_only = run(hybrids_input_dict)
 
 
-# hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
-# hybrid_results, wind_only, solar_only = run(hybrids_scenario_dict)
-# print(hybrid_results)
-# display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only)
+print('Hybrid Dictionary Results:')
+print('')
+print(hybrid_results)
+print('')
+print('Wind Only Dictionary Results:')
+print('')
+print(wind_only)
+print('')
+print('Solar Only Dictionary Results:')
+print('')
+print(solar_only)
