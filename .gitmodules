@@ -1,3 +1,6 @@
 [submodule "LandBOSSE"]
 	path = LandBOSSE
 	url = https://github.com/WISDEM/LandBOSSE.git
+[submodule "hybridbosse/LandBOSSE"]
+	path = hybridbosse/LandBOSSE
+	url = https://github.com/WISDEM/LandBOSSE.git
