@@ -34,11 +34,10 @@ class Manager:
 
 
         # TODO: Replace these modules with appropriate components for Hydro:
-        # SitePrepCost:
-        # siteprep = SitePreparationCost(input_dict=self.input_dict,
-        #                                output_dict=self.output_dict,
-        #                                project_name=project_name)
-        # siteprep.run_module()
+        siteprep = SitePreparationCost(input_dict=self.input_dict,
+                                       output_dict=self.output_dict,
+                                       project_name=project_name)
+        siteprep.run_module()
         #
         #
         # # RackingSystemInstallation:

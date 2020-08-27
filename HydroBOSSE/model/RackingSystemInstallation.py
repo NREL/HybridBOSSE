@@ -2,7 +2,7 @@ import traceback
 import pandas as pd
 import math
 import numpy as np
-from .CostModule import CostModule
+from CostModule import CostModule
 
 
 class RackingSystemInstallation(CostModule):

@@ -111,6 +111,17 @@ def read_weather_data(file_path):
     return weather_data
 
 
+def read_hydro_data(file_path):
+    # metadata = pd.read_excel(file_path, sheet_name='Metadata', index_col=0)
+    # usacost = pd.read_excel('project_list_30MW.xlsx', sheet_name='USACost')
+    usacost = pd.read_excel(file_path, sheet_name='USACost')
+
+    # lcmcost = pd.read_excel('project_list_30MW.xlsx', sheet_name='LCMCosts')
+    return usacost
+
+
+
+
 class Error(Exception):
     """
         Base class for other exceptions
@@ -130,12 +141,15 @@ class NegativeInputError(Error):
 # sizes = [5, 50, 100]
 # head_height = [20, 90, 250] #feet
 
+
 project_types = ['Non-powered Dam', 'New Stream-reach Development',
                  'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
                  'Generator Rewind Project']
 
 # Set project input parameters
-size = 70  # MW
+size = 26  # MW
+# Go to the closed roundup value [1 10 30 100]
+
 head_height = 90  # feet
 
 # Create input and output dictionaries
@@ -145,12 +159,12 @@ BOS_results.update({str(size)+' MW scenario': ' '})
 
 # Set input parameters
 # input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
-input_dict['project_list'] = 'project_list_50MW'
+input_dict['project_list'] = 'project_list_30MW'
 input_dict['system_size_MW_DC'] = size
 input_dict['grid_system_size_MW_DC'] = size
 input_dict['grid_size_MW_AC'] = size
 input_dict['head_height_ft'] = head_height
-input_dict['greenfield_or_existing'] = 'existing infrastructure'
+input_dict['greenfield_or_existing'] = 'greenfield'
 
 for project_type in project_types:
     input_dict['project_type'] = project_type  # Non-powered Dam, New Stream-reach Development,\
@@ -161,9 +175,8 @@ for project_type in project_types:
 
     # Print Results
     print(BOS_results)
-    bos_capex_total = BOS_results['total_bos_cost']
+    bos_capex_total = BOS_results['total_icc_cost']
     bos_capex = bos_capex_total / (size * 1e6)
     print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
-
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

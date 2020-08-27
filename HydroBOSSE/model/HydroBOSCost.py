@@ -2,7 +2,7 @@ import math
 import traceback
 import pytest
 import traceback
-from .CostModule import CostModule
+from CostModule import CostModule
 
 
 class HydroBOSCost(CostModule):
@@ -38,6 +38,43 @@ class HydroBOSCost(CostModule):
         # Project CAPEX before management costs (USD)
         # self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt'] + \
         #                          (0.51 * self.input_dict['system_size_MW_DC'] * 1e6)
+
+    def total_initial_capital_cost(self):
+        """
+        Classifies project based on installed capacity size.
+        Determines total BOS cost based on installed capacity (MW) and head height (feet)
+        Cost data is sourced from: “Hydropower Baseline Cost Modelling, Version 2”
+         –Oak Ridge National Laboratory https://info.ornl.gov/sites/publications/files/Pub58666.pdf
+        """
+
+        P = self.input_dict['system_size_MW_DC']
+        H = self.input_dict['head_height_ft']
+
+        if self.input_dict['project_type'] == 'Non-powered Dam':
+            total_icc_cost = 11489245 * P**0.976 * H ** -0.240
+
+        if self.input_dict['project_type'] == 'New Stream-reach Development':
+            total_icc_cost = 9605710 * P**0.977 * H ** -0.126
+
+        if self.input_dict['project_type'] == 'Canal/Conduit Project':
+            total_icc_cost = 9297820 * P**0.810 * H ** -0.102
+
+        if self.input_dict['project_type'] == 'Pumped Storage Hydropower Project':
+            if self.input_dict['greenfield_or_existing'] == 'existing infrastructure':
+                total_icc_cost = 3008246 * P * math.exp(-0.000460*P)
+            elif self.input_dict['greenfield_or_existing'] == 'greenfield':
+                total_icc_cost = 4882655 * P * math.exp(-0.000776 * P)
+
+        if self.input_dict['project_type'] == 'Unit Addition Project':
+            total_icc_cost = 4163746 * P**0.741
+
+        if self.input_dict['project_type'] == 'Generator Rewind Project':
+            total_icc_cost = 250147 * P**0.817
+
+        self.output_dict['total_initial_capital_cost'] = total_icc_cost
+
+        return self.output_dict['total_initial_capital_cost']
+
 
     def total_bos_cost(self):
         """
