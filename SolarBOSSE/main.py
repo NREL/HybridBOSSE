@@ -34,6 +34,13 @@ def run_solarbosse(input_dictionary):
     for key, _ in input_dictionary.items():
         master_input_dict[key] = input_dictionary[key]
 
+    if 'grid_system_size_MW_DC' not in master_input_dict:
+        master_input_dict['grid_system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
+
+    if 'grid_size_MW_AC' not in master_input_dict:
+        master_input_dict['grid_size_MW_AC'] = \
+            master_input_dict['system_size_MW_DC'] / master_input_dict['dc_ac_ratio']
+
     # Manager class (1) manages the distribution of inout data for all modules
     # and (2) executes landbosse
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
@@ -123,43 +130,50 @@ class NegativeInputError(Error):
 # <><><><><><><><> EXAMPLE OF RUNNING THIS SolarBOSSE API <><><><><><><><><><><>
 # TODO: uncomment these lines to run SolarBOSSE as a standalone model.
 
-sizes = [5, 50, 100]
-sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
-sizes = [n for n in range(5, 105, 5)]
-
-for size in sizes:
-    input_dict = dict()
-    BOS_results = dict()
-    BOS_results.update({str(size)+' MW scenario': ' '})
-    input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
-
-    input_dict['project_list'] = 'project_list_50MW'
-
-    input_dict['system_size_MW_DC'] = size
-
-    if size <= 10:
-        input_dict['dist_interconnect_mi'] = 0
-    else:
-        input_dict['dist_interconnect_mi'] = (0.0263 * size) - 0.2632
-
-    if size > 50:
-        input_dict['construction_time_months'] = 24
-    elif size <= 20:
-        input_dict['construction_time_months'] = 12
-
-    elif size <= 10:
-        input_dict['construction_time_months'] = 6
-
-    if size <= 20:
-        input_dict['interconnect_voltage_kV'] = 34.5
-
-    BOS_results, detailed_results = run_solarbosse(input_dict)
-    print(BOS_results)
-    bos_capex = BOS_results['total_bos_cost']
-    capex = 0.51 + bos_capex
-    # print(str(size) + ' MW BOS CAPEX (USD/Watt) = ' + str(round(bos_capex, 4)))
-    print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(capex, 2)))
-    print('')
-    print('')
+# sizes = [5, 50, 100]
+# sizes = [5, 50, 100, 450, 495, 500]
+# sizes = [150]
+# sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+# sizes = [n for n in range(5, 105, 5)]
+#
+# for size in sizes:
+#     input_dict = dict()
+#     BOS_results = dict()
+#     BOS_results.update({str(size)+' MW scenario': ' '})
+#     input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
+#
+#     # print(inp
+#
+#     input_dict['project_list'] = 'project_list_50MW'
+#
+#     input_dict['system_size_MW_DC'] = size
+#     input_dict['grid_system_size_MW_DC'] = size
+#     input_dict['grid_size_MW_AC'] = size
+#
+#     if size <= 10:
+#         input_dict['dist_interconnect_mi'] = 0
+#     else:
+#         input_dict['dist_interconnect_mi'] = (0.0263 * size) - 0.2632
+#
+#     if size > 50:
+#         input_dict['construction_time_months'] = 24
+#     elif size <= 20:
+#         input_dict['construction_time_months'] = 12
+#
+#     elif size <= 10:
+#         input_dict['construction_time_months'] = 6
+#
+#     if size <= 20:
+#         input_dict['interconnect_voltage_kV'] = 34.5
+#
+#     BOS_results, detailed_results = run_solarbosse(input_dict)
+#     print(BOS_results)
+#     bos_capex_total = BOS_results['total_bos_cost']
+#     bos_capex = bos_capex_total / (size * 1e6)
+#     capex = 0.51 + bos_capex
+#     # print(str(size) + ' MW BOS CAPEX (USD/Watt) = ' + str(round(bos_capex, 4)))
+#     print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(capex, 2)))
+#     print('')
+#     print('')
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

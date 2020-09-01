@@ -52,9 +52,9 @@ def run_storagebosse(input_dictionary):
             results['errors'].append(msg)
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
-        results['Name'] = 'area undefined'
         # results['Name'] = str(master_input_dict['system_size_MW_DC'])+'MW_'+str(master_input_dict['system_size_MWh'])+'MWh'
-        results['labor_cost_multiplier'] = master_input_dict['labor_cost_multiplier']
+        # results['labor_cost_multiplier'] = master_input_dict['labor_cost_multiplier']
+        # results['material_cost_multiplier'] = master_input_dict['material_cost_multiplier']
         results['system_size_MW_DC'] = master_input_dict['system_size_MW_DC']
         results['system_size_MWh'] = master_input_dict['system_size_MWh']
         results['total_cost'] = output_dict['total_cost']
@@ -68,7 +68,6 @@ def run_storagebosse(input_dictionary):
         results['total_erection_cost'] = output_dict['total_erection_cost']
         results['total_collection_cost'] = output_dict['total_collection_cost']
         results['total_management_cost'] = output_dict['total_management_cost']
-
 
         # L1: assume share substation, transdist, mgmt costs
         results['%_bos_cost'] = results['total_bos_cost']/results['total_cost']*100
@@ -136,17 +135,20 @@ class NegativeInputError(Error):
     """
     pass
 
-# <><><><><><><><> EXAMPLE OF RUNNING THIS StorageBOSSE API <><><><><><><><><><><>
-# TODO: uncomment these lines to run StorageBOSSE as a standalone model.
+# <><><><><><><><> SIMPLEST EXAMPLE OF RUNNING THIS StorageBOSSE <><><><><><><><><><><>
 # overwrite keys in input_dict. Can also modify keys in project_list excel file.
 # optional key: site_prep_area_m2: defined project area for site preparation. If unspecified, site prep area is
 # calculated based on number of containers and road length
+# TODO: uncomment these lines to run StorageBOSSE as a standalone model.
+input_dict = dict()
+input_dict['project_list'] = 'project_list_test'
+BOS_results, detailed_results = run_storagebosse(input_dict)
+# <><><><><><><><> END SIMPLEST EXAMPLE OF RUNNING THIS StorageBOSSE <><><><><><><><><><><>
 
-# ##### loop through various project sizes. Find % shared #####
+# <><><><><><><><> RUNS LOOPING THROUGH VARIOUS PROJECT SIZES <><><><><><><><><><><>
+# energies = [1, 5, 10, 50, 100, 150, 20, 20, 20, 20, 20, 20]  # MWh
+# powers = [20, 20, 20, 20, 20, 20, 1, 5, 10, 50, 100, 150]  # MW
 #
-# energies = [1, 5, 10, 50, 100, 500, 20, 20, 20, 20, 20, 20]  # MWh
-# powers = [20, 20, 20, 20, 20, 20, 1, 5, 10, 50, 100, 500]  # MW
-
 # for i in range(0, len(energies)):
 #     input_dict = dict()
 #     BOS_results = dict()
@@ -161,51 +163,66 @@ class NegativeInputError(Error):
 #
 #     elif max(energies[i], powers[i]) <= 10:
 #         input_dict['construction_time_months'] = 6
+#
+#     input_dict['site_prep_area_m2'] = 100*max(max(energies),max(powers)) + 100
+#     input_dict['project_list'] = 'project_list_test'
+#     BOS_results, detailed_results = run_storagebosse(input_dict)
+#
+#     """ OUTPUT TO EXCEL FOR TESTING"""
+#     headers = BOS_results.keys()
+#     outfile = 'sizes_out.xlsx'
+#     # create excel file if it does not exist
+#     if not os.path.isfile(outfile):
+#         book = xlsxwriter.Workbook(outfile)
+#         sheet = book.add_worksheet("TestSheet")
+#         for (idx, header) in enumerate(headers):
+#             sheet.write(0, idx, header)
+#         book.close()
+#     # open the file
+#     with open(outfile, 'a+') as xl_file:
+#         book = load_workbook(outfile)
+#         sheet = book.get_sheet_by_name('TestSheet')
+#
+#     values = [BOS_results[key] for key in headers]
+#     sheet.append(values)
+#     book.save(filename=outfile)
+# <><><><><><><><> END RUNS LOOPING THROUGH VARIOUS PROJECT SIZES <><><><><><><><><><><>
 
-# ##### loop through various material multipliers ##########
+
+
+# <><><><><><><><> RUNS LOOPING THROUGH VARIOUS MATERIAL COST MULITPLIERS <><><><><><><><><><><>
 # energies = 100
 # powers = 100
 # input_dict = dict()
 # BOS_results = dict()
-# mcx = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
+# mcx = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
 # for i in mcx:
 #     input_dict['material_cost_multiplier'] = i
-
-###### loop through various labor multipliers #########
-energies = 100
-powers = 100
-input_dict = dict()
-BOS_results = dict()
-# lcx = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
-# for i in lcx:
-#     input_dict['labor_cost_multiplier'] = i
-
-
-####################################### KEEP (in loop) ####################################
-# input_dict['site_prep_area_m2'] = 100*max(max(energies),max(powers)) + 100
-
-input_dict['project_list'] = 'project_list_test'  # THE ESSENTIAL INPUT
-
-BOS_results, detailed_results = run_storagebosse(input_dict)  # ALL I NEEEEED
-
-""" OUTPUT TO EXCEL FOR TESTING"""
-headers = BOS_results.keys()
-outfile = 'labor_cost_sensitivity_outputs.xlsx'
-# create excel file if it does not exist
-if not os.path.isfile(outfile):
-    book = xlsxwriter.Workbook(outfile)
-    sheet = book.add_worksheet("TestSheet")
-    for (idx, header) in enumerate(headers):
-        sheet.write(0, idx, header)
-    book.close()
-# open the file
-with open(outfile, 'a+') as xl_file:
-    book = load_workbook(outfile)
-    sheet = book.get_sheet_by_name('TestSheet')
-
-values = [BOS_results[key] for key in headers]
-sheet.append(values)
-book.save(filename=outfile)
-
-
-# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+#     input_dict = dict()
+#     BOS_results = dict()
+#     BOS_results.update({'Material Cost Multiplier': str(i)})
+#     input_dict['system_size_MW_DC'] = powers
+#     input_dict['system_size_MWh'] = energies
+#     input_dict['site_prep_area_m2'] = 100*max(energies, powers) + 100
+#     input_dict['project_list'] = 'project_list_test'
+#     BOS_results, detailed_results = run_storagebosse(input_dict)
+#
+#     """ OUTPUT TO EXCEL FOR TESTING"""
+#     headers = BOS_results.keys()
+#     outfile = 'mcm.xlsx'
+#     # create excel file if it does not exist
+#     if not os.path.isfile(outfile):
+#         book = xlsxwriter.Workbook(outfile)
+#         sheet = book.add_worksheet("TestSheet")
+#         for (idx, header) in enumerate(headers):
+#             sheet.write(0, idx, header)
+#         book.close()
+#     # open the file
+#     with open(outfile, 'a+') as xl_file:
+#         book = load_workbook(outfile)
+#         sheet = book.get_sheet_by_name('TestSheet')
+#
+#     values = [BOS_results[key] for key in headers]
+#     sheet.append(values)
+#     book.save(filename=outfile)
+# <><><><><><><><> END RUNS LOOPING THROUGH VARIOUS MATERIAL COST MULITPLIERS <><><><><><><><><><><>

@@ -18,8 +18,8 @@ def run_hybrid_BOS(hybrids_input_dict):
     solar_only_BOS = solar_BOS.copy()
     storage_only_BOS = storage_BOS.copy()
 
-    print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ', wind_BOS)
-    print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ', solar_BOS)
+    print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
+    print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)
     print('storage_only_BOS at ', hybrids_input_dict['storage_system_size_MW_DC'], ' MW and ',
           hybrids_input_dict['storage_system_size_MWh'], ' MWh', storage_BOS)
 
@@ -54,9 +54,8 @@ def run_hybrid_BOS(hybrids_input_dict):
     results['hybrid']['hybrid_substation_usd'] = hybrid_BOS.hybrid_substation_usd
     results['hybrid']['hybrid_management_development_usd'] = wind_BOS['total_management_cost'] + \
                                                              solar_BOS['total_management_cost'] + \
-                                                             storage_BOS['total_management_cost'] +\
+                                                             storage_BOS['total_management_cost'] + \
                                                              hybrid_BOS.site_facility_usd
-
 
     results['Wind_BOS_results'] = hybrid_BOS.update_BOS_dict(wind_BOS, 'wind')
     results['Solar_BOS_results'] = hybrid_BOS.update_BOS_dict(solar_BOS, 'solar')
@@ -114,124 +113,6 @@ yaml_file_path = dict()
 #                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
 #                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
 
-# hybrid_inputs_7.5_7.5_15
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_15.yaml'
-
-# hybrid_inputs_15_15_15
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_15_15_15.yaml'
-
-# hybrid_inputs_22.5_22.5_22.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_22.5.yaml'
-
-# hybrid_inputs_22.5_22.5_45
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_22.5_22.5_45.yaml'
-
-# hybrid_inputs_30_30_30
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_30_30_30.yaml'
-
-# # hybrid_inputs_30_30_60
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_30_30_60.yaml'
-#
-# # hybrid_inputs_37.5_37.5_37.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_37.5_37.5_37.5.yaml'
-
-# # hybrid_inputs_37.5_37.5_75
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-
-# hybrid_inputs_45_45_45
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_45_45_45.yaml'
-
-# hybrid_inputs_45_45_90
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_45_45_90.yaml'
-
-# hybrid_inputs_52.5_52.5_52.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_52.5_52.5_52.5.yaml'
-
-# hybrid_inputs_52.5_52.5_105
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_52.5_52.5_105.yaml'
-
-# hybrid_inputs_60_60_60
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_60_60_60.yaml'
-
-# hybrid_inputs_60_60_60
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_60_60_120.yaml'
-
-# hybrid_inputs_67.5_67.5_67.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_67.5_67.5_67.5.yaml'
-
-# hybrid_inputs_67.5_67.5_130
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_67.5_67.5_130.yaml'
-
-# hybrid_inputs_75_75_75
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_75_75_75.yaml'
-
-# hybrid_inputs_75_75_150
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_75_75_150.yaml'
-
-# hybrid_inputs_82.5_82.5_82.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_82.5_82.5_82.5.yaml'
-
-# hybrid_inputs_82.5_82.5_165
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_82.5_82.5_165.yaml'
-
-# hybrid_inputs_90_90_90
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_90_90_90.yaml'
-
-# hybrid_inputs_90_90_180
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_90_90_180.yaml'
-
-# hybrid_inputs_97.5_97.5_97.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_97.5.yaml'
-
-# hybrid_inputs_97.5_97.5_195
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_97.5_97.5_195.yaml'
 
 
 def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_dict):
@@ -288,11 +169,78 @@ if __name__ == '__main__':
     sys.path.append(".")
 
     #Create the hybrid_scenario_dict from a yaml file
-    hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+    # hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 
+    # Create hybrid_scenario_dict manually
+    hybrids_scenario_dict = {
+            "shared_interconnection": True,
+            "distance_to_interconnect_mi": 1.5,
+            "new_switchyard": True,
+            "grid_interconnection_rating_MW": 7.5,
+            "interconnect_voltage_kV": 15,
+            "shared_substation": True,
+            "hybrid_substation_rating_MW": 7.5,
+            "wind_dist_interconnect_mi": 0,
+            "num_turbines": 5,
+            "turbine_rating_MW": 1.5,
+            "wind_construction_time_months": 5,
+            "project_id": "ge15_public_dist",
+            "path_to_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure",
+            "name_of_project_list": "project_list_ge15_dist_05",
+            "solar_system_size_MW_DC": 7.5,
+            "dc_ac_ratio": 1.2,
+            "solar_construction_time_months": 5,
+            "solar_dist_interconnect_mi": 5,
+            "storage_system_size_MW_DC": 10,
+            "storage_system_size_MWh": 1,
+            "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/StorageBOSSE/project_list_test.xlsx",
+            "storage_project_list": "project_list_test"
+    }
+    #Set custom HybridBOSSE parameters
+    wind_size = 150
+    hybrids_scenario_dict['wind_plant_size_MW'] = wind_size
+    hybrids_scenario_dict['num_turbines'] = wind_size / 1.5
+    hybrids_scenario_dict["grid_interconnection_rating_MW"] = wind_size
+    hybrids_scenario_dict['hybrid_plant_size_MW'] = wind_size * 2
+    hybrids_scenario_dict["hybrid_substation_rating_MW"] = wind_size
+    hybrids_scenario_dict["hybrid_construction_months"] = wind_size
+    hybrids_scenario_dict["interconnect_voltage_kV"] = 15
+    hybrids_scenario_dict["solar_system_size_MW_DC"] = wind_size
+
+    if hybrids_scenario_dict['num_turbines'] is None or hybrids_scenario_dict['num_turbines'] == 0:
+        hybrids_scenario_dict['num_turbines'] = 0
+
+    hybrids_scenario_dict['wind_plant_size_MW'] = hybrids_scenario_dict['num_turbines'] * \
+                                                  hybrids_scenario_dict['turbine_rating_MW']
+
+    hybrids_scenario_dict['hybrid_plant_size_MW'] = hybrids_scenario_dict['wind_plant_size_MW'] + \
+                                                    hybrids_scenario_dict['solar_system_size_MW_DC']
+
+    hybrids_scenario_dict['hybrid_construction_months'] = \
+        hybrids_scenario_dict['wind_construction_time_months'] + \
+        hybrids_scenario_dict['solar_construction_time_months']
+
+    hybrids_scenario_dict['path_to_project_list'] = os.path.abspath(os.path.dirname(__file__))
+    hybrids_scenario_dict['path_to_storage_project_list'] = os.path.join(os.path.abspath(os.path.dirname(__file__))
+                                                                         , 'StorageBOSSE')
+    #Setting inteconnect sizes based on project size
+    grid_size_multiplier = 1
+    grid_size = wind_size #* grid_size_multiplier * 2
+    if grid_size > 15:
+        hybrids_scenario_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
+    else:
+        hybrids_scenario_dict['distance_to_interconnect_mi'] = 0
+    if grid_size < 20:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 15
+    elif 20 < grid_size < 40:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 34.5
+    elif 40 <= grid_size < 75:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 69  # should be 69
+    elif grid_size >= 75:
+        hybrids_scenario_dict['interconnect_voltage_kV'] = 138  # should be 138
 
     hybrid_results, wind_only, solar_only, storage_only = run_hybrid_BOS(hybrids_scenario_dict)
     print("<++++++++ HYBRID RESULTS++++++++>")
-    print(hybrid_results)
+    # print(hybrid_results)
     display_results(hybrid_results, wind_only_dict=wind_only, solar_only_dict=solar_only,
                     storage_only_dict=storage_only)

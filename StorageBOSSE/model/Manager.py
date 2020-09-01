@@ -5,6 +5,7 @@ from .GridConnectionCost import GridConnectionCost
 from .FoundationCost import FoundationCost
 from .ContainerErection import ContainerErection
 from .CollectionCost import CollectionCost
+from.LayoutOptimizer import LayoutOptimizer
 import numpy as np
 
 
@@ -30,16 +31,29 @@ class Manager:
 
         self.input_dict['system_size_MW_AC'] = \
             self.input_dict['system_size_MW_DC'] / self.input_dict['dc_ac_ratio']
+
         # calculate number of containers based on desired system sizes
         self.output_dict['num_containers'] = np.ceil(max(self.input_dict['system_size_MW_DC'] / self.input_dict['battery_power_MW'], \
                                                          self.input_dict['system_size_MWh'] / self.input_dict['battery_capacity_MWh']))
-        # Project CAPEX  (USD)
-        # TODO battery costs in here?
+
+        # check to see if enough containers are included in custom layout
+        if self.input_dict['layout'] == 'custom':
+            num_layout = self.input_dict['num_full_row']*self.input_dict['pad_per_row'] + self.input_dict['num_left']
+            if num_layout < self.output_dict['num_containers']:
+                print('need at least ' +str(self.output_dict['num_containers']) + ' containers to satisfy system'
+                      'requirements. Only ' + str(num_layout) + ' containers specified in custom layout.')
+                exit(1)
+
+        # Battery CAPEX  (USD)
         self.output_dict['total_container_cost'] = self.output_dict['num_containers'] * self.input_dict['container_cost']
 
     def execute_storagebosse(self):
 
         project_name = 'storage_run'
+
+        layout_optimizer = LayoutOptimizer(input_dict=self.input_dict,
+                                       output_dict=self.output_dict)
+        layout_optimizer.run_module()
 
         siteprep = SitePreparationCost(input_dict=self.input_dict,
                                        output_dict=self.output_dict,
@@ -84,12 +98,13 @@ class Manager:
             self.output_dict['total_erection_cost']
 
 
-
         # ManagementCost:
         managementcost = ManagementCost(input_dict=self.input_dict,
                                         output_dict=self.output_dict,
                                         project_name=project_name)
         managementcost.run_module()
+        if 'management_cost_multiplier' in self.input_dict:
+            self.output_dict['total_management_cost'] *= self.input_dict['management_cost_multiplier']
 
         self.output_dict['total_bos_cost'] = \
             self.output_dict['total_bos_cost_before_mgmt'] + \

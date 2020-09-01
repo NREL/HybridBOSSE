@@ -20,9 +20,7 @@ class ContainerErection(CostModule):
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
-        self.output_dict['num_containers']
-
-        # As mentioned in the module documentation, This module assumes that it takes
+        # This module assumes that it takes
         # 2 hours to offload each BESS container and place on it's
         # respective concrete pad.
         self.total_crane_time = self.output_dict['num_containers'] * 2   # hours

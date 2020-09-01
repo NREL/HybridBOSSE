@@ -153,7 +153,16 @@ class CollectionCost(CostModule):
         Return a tuple of inverters in the project
         """
         # Get number of inverters in the project
-        number_of_inverters = self.input_dict['system_size_MW_DC']
+        # dividing by 150 because that's the upper limit on the size of 1 region.
+        # Where 1 region is the max size of PV array that the collection module
+        # runs for. If the project size is greater than size of region,
+        # SolarBOSSE runs the collection cost module
+        # (floor(project_size / region) + 1) times.
+        if self.input_dict['system_size_MW_DC'] > 150:
+            number_of_inverters = 150
+        else:
+            number_of_inverters = self.input_dict['system_size_MW_DC']
+
         inverter_list = [n for n in range(round(number_of_inverters))]
         self.output_dict['inverter_list'] = inverter_list
         return inverter_list
@@ -288,7 +297,13 @@ class CollectionCost(CostModule):
         """
         Empirical curve fit of pv wire cost ($/LF) for AWG #10 wire or smaller.
         """
-        if system_size_MW_DC > 50:
+        if system_size_MW_DC > 500:
+            volume_order_discount_multiplier = 0.50  # 25 % discount (volume pricing)
+        elif system_size_MW_DC > 300:
+            volume_order_discount_multiplier = 0.70  # 25 % discount (volume pricing)
+        elif system_size_MW_DC > 150:
+            volume_order_discount_multiplier = 0.75     # 25 % discount (volume pricing)
+        elif system_size_MW_DC > 50:
             volume_order_discount_multiplier = 0.80    # 20 % discount (volume pricing)
         elif system_size_MW_DC > 20:
             volume_order_discount_multiplier = 0.90
@@ -737,7 +752,7 @@ class CollectionCost(CostModule):
 
         return self.output_dict['total_collection_cost']
 
-    def run_module(self):
+    def run_module_for_150_MW(self):
         """
         Runs the CollectionCost module and populates the IO dictionaries with
         calculated values.
@@ -755,92 +770,134 @@ class CollectionCost(CostModule):
             the error raised that caused the failure.
 
         """
+
+        # l = length ; w = width
+        project_l_m, project_w_m = self.land_dimensions()
+        l, w = self.get_quadrant_dimensions()
+        num_quadrants = len(self.inverter_list())
+        number_rows_per_subquadrant = self.number_rows_per_subquadrant()
+        num_strings_per_row = self.num_strings_per_row()
+
+        source_circuit_wire_length_lf =\
+            self.source_circuit_wire_length_lf(num_strings_per_row,
+                                               number_rows_per_subquadrant)
+
+        source_circuit_wire_length_total_lf = \
+            self.source_circuit_wire_length_total_lf(source_circuit_wire_length_lf,
+                                                     num_quadrants)
+
+        self.output_dict['source_circuit_wire_length_total_lf'] = \
+            source_circuit_wire_length_total_lf
+
+        # Begin output circuit calculations:
+        num_strings_per_quadrant = \
+            self.number_strings_quadrant(num_strings_per_row,
+                                         number_rows_per_subquadrant)
+
+        num_strings_parallel = self.num_strings_parallel(num_strings_per_row)
+
+        row_spacing_m = self.row_spacing_m(l, number_rows_per_subquadrant)
+
+        # make a list of rows in each quadrant:
+        all_rows = [n for n in range(number_rows_per_subquadrant)]
+        row_out_circuit_length_m = all_rows
+
+        # starting with the bottom-most row in a quadrant (which is also the
+        # farthest row from the inverter.
+        total_out_circuit_length_m = 0  # Initialize
+        for row in all_rows:
+            row_inverter_distance_m = ((number_rows_per_subquadrant - 1) - row) * \
+                                      row_spacing_m
+            row_out_circuit_length_m[row] = row_inverter_distance_m * 2
+            total_out_circuit_length_m += row_out_circuit_length_m[row]
+
+        # total output circuit length for quadrant (2 sub quadrants per quadrant):
+        TOC_length_quadrant_m = total_out_circuit_length_m * 2
+
+        # Total output circuit length for entire farms (all quadrants combined):
+        output_circuit_wire_length_total_lf = \
+            TOC_length_quadrant_m * self.m_to_lf * num_quadrants
+
+        self.output_dict[
+            'output_circuit_wire_length_total_lf'] = output_circuit_wire_length_total_lf
+
+        # Trench length for project (all quadrants combined):
+        self.output_dict['trench_length_km'] = (project_l_m / 1000) * 2     # 2 trenches
+
+        # Series of methods to select the right cable for output circuit:
+        # Not using this set of implementations for now. That is, I'm assuming the
+        # cable selected based solely on circuit ampacity also satisfies the 3 %
+        # VD (max) requirement.
+
+        # longest_output_circuit_m = row_out_circuit_length_m[0]
+        # max_voltage_drop_V = self.voltage_drop_V()
+        # self.VD_passes(longest_output_circuit_m, max_voltage_drop_V,
+        # output_circuit_ampacity)
+
+        output_circuit_ampacity = self.output_circuit_ampacity(num_strings_parallel)
+
+        total_material_cost = source_circuit_wire_length_total_lf * \
+                                self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
+                                                  'source_circuit',
+                                                  self.input_dict['module_I_SC_DC'])
+
+        total_material_cost += TOC_length_quadrant_m * self.m_to_lf * num_quadrants * \
+                                self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
+                                                  'output_circuit',
+                                                  output_circuit_ampacity)
+
+        self.output_dict['total_material_cost'] = total_material_cost
+
+        self.estimate_construction_time()
+        self.output_dict['total_collection_cost'] = self.calculate_costs()
+
+
+    def run_module(self):
+        """
+
+        """
         try:
-            # l = length ; w = width
-            project_l_m, project_w_m = self.land_dimensions()
-            l, w = self.get_quadrant_dimensions()
-            num_quadrants = len(self.inverter_list())
-            number_rows_per_subquadrant = self.number_rows_per_subquadrant()
-            num_strings_per_row = self.num_strings_per_row()
+            original_site_prep_area_acres = self.input_dict['site_prep_area_acres']
+            regions_list = []
+            region_iter = 0
+            total_collection_cost = 0
 
-            source_circuit_wire_length_lf =\
-                self.source_circuit_wire_length_lf(num_strings_per_row,
-                                                   number_rows_per_subquadrant)
+            if self.input_dict['system_size_MW_DC'] > 150:
+                site_prep_area_regions = self.input_dict['system_size_MW_DC'] / 150
 
-            source_circuit_wire_length_total_lf = \
-                self.source_circuit_wire_length_total_lf(source_circuit_wire_length_lf,
-                                                         num_quadrants)
+                fraction_site_prep_area_regions = site_prep_area_regions - \
+                                                  math.floor(site_prep_area_regions)
 
-            self.output_dict['source_circuit_wire_length_total_lf'] = \
-                source_circuit_wire_length_total_lf
+                region_iter = math.floor(site_prep_area_regions)
 
-            # Begin output circuit calculations:
-            num_strings_per_quadrant = \
-                self.number_strings_quadrant(num_strings_per_row,
-                                             number_rows_per_subquadrant)
+                for i in range(region_iter):
+                    regions_list.append(150)    # Stores size (in MW) of the region
 
-            num_strings_parallel = self.num_strings_parallel(num_strings_per_row)
+                if fraction_site_prep_area_regions > 0:
+                    regions_list.append(fraction_site_prep_area_regions * 150)
 
-            row_spacing_m = self.row_spacing_m(l, number_rows_per_subquadrant)
+                for region in regions_list:
+                    # Should be site_prep_area_acres_mw_dc and not site_prep_area_acres_mw_ac
+                    self.input_dict['site_prep_area_acres'] = \
+                        self.input_dict['site_prep_area_acres_mw_ac'] * region
 
-            # make a list of rows in each quadrant:
-            all_rows = [n for n in range(number_rows_per_subquadrant)]
-            row_out_circuit_length_m = all_rows
+                    self.run_module_for_150_MW()
+                    total_collection_cost += self.output_dict['total_collection_cost']
 
-            # starting with the bottom-most row in a quadrant (which is also the
-            # farthest row from the inverter.
-            total_out_circuit_length_m = 0  # Initialize
-            for row in all_rows:
-                row_inverter_distance_m = ((number_rows_per_subquadrant - 1) - row) * \
-                                          row_spacing_m
-                row_out_circuit_length_m[row] = row_inverter_distance_m * 2
-                total_out_circuit_length_m += row_out_circuit_length_m[row]
+            else:
+                self.run_module_for_150_MW()
+                total_collection_cost += self.output_dict['total_collection_cost']
 
-            # total output circuit length for quadrant (2 sub quadrants per quadrant):
-            TOC_length_quadrant_m = total_out_circuit_length_m * 2
+            self.input_dict['site_prep_area_acres'] = original_site_prep_area_acres
+            self.output_dict['total_collection_cost'] = total_collection_cost
+            # self.output_dict['total_collection_cost'] = 65153571
 
-            # Total output circuit length for entire farms (all quadrants combined):
-            output_circuit_wire_length_total_lf = \
-                TOC_length_quadrant_m * self.m_to_lf * num_quadrants
-
-            self.output_dict[
-                'output_circuit_wire_length_total_lf'] = output_circuit_wire_length_total_lf
-
-            # Trench length for project (all quadrants combined):
-            self.output_dict['trench_length_km'] = (project_l_m / 1000) * 2     # 2 trenches
-
-            # Series of methods to select the right cable for output circuit:
-            # Not using this set of implementations for now. That is, I'm assuming the
-            # cable selected based solely on circuit ampacity also satisfies the 3 %
-            # VD (max) requirement.
-
-            # longest_output_circuit_m = row_out_circuit_length_m[0]
-            # max_voltage_drop_V = self.voltage_drop_V()
-            # self.VD_passes(longest_output_circuit_m, max_voltage_drop_V,
-            # output_circuit_ampacity)
-
-            output_circuit_ampacity = self.output_circuit_ampacity(num_strings_parallel)
-
-            total_material_cost = source_circuit_wire_length_total_lf * \
-                                    self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
-                                                      'source_circuit',
-                                                      self.input_dict['module_I_SC_DC'])
-
-            total_material_cost += TOC_length_quadrant_m * self.m_to_lf * num_quadrants * \
-                                    self.pv_wire_cost(self.input_dict['system_size_MW_DC'],
-                                                      'output_circuit',
-                                                      output_circuit_ampacity)
-
-            self.output_dict['total_material_cost'] = total_material_cost
-
-            self.estimate_construction_time()
-            self.output_dict['total_collection_cost'] = self.calculate_costs()
-
-            return 0, 0   # module ran successfully
+            return 0, 0  # module ran successfully
 
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} CollectionCost")
             self.input_dict['error']['CollectionCost'] = error
-            return 1, error    # module did not run successfully
+            return 1, error  # module did not run successfully
+
 

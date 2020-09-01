@@ -64,11 +64,11 @@ class GridConnectionCost(CostModule):
             raised that caused the failure.
         """
         # TODO: In the next version update of SolarBOSSE, change grid cost
-        #  calculation as a function of system_size_MW_AC, not system_size_MW_DC
+        #  calculation as a function of grid_size_MW_AC, not grid_system_size_MW_DC
 
         # Switch between utility scale model and distributed model
         # Run utility version of GridConnectionCost for project size > 10 MW:
-        if input_dict['system_size_MW_DC'] > 15:
+        if input_dict['grid_system_size_MW_DC'] > 15:
             if input_dict['dist_interconnect_mi'] == 0:
                 output_dict['trans_dist_usd'] = 0
             else:
@@ -90,10 +90,10 @@ class GridConnectionCost(CostModule):
             # distributed wind into the model. Here POI refers to point of
             # interconnection.
             output_dict['array_to_POI_usd_per_kw'] = \
-                1736.7 * ((input_dict['system_size_MW_AC'] * 1000) ** (-0.272))
+                1736.7 * ((input_dict['grid_size_MW_AC'] * 1000) ** (-0.272))
 
             output_dict['trans_dist_usd'] = \
-                input_dict['system_size_MW_AC'] * 1000 * output_dict['array_to_POI_usd_per_kw']
+                input_dict['grid_size_MW_AC'] * 1000 * output_dict['array_to_POI_usd_per_kw']
 
         output_dict['trans_dist_usd_df'] = pd.DataFrame([['Other',
                                                           output_dict['trans_dist_usd'],
