@@ -76,7 +76,7 @@ class HydroBOSCost(CostModule):
         return self.output_dict['total_initial_capital_cost']
 
 
-    def total_bos_cost(self):
+    gitdef total_bos_cost(self):
         """
         Classifies project based on installed capacity size.
         Determines total BOS cost based on installed capacity (MW) and head height (feet)

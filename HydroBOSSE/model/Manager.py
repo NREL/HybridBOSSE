@@ -1,12 +1,12 @@
-from .RackingSystemInstallation import RackingSystemInstallation
-from .SitePreparationCost import SitePreparationCost
-from .SubstationCost import SubstationCost
-from .ManagementCost import ManagementCost
-from .GridConnectionCost import GridConnectionCost
-from .FoundationCost import FoundationCost
-from .InverterTransformerErection import InverterTransformerErection
-from .CollectionCost import CollectionCost
-from .HydroBOSCost import HydroBOSCost
+from RackingSystemInstallation import RackingSystemInstallation
+from SitePreparationCost import SitePreparationCost
+from SubstationCost import SubstationCost
+from ManagementCost import ManagementCost
+from GridConnectionCost import GridConnectionCost
+from FoundationCost import FoundationCost
+from InverterTransformerErection import InverterTransformerErection
+from CollectionCost import CollectionCost
+from HydroBOSCost import HydroBOSCost
 
 class Manager:
     """
@@ -31,7 +31,7 @@ class Manager:
     def execute_hydrobosse(self):
 
         project_name = 'hydro_run'
-
+        print('Running HydroBOSSE')
 
         # TODO: Replace these modules with appropriate components for Hydro:
         siteprep = SitePreparationCost(input_dict=self.input_dict,

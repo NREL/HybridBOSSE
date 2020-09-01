@@ -1,10 +1,10 @@
 import traceback
 import pandas as pd
 import math
-from .CostModule import CostModule
+from HydroBOSSE.model.CostModule import CostModule
 
 
-class InverterTransformerErection(CostModule):
+class InverterTransformerEregiction(CostModule):
     """
     Cost of erecting the inverter+transformer container once the concrete pad
     has been constructed and is cured. This module calculates the cost of

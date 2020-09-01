@@ -11,7 +11,7 @@ ft_to_meter = 0.3048
 
 # pd.read_csv('examples/ex2.csv', names=['key', 'description', 'A', 'B', 'C'])
 
-metadata = pd.read_excel('project_list_30MW.xlsx', sheet_name='Metadata',index_col=0)
+metadata = pd.read_excel('project_list_30mw.xlsx', sheet_name='Metadata',index_col=0)
 usacost = pd.read_excel('project_list_30MW.xlsx', sheet_name='USACost')
 lcmcost = pd.read_excel('project_list_30MW.xlsx', sheet_name='LCMCosts')
 

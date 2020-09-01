@@ -1,7 +1,7 @@
 import traceback
 import pandas as pd
 import math
-from .CostModule import CostModule
+from HydroBOSSE.model.CostModule import CostModule
 
 
 class GridConnectionCost(CostModule):

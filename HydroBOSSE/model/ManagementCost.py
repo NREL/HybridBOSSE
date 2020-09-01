@@ -2,7 +2,7 @@ import math
 import traceback
 import pytest
 import traceback
-from .CostModule import CostModule
+from HydroBOSSE.model.CostModule import CostModule
 
 
 class ManagementCost(CostModule):

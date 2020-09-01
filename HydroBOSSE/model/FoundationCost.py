@@ -2,7 +2,7 @@ import traceback
 import math
 import pandas as pd
 import numpy as np
-from .CostModule import CostModule
+from HydroBOSSE.model.CostModule import CostModule
 
 class FoundationCost(CostModule):
     """

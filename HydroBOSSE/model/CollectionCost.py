@@ -2,7 +2,7 @@ import traceback
 import math
 import numpy as np
 import pandas as pd
-from .CostModule import CostModule
+from CostModule import CostModule
 
 
 class CollectionCost(CostModule):
