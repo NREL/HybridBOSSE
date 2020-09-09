@@ -1,7 +1,7 @@
 import yaml
 import os
-from hybrids_shared_infrastructure.run_BOSSEs import run_BOSSEs
-from hybrids_shared_infrastructure.PostSimulationProcessing import PostSimulationProcessing
+from bin.run_BOSSEs import run_BOSSEs
+from bin.PostSimulationProcessing import PostSimulationProcessing
 import pandas as pd
 import sys
 
@@ -68,8 +68,8 @@ def read_hybrid_scenario(file_path):
     [Optional method]
 
     Reads in default hybrid_inputs.yaml (YAML file) shipped with
-    hybrids_shared_infrastructure, and returns a python dictionary with all required
-    key:value pairs needed to run the hybrids_shared_infrastructure API.
+    bin, and returns a python dictionary with all required
+    key:value pairs needed to run the bin API.
     """
     if file_path:
         input_file_path = file_path['input_file_path']
@@ -185,7 +185,7 @@ if __name__ == '__main__':
             "turbine_rating_MW": 1.5,
             "wind_construction_time_months": 5,
             "project_id": "ge15_public_dist",
-            "path_to_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure",
+            "path_to_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/bin",
             "name_of_project_list": "project_list_ge15_dist_05",
             "solar_system_size_MW_DC": 7.5,
             "dc_ac_ratio": 1.2,
@@ -193,7 +193,7 @@ if __name__ == '__main__':
             "solar_dist_interconnect_mi": 5,
             "storage_system_size_MW_DC": 10,
             "storage_system_size_MWh": 1,
-            "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/StorageBOSSE/project_list_test.xlsx",
+            "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/bin/StorageBOSSE/project_list_test.xlsx",
             "storage_project_list": "project_list_test"
     }
     #Set custom HybridBOSSE parameters

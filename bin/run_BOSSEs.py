@@ -1,6 +1,6 @@
 from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
-from hybrids_shared_infrastructure.GridConnectionCost import hybrid_gridconnection
+from bin.GridConnectionCost import hybrid_gridconnection
 from StorageBOSSE.main import run_storagebosse
 
 

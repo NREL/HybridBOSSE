@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-"""Tests for `hybrids_shared_infrastructure` package."""
+"""Tests for `bin` package."""
 
 import pytest
 
 from click.testing import CliRunner
 
-from hybrids_shared_infrastructure import hybrids_shared_infrastructure
-from hybrids_shared_infrastructure import cli
+from bin import hybrids_shared_infrastructure
+from bin import cli
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def test_command_line_interface():
     runner = CliRunner()
     result = runner.invoke(cli.main)
     assert result.exit_code == 0
-    assert 'hybrids_shared_infrastructure.cli.main' in result.output
+    assert 'bin.cli.main' in result.output
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output

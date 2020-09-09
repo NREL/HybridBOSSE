@@ -78,7 +78,7 @@ class SitePreparationCost(CostModule):
 
         """
         try:
-            self.calculate_siteprep_cost(self.input_dict, self.output_dict)
+            self.calculate_siteprep_cost()
             return 0, 0  # module ran successfully
         except Exception as error:
             traceback.print_exc()

@@ -33,7 +33,13 @@ class Manager:
         project_name = 'hydro_run'
         print('Running HydroBOSSE')
 
-        HydroBOSCost.project_classification()       # idea was to get BOS cost and ICC on the dictionary
+        hydroboscost = HydroBOSCost(input_dict=self.input_dict,
+                                      output_dict=self.output_dict,
+                                      project_name=project_name)
+
+        hydroboscost.project_classification()
+        hydroboscost.run_module()
+        print("Debug")
 
         # TODO: Replace these modules with appropriate components for Hydro:
         siteprep = SitePreparationCost(input_dict=self.input_dict,
@@ -94,11 +100,6 @@ class Manager:
         # self.output_dict['total_bos_cost'] = \
         #     self.output_dict['total_bos_cost_before_mgmt'] + \
         #     self.output_dict['total_management_cost']
-
-        hydroboscost = HydroBOSCost(input_dict=self.input_dict,
-                                      output_dict=self.output_dict,
-                                      project_name=project_name)
-        hydroboscost.run_module()
 
         print(self.output_dict['total_bos_cost'])
 

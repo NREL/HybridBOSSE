@@ -86,7 +86,8 @@ def run_hydrobosse(input_dictionary):
         # results['total_erection_cost'] = output_dict['total_erection_cost']
         # results['total_collection_cost'] = output_dict['total_collection_cost']
         # results['total_bos_cost_before_mgmt'] = output_dict['total_bos_cost_before_mgmt']
-        results['total_initial_capital_cost'] = BOS_results['total_initial_capital_cost']
+        print(results)
+        results['total_initial_capital_cost'] = output_dict['total_initial_capital_cost']
 
     return results, output_dict
 

@@ -17,8 +17,8 @@ setup_requirements = ['pytest-runner', ]
 test_requirements = ['pytest>=3', ]
 
 setup(
-    author="Parangat Bhaskar",
-    author_email='parangat.bhaskar94@gmail.com',
+    author="Aaron Barker",
+    author_email='aaron.barker@nrel.gov',
     python_requires='>=3.5',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -41,13 +41,13 @@ setup(
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='hybrids_shared_infrastructure',
-    name='hybrids_shared_infrastructure',
+    keywords='hybrids_shared_infrastructure_2',
+    name='hybrids_shared_infrastructure_2',
     packages=find_packages(include=['hybrids_shared_infrastructure', 'hybrids_shared_infrastructure.*']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/parangat94/hybrids_shared_infrastructure',
-    version='1',
+    version='2',
     zip_safe=False,
 )
