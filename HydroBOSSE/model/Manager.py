@@ -46,6 +46,12 @@ class Manager:
                                        output_dict=self.output_dict,
                                        project_name=project_name)
         siteprep.run_module()
+
+        cobb_npd, case = hydroboscost.cobb_cost_model(uid_case=self.input_dict['uid_lcmcosts'])
+        print("COBB Cost: ", cobb_npd)
+        print("Case: ", case)
+
+
         #
         #
         # # RackingSystemInstallation:

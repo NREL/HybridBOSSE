@@ -150,22 +150,31 @@ class HydroBOSCost(CostModule):
         self.output_dict['total_initial_capital_cost'] = self.total_initial_capital_cost()
         return self.input_dict, self.output_dict
 
-    def cobb_cost_model(self, lcmcost, uid_case):
+    def cobb_cost_model(self, uid_case):
         """
-
+        Cobb douglas cost calculation
         """
         # get the row for the uid_case and extract that particular row - based on key
 
-        var1 = uid_case[0]      # can we make a list power, head_in_ft, gen_rpm, cf or AEP.
-        var2 = uid_case[1]
-        var3 = uid_case[2]
+
+        var1 = self.input_dict['system_size_MW_AC']  # can we make a list power, head_in_ft, gen_rpm, cf or AEP.
+        var2 = self.input_dict['head_height_ft']
 
         # default as power and head_ft - if uid_case = gen_all replace it by rpm = default.
+        print('UID Case is: ', uid_case)
+        df = self.input_dict['lcmcosts']
+        desired_row_for_technology = df.loc[df.uid == uid_case]
 
-        a_cobb = self.input_dict['lcmcosts'].at['uid_case', 'A']
-        b_cobb = self.input_dict['lcmcosts'].at['uid_case', 'B']
-        c_cobb = self.input_dict['lcmcost'].at['uid_case', 'C']
+        try:
+            a_cobb = desired_row_for_technology['A'][0]
+            b_cobb = desired_row_for_technology['B'][0]
+            c_cobb = desired_row_for_technology['C'][0]
+        except:
+            a_cobb = desired_row_for_technology['A']
+            b_cobb = desired_row_for_technology['B']
+            c_cobb = desired_row_for_technology['C']
 
+        print('Debug')
         cost_cobb = a_cobb * (var1 ** b_cobb) * (var2 ** c_cobb)
 
         # output_dict['site_access_cost'] = per_ICC * factor * self.output_dict['total_initial_capital_cost']

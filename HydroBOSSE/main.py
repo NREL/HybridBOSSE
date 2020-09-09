@@ -36,7 +36,8 @@ def run_hydrobosse(input_dictionary):
 
 
         master_input_dict = xlsx_reader.create_master_input_dictionary(
-                                            project_data_sheets['metadata'], project_data_sheets['usacost_df'], project_parameters)
+                                            project_data_sheets['metadata'], project_data_sheets['usacost_df'],
+                                            project_data_sheets['lcmcosts_df'], project_parameters)
 
         master_input_dict['error'] = dict()
 #        print(project_data_sheets.values()[1]) - can index extract the sheet

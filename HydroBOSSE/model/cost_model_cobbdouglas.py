@@ -27,24 +27,24 @@ print('Total BOS Site Prep:', total_cost)
 
 
 
-def cobb_cost_model(self, lcmcost, uid):
-    """
-
-    """
-    # get the row for the uid_case and extract that particular row - based on key
-    # how we confirm the variables used are right one
-
-    # power and head information not passed into this funtion...get from self()
-
-    a_cobb = lcmcost.at['uid_case', 'A']
-    b_cobb = lcmcost.at['uid_case', 'B']
-    c_cobb = lcmcost.at['uid_case', 'C']
-
-    cost_cobb = a_cobb * (power ** b_cobb) * (head_ft ** c_cobb)
-
-    # output_dict['site_access_cost'] = per_ICC * factor * self.output_dict['total_initial_capital_cost']
-
-    return cost_cobb, uid_case
+# def cobb_cost_model(self, lcmcost, uid):
+#     """
+#
+#     """
+#     # get the row for the uid_case and extract that particular row - based on key
+#     # how we confirm the variables used are right one
+#
+#     # power and head information not passed into this funtion...get from self()
+#
+#     a_cobb = lcmcost.at['uid_case', 'A']
+#     b_cobb = lcmcost.at['uid_case', 'B']
+#     c_cobb = lcmcost.at['uid_case', 'C']
+#
+#     cost_cobb = a_cobb * (power ** b_cobb) * (head_ft ** c_cobb)
+#
+#     # output_dict['site_access_cost'] = per_ICC * factor * self.output_dict['total_initial_capital_cost']
+#
+#     return cost_cobb, uid_case
 
 
 def cost_escalation_factor(lcmcost, uid_case):

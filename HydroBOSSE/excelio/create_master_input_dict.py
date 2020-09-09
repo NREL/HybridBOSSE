@@ -50,7 +50,7 @@ class XlsxReader:
     """
 
     def create_master_input_dictionary(self,
-                                       project_data_dataframes, usacost_df,
+                                       project_data_dataframes, usacost_df, lcmcost_df,
                                        project_parameters):
         """
         This method takes a dictionary of dataframes that are the project data
@@ -88,6 +88,8 @@ class XlsxReader:
         incomplete_input_dict = dict()
         incomplete_input_dict['error'] = dict()
         incomplete_input_dict['usacost'] = usacost_df
+        incomplete_input_dict['lcmcosts'] = lcmcost_df
+
 #        incomplete_input_dict['lcmcosts'] = lcmcosts_df
         # Read all project_data sheets.
         # The erection module takes in a bunch of keys and values under the
