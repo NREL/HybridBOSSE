@@ -4,7 +4,7 @@ from SubstationCost import SubstationCost
 from ManagementCost import ManagementCost
 from GridConnectionCost import GridConnectionCost
 from FoundationCost import FoundationCost
-from InverterTransformerErection import InverterTransformerErection
+from InverterTransformerErection import InverterTransformerEregiction
 from CollectionCost import CollectionCost
 from HydroBOSCost import HydroBOSCost
 
@@ -32,6 +32,8 @@ class Manager:
 
         project_name = 'hydro_run'
         print('Running HydroBOSSE')
+
+        HydroBOSCost.project_classification()       # idea was to get BOS cost and ICC on the dictionary
 
         # TODO: Replace these modules with appropriate components for Hydro:
         siteprep = SitePreparationCost(input_dict=self.input_dict,
@@ -99,6 +101,5 @@ class Manager:
         hydroboscost.run_module()
 
         print(self.output_dict['total_bos_cost'])
-
 
         return self.output_dict

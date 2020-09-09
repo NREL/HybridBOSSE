@@ -11,14 +11,14 @@ ft_to_meter = 0.3048
 
 # pd.read_csv('examples/ex2.csv', names=['key', 'description', 'A', 'B', 'C'])
 
-metadata = pd.read_excel('project_list_30mw.xlsx', sheet_name='Metadata',index_col=0)
-usacost = pd.read_excel('project_list_30MW.xlsx', sheet_name='USACost')
-lcmcost = pd.read_excel('project_list_30MW.xlsx', sheet_name='LCMCosts')
+metadata = pd.read_excel('project_list_30mw.xlsx', sheet_name='metadata',index_col=0)
+usacost = pd.read_excel('project_list_30mw.xlsx', sheet_name='usacost_df')
+lcmcost = pd.read_excel('project_list_30mw.xlsx', sheet_name='lcmcosts_df')
 
 
-usacost["product08"] = usacost["%ICC(inFC)"] * usacost["08"]
+usacost["product08"] = usacost["%ICC(inFC)"] * usacost["Site Preparation"]
 
-total_cost = usacost.sum(axis=0)[17]
+total_cost = usacost.sum(axis=0)["product08"]
 # total_cost = usacost.sum(axis=0)[17] * self.output_dict['total_initial_capital_cost']
 # print(usacost)
 print('Total BOS Site Prep:', total_cost)
@@ -27,19 +27,20 @@ print('Total BOS Site Prep:', total_cost)
 
 
 
-def cobb_cost_model(lcmcost, uid_case):
+def cobb_cost_model(self, lcmcost, uid):
     """
 
     """
     # get the row for the uid_case and extract that particular row - based on key
     # how we confirm the variables used are right one
 
+    # power and head information not passed into this funtion...get from self()
+
     a_cobb = lcmcost.at['uid_case', 'A']
     b_cobb = lcmcost.at['uid_case', 'B']
     c_cobb = lcmcost.at['uid_case', 'C']
 
     cost_cobb = a_cobb * (power ** b_cobb) * (head_ft ** c_cobb)
-
 
     # output_dict['site_access_cost'] = per_ICC * factor * self.output_dict['total_initial_capital_cost']
 
@@ -69,12 +70,15 @@ metadata_dic = metadata.to_dict()
 #   metadat_dic[] = metadata.at[index, 'value']
 
 
-print(metadata)
+print(metadata_dic)
 
-power = metadata_dic['Value']['Capacity']       # Nested Dictionaries https://www.w3schools.com/python/python_dictionaries.asp
-head_ft = metadata_dic['Value']['Head']/ft_to_meter
+# power = metadata_dic['Value']['Capacity']       # Nested Dictionaries https://www.w3schools.com/python/python_dictionaries.asp
+power = 26
+head_ft = 90
+# power =metadata_dic['Capacity (MW)']
+# head_ft = metadata_dic['Head (meter)']
 
-abc = pd.read_excel('project_list_30MW.xlsx', sheet_name='LCMCosts', index_col=0)
+abc = pd.read_excel('project_list_30MW.xlsx', sheet_name='lcmcosts_df', index_col=0)
 
 #nsd_a = abc.loc['nsd',['A']]
 

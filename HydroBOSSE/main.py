@@ -3,6 +3,7 @@ import pandas as pd
 from HydroBOSSE.excelio.create_master_input_dict import XlsxReader
 from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from HydroBOSSE.model.Manager import Manager
+from HydroBOSSE.model.SitePreparationCost import SitePreparationCost
 
 
 def run_hydrobosse(input_dictionary):
@@ -18,18 +19,27 @@ def run_hydrobosse(input_dictionary):
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
 
-        project_data_sheets = \
-            XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
+        print(project_data_basename)
 
-        # make sure you call create_master_input_dictionary() as soon as
-        # labor_cost_multiplier's value is changed.
-    #if project_data_sheets.endswith('_df')
-    #    input_dict[''] = pd.to_excel()
+        project_path = os.path.join(input_output_path, project_data_basename)
+
+        # project_data_sheets = \
+        #     XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
+        project_data_sheets = \
+             XlsxDataframeCache.read_all_sheets_from_xlsx(project_path)
+
+    # make sure you call create_master_input_dictionary() as soon as
+    # labor_cost_multiplier's value is changed.
+    #   Take out data_sheets with
+    #    for each_sheet,_ in  project_data_sheets.endswith('_df')
+    #        input_dictionary[each_sheet] = XlsxDataframeCache.copy_dataframes()
+
 
         master_input_dict = xlsx_reader.create_master_input_dictionary(
-                                            project_data_sheets, project_parameters)
+                                            project_data_sheets['metadata'], project_data_sheets['usacost_df'], project_parameters)
 
         master_input_dict['error'] = dict()
+#        print(project_data_sheets.values()[1]) - can index extract the sheet
 
     # master_input_dict = dict()
     output_dict = dict()
@@ -43,6 +53,9 @@ def run_hydrobosse(input_dictionary):
     if 'grid_size_MW_AC' not in master_input_dict:
         master_input_dict['grid_size_MW_AC'] = \
             master_input_dict['system_size_MW_DC'] / master_input_dict['dc_ac_ratio']
+    if 'Labor cost multiplier' not in master_input_dict:
+        master_input_dict['Labor cost multiplier'] = 1
+
 
     # Manager class (1) manages the distribution of inout data for all modules
     # and (2) executes hydrobosse
@@ -59,6 +72,7 @@ def run_hydrobosse(input_dictionary):
     else:   # if project runs successfully, return a dictionary with results
         # that are 3 layers deep (but 1-D)
         results['total_bos_cost'] = output_dict['total_bos_cost']
+        results['site_prep_cost'] = output_dict['total_bos_cost']
         # results['total_racking_cost'] = output_dict['total_racking_cost_USD']
         # results['siteprep_cost'] = output_dict['total_road_cost']
         # results['substation_cost'] = output_dict['total_substation_cost']
@@ -72,6 +86,7 @@ def run_hydrobosse(input_dictionary):
         # results['total_erection_cost'] = output_dict['total_erection_cost']
         # results['total_collection_cost'] = output_dict['total_collection_cost']
         # results['total_bos_cost_before_mgmt'] = output_dict['total_bos_cost_before_mgmt']
+        results['total_initial_capital_cost'] = BOS_results['total_initial_capital_cost']
 
     return results, output_dict
 
@@ -118,7 +133,7 @@ def read_weather_data(file_path):
 def read_hydro_data(file_path):
     # metadata = pd.read_excel(file_path, sheet_name='Metadata', index_col=0)
     # usacost = pd.read_excel('project_list_30MW.xlsx', sheet_name='USACost')
-    usacost = pd.read_excel(file_path, sheet_name='USACost')
+    usacost = pd.read_excel(file_path, sheet_name='usacost')
 
     # lcmcost = pd.read_excel('project_list_30MW.xlsx', sheet_name='LCMCosts')
     return usacost
@@ -142,7 +157,7 @@ class NegativeInputError(Error):
 # <><><><><><><><> EXAMPLE OF RUNNING THIS HydroBOSSE API <><><><><><><><><><><>
 # TODO: uncomment these lines to run HydroBOSSE as a standalone model.
 
-# sizes = [5, 50, 100]
+# sizes = [1, 10, 30,  100]
 # head_height = [20, 90, 250] #feet
 
 
@@ -151,24 +166,33 @@ project_types = ['Non-powered Dam', 'New Stream-reach Development',
                  'Generator Rewind Project']
 
 # Set project input parameters
-size = 26  # MW
+size = 22  # MW
 # Go to the closed roundup value [1 10 30 100]
 
 head_height = 90  # feet
 
 # Create input and output dictionaries
 input_dict = dict()
+output_dict = dict()
 BOS_results = dict()
 BOS_results.update({str(size)+' MW scenario': ' '})
 
 # Set input parameters
 # input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
-input_dict['project_list'] = 'project_list_30MW'
+input_dict['project_list'] = 'project_list'
 input_dict['system_size_MW_DC'] = size
 input_dict['grid_system_size_MW_DC'] = size
 input_dict['grid_size_MW_AC'] = size
 input_dict['head_height_ft'] = head_height
 input_dict['greenfield_or_existing'] = 'greenfield'
+
+# SitePreparationCost.calculate_siteprep_cost()       # this is giving a output dictionry
+# spc = output_dict['site_preparation_cost']
+# print('Site prep cost:', spc)
+
+# cobb_npd, case = HydroBOSCost.cobb_cost_model(input_dict('lcmcost'), npd)
+#
+# print('Cobb Douglas value:', cobb_npd)
 
 for project_type in project_types:
     input_dict['project_type'] = project_type  # Non-powered Dam, New Stream-reach Development,\
@@ -179,8 +203,10 @@ for project_type in project_types:
 
     # Print Results
     print(BOS_results)
-    bos_capex_total = BOS_results['total_icc_cost']
+    bos_capex_total = BOS_results['total_initial_capital_cost']
     bos_capex = bos_capex_total / (size * 1e6)
     print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
+
+
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

@@ -50,24 +50,24 @@ class SitePreparationCost(CostModule):
     # Here one function shoudl suffice - sumproduct of array and multiply by the icc cost
 
 
-    def calculate_siteprep_cost(self, input_dict, output_dict):
+    def calculate_siteprep_cost(self):
         """
         This is a BOS cost comming out of ICC
         """
 
         # load the USACost as input_dictionary?
         # Here inputdictionary should provide the filename to be used
-        file_name = input_dict['file_name']
-        #file_name = 'project_list_30MW.xlsx'
-        usacost = pd.read_excel(file_name, sheet_name='USACost')
-        # usacost = pd.read_excel('project_list_30MW.xlsx', sheet_name='USACost')
-        usacost["product08"] = usacost["%ICC(inFC)"] * usacost["08"]
+        # file_name = input_dict['project_data_file']
+        # file_name = 'project_list_30MW.xlsx'
+        usacost = self.input_dict['usacost']        # this is assumed to be a dataframe
 
-        total_cost = usacost.sum(axis=0)[17]
+        usacost["pct_siteprep"] = usacost["%ICC(inFC)"] * usacost["Site Preparation"]
 
-        output_dict['site_preparation_cost'] = total_cost * self.output_dict['total_initial_capital_cost']
+        total_cost = usacost.sum(axis=0)["pct_siteprep"]
 
-        return output_dict
+        self.output_dict['site_preparation_cost'] = total_cost * self.output_dict['total_initial_capital_cost']
+
+        return self.output_dict
 
 
 
