@@ -56,16 +56,16 @@ class SitePreparationCost(CostModule):
         """
 
         # load the USACost as input_dictionary?
-        # Here inputdictionary should provide the filename to be used
+        # Here input dictionary should provide the filename to be used
         # file_name = input_dict['project_data_file']
-        # file_name = 'project_list_30MW.xlsx'
+
         usacost = self.input_dict['usacost']        # this is assumed to be a dataframe
 
         usacost["pct_siteprep"] = usacost["%ICC(inFC)"] * usacost["Site Preparation"]
 
-        total_cost = usacost.sum(axis=0)["pct_siteprep"]
+        total_cost_percent = usacost.sum(axis=0)["pct_siteprep"]/100
 
-        self.output_dict['site_preparation_cost'] = total_cost * self.output_dict['total_initial_capital_cost']
+        self.output_dict['site_preparation_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
 
         return self.output_dict
 

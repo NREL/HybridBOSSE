@@ -3,6 +3,7 @@ import traceback
 import pytest
 import traceback
 from CostModule import CostModule
+from datetime import datetime
 
 
 class HydroBOSCost(CostModule):
@@ -85,10 +86,16 @@ class HydroBOSCost(CostModule):
 
     def total_bos_cost(self):
     # I am keeping the function as it is from Aaron (guress?)
-    # We can get BOS cost as % of ICC if that is what all needed.
-    # Or we can loop through all those 9 relevant BOS costs.
 
-        return 35.2
+        df = self.input_dict['usacost']
+
+        bos_percent = df.sum(axis=0)["Sum Product"]
+        # bos_percent = df.values[23,17]
+        # bos_cost = bos_percent * self.output_dict['total_initial_capital_cost']
+
+        #print('Bost Percent direct:', bos_percent)
+
+        return bos_percent
 
 
 
@@ -146,8 +153,9 @@ class HydroBOSCost(CostModule):
         # if self.input_dict['project_type'] == 'Generator Rewind Project':
         #total_bos_cost = 250147
         #
-        self.output_dict['total_bos_cost'] = self.total_bos_cost()
+
         self.output_dict['total_initial_capital_cost'] = self.total_initial_capital_cost()
+        self.output_dict['total_bos_cost'] = self.total_bos_cost() * self.output_dict['total_initial_capital_cost']
         return self.input_dict, self.output_dict
 
     def cobb_cost_model(self, uid_case):
@@ -155,7 +163,6 @@ class HydroBOSCost(CostModule):
         Cobb douglas cost calculation
         """
         # get the row for the uid_case and extract that particular row - based on key
-
 
         var1 = self.input_dict['system_size_MW_AC']  # can we make a list power, head_in_ft, gen_rpm, cf or AEP.
         var2 = self.input_dict['head_height_ft']
@@ -174,7 +181,7 @@ class HydroBOSCost(CostModule):
             b_cobb = desired_row_for_technology['B']
             c_cobb = desired_row_for_technology['C']
 
-        print('Debug')
+        # print('Debug')
         cost_cobb = a_cobb * (var1 ** b_cobb) * (var2 ** c_cobb)
 
         # output_dict['site_access_cost'] = per_ICC * factor * self.output_dict['total_initial_capital_cost']
@@ -186,7 +193,11 @@ class HydroBOSCost(CostModule):
 
         """
         model_year = lcmcost.at['uid_case', 'CostModelYear']
-        current_year = 2020  # Hard coded for now - make dynamic later
+        today = datetime.today()
+
+        current_year = today.year()  # Hard coded for now - make dynamic later
+
+        print(current_year)
 
         # Use some logic here based on Construction Cost Escalation
         # Here I am using default value as a placeholder

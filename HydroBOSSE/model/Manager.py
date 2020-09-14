@@ -4,7 +4,7 @@ from SubstationCost import SubstationCost
 from ManagementCost import ManagementCost
 from GridConnectionCost import GridConnectionCost
 from FoundationCost import FoundationCost
-from InverterTransformerErection import InverterTransformerEregiction
+from InverterTransformerErection import InverterTransformerErection
 from CollectionCost import CollectionCost
 from HydroBOSCost import HydroBOSCost
 
@@ -30,7 +30,7 @@ class Manager:
 
     def execute_hydrobosse(self):
 
-        project_name = 'hydro_run'
+        project_name = self.input_dict['project_type']
         print('Running HydroBOSSE')
 
         hydroboscost = HydroBOSCost(input_dict=self.input_dict,
@@ -38,8 +38,8 @@ class Manager:
                                       project_name=project_name)
 
         hydroboscost.project_classification()
+        hydroboscost.total_bos_cost()
         hydroboscost.run_module()
-        print("Debug")
 
         # TODO: Replace these modules with appropriate components for Hydro:
         siteprep = SitePreparationCost(input_dict=self.input_dict,
@@ -60,32 +60,32 @@ class Manager:
         #                                                         project_name=project_name)
         # racking_system_installation.run_module()
         #
-        # collection_system = CollectionCost(input_dict=self.input_dict,
-        #                                    output_dict=self.output_dict,
-        #                                    project_name=project_name)
-        # collection_system.run_module()
+        collection_system = CollectionCost(input_dict=self.input_dict,
+                                           output_dict=self.output_dict,
+                                           project_name=project_name)
+        collection_system.run_module()
         #
-        # foundation_cost = FoundationCost(input_dict=self.input_dict,
-        #                                  output_dict=self.output_dict,
-        #                                  project_name=project_name)
-        # foundation_cost.run_module()
+        foundation_cost = FoundationCost(input_dict=self.input_dict,
+                                         output_dict=self.output_dict,
+                                         project_name=project_name)
+        foundation_cost.run_module()
         #
-        # container_erection = InverterTransformerErection(input_dict=self.input_dict,
-        #                                                  output_dict=self.output_dict,
-        #                                                  project_name=project_name)
-        # container_erection.run_module()
+        container_erection = InverterTransformerErection(input_dict=self.input_dict,
+                                                         output_dict=self.output_dict,
+                                                         project_name=project_name)
+        container_erection.run_module()
         #
-        # # SubstationCost:
-        # substationcost = SubstationCost(input_dict=self.input_dict,
-        #                                 output_dict=self.output_dict,
-        #                                 project_name=project_name)
-        # substationcost.run_module()
+        # SubstationCost:
+        substationcost = SubstationCost(input_dict=self.input_dict,
+                                        output_dict=self.output_dict,
+                                        project_name=project_name)
+        substationcost.run_module()
         #
         # # GridConnectionCost:
-        # gridconnection = GridConnectionCost(input_dict=self.input_dict,
-        #                                     output_dict=self.output_dict,
-        #                                     project_name=project_name)
-        # gridconnection.run_module()
+        gridconnection = GridConnectionCost(input_dict=self.input_dict,
+                                            output_dict=self.output_dict,
+                                            project_name=project_name)
+        gridconnection.run_module()
 
         # Sum all costs
         # self.output_dict['total_bos_cost_before_mgmt'] = \
@@ -98,10 +98,10 @@ class Manager:
         #     self.output_dict['total_collection_cost']
 
         # ManagementCost:
-        # managementcost = ManagementCost(input_dict=self.input_dict,
-        #                                 output_dict=self.output_dict,
-        #                                 project_name=project_name)
-        # managementcost.run_module()
+        managementcost = ManagementCost(input_dict=self.input_dict,
+                                        output_dict=self.output_dict,
+                                        project_name=project_name)
+        managementcost.run_module()
 
         # self.output_dict['total_bos_cost'] = \
         #     self.output_dict['total_bos_cost_before_mgmt'] + \

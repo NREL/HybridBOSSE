@@ -19,7 +19,7 @@ def run_hydrobosse(input_dictionary):
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
 
-        print(project_data_basename)
+     # print(project_data_basename)
 
         project_path = os.path.join(input_output_path, project_data_basename)
 
@@ -40,7 +40,6 @@ def run_hydrobosse(input_dictionary):
                                             project_data_sheets['lcmcosts_df'], project_parameters)
 
         master_input_dict['error'] = dict()
-#        print(project_data_sheets.values()[1]) - can index extract the sheet
 
     # master_input_dict = dict()
     output_dict = dict()
@@ -78,16 +77,15 @@ def run_hydrobosse(input_dictionary):
         # results['siteprep_cost'] = output_dict['total_road_cost']
         # results['substation_cost'] = output_dict['total_substation_cost']
         # results['total_transdist_cost'] = output_dict['total_transdist_cost']
-        # results['total_management_cost'] = output_dict['total_management_cost']
+        results['total_management_cost'] = output_dict['total_management_cost']
         # results['epc_developer_profit'] = output_dict['epc_developer_profit']
         # results['bonding_usd'] = output_dict['bonding_usd']
         # results['development_overhead_cost'] = output_dict['development_overhead_cost']
         # results['total_sales_tax'] = output_dict['development_overhead_cost']
         # results['total_foundation_cost'] = output_dict['total_foundation_cost']
         # results['total_erection_cost'] = output_dict['total_erection_cost']
-        # results['total_collection_cost'] = output_dict['total_collection_cost']
+        results['total_collection_cost'] = output_dict['total_collection_cost']
         # results['total_bos_cost_before_mgmt'] = output_dict['total_bos_cost_before_mgmt']
-        print(results)
         results['total_initial_capital_cost'] = output_dict['total_initial_capital_cost']
 
     return results, output_dict
@@ -132,16 +130,6 @@ def read_weather_data(file_path):
     return weather_data
 
 
-def read_hydro_data(file_path):
-    # metadata = pd.read_excel(file_path, sheet_name='Metadata', index_col=0)
-    # usacost = pd.read_excel('project_list_30MW.xlsx', sheet_name='USACost')
-    usacost = pd.read_excel(file_path, sheet_name='usacost')
-
-    # lcmcost = pd.read_excel('project_list_30MW.xlsx', sheet_name='LCMCosts')
-    return usacost
-
-
-
 
 class Error(Exception):
     """
@@ -166,6 +154,7 @@ class NegativeInputError(Error):
 project_types = ['Non-powered Dam', 'New Stream-reach Development',
                  'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
                  'Generator Rewind Project']
+
 
 # Set project input parameters
 size = 22  # MW
@@ -204,11 +193,25 @@ for project_type in project_types:
     BOS_results, detailed_results = run_hydrobosse(input_dict)
 
     # Print Results
-    print(BOS_results)
+#    print(BOS_results)
     bos_capex_total = BOS_results['total_initial_capital_cost']
-    bos_capex = bos_capex_total / (size * 1e6)
-    print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
+    management_cost = BOS_results['total_management_cost']
+    collection_cost = detailed_results['collection_cost']       # because it was on output dictionary
+    foundation_cost = detailed_results['foundation_cost']
+    grid_connection_cost = detailed_results['grid_connection_cost']
+    # erection_cost = detailed_results['invertertransformer_erection_cost']   # whether module o/p is dictionary
+    erection_cost = detailed_results['total_erection_cost']             # this is comming from run_module.
+    substation_cost = detailed_results['total_substation_cost']
 
+    bos_capex = bos_capex_total / (size * 1e6)
+    management_capex = management_cost / (size * 1e6)
+    print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
+    print(str(size) + ' MW Management (USD/Watt)  = ' + str(round(management_capex, 2)))
+    print(str(size) + ' MW Collection USD  = ' + str(round(collection_cost, 2)))
+    print(str(size) + ' MW Foundation USD  = ' + str(round(foundation_cost, 2)))
+    print(str(size) + ' MW Grid Connection USD  = ' + str(round(grid_connection_cost, 2)))
+    print(str(size) + ' MW Inv Trans Erection USD  = ' + str(round(erection_cost, 2)))
+    print(str(size) + ' MW Substation USD  = ' + str(round(substation_cost, 2)))
 
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

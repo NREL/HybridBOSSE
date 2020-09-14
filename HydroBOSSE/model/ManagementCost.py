@@ -3,6 +3,8 @@ import traceback
 import pytest
 import traceback
 from HydroBOSSE.model.CostModule import CostModule
+from HydroBOSCost import HydroBOSCost
+
 
 
 class ManagementCost(CostModule):
@@ -35,9 +37,13 @@ class ManagementCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
+        # # Project CAPEX before management costs (USD)
+        # self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt'] + \
+        #                          (0.51 * self.input_dict['system_size_MW_DC'] * 1e6)
         # Project CAPEX before management costs (USD)
-        self.project_capex_usd = self.output_dict['total_bos_cost_before_mgmt'] + \
+        self.project_capex_usd = (35.2 - 14.3)* output_dict['total_initial_capital_cost'] + \
                                  (0.51 * self.input_dict['system_size_MW_DC'] * 1e6)
+
 
     def epc_developer_profit(self):
         """
@@ -76,6 +82,24 @@ class ManagementCost(CostModule):
         self.output_dict['total_sales_tax'] = sales_tax_percent * self.project_capex_usd
         return self.output_dict['total_sales_tax']
 
+    def calculate_management_cost(self):
+        """
+        This is a BOS cost comming out of ICC
+        """
+
+        # load the USACost as input_dictionary?
+        # Here input dictionary should provide the filename to be used
+        # file_name = input_dict['project_data_file']
+
+        usacost = self.input_dict['usacost']        # this is assumed to be a dataframe
+        usacost["pct_management"] = usacost["%ICC(inFC)"] * usacost["Management"]
+        total_cost_percent = usacost.sum(axis=0)["pct_management"]/100
+        self.output_dict['management_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
+
+        return self.output_dict['management_cost']
+
+
+
     def total_management_cost(self):
         """
         Calculates the total cost of returned by the rest of the methods.
@@ -91,10 +115,12 @@ class ManagementCost(CostModule):
             other methods.
         """
         total = 0
-        total += self.output_dict['epc_developer_profit']
-        total += self.output_dict['contingency_cost']
-        total += self.output_dict['development_overhead_cost']
-        total += self.output_dict['total_sales_tax']
+        # total += self.output_dict['epc_developer_profit']
+        # total += self.output_dict['contingency_cost']
+        # total += self.output_dict['development_overhead_cost']
+        # total += self.output_dict['total_sales_tax']
+        total += self.output_dict['management_cost']                # This is from Hydro Excel -
+
         self.output_dict['total_management_cost'] = total
         return total
 
@@ -117,10 +143,11 @@ class ManagementCost(CostModule):
             0 then the second element is 0 as well.
         """
         try:
-            self.output_dict['epc_developer_profit'] = self.epc_developer_profit()
-            self.output_dict['bonding_usd'] = self.contingency()
-            self.output_dict['development_overhead_cost'] = self.development_overhead_cost()
-            self.output_dict['total_sales_tax'] = self.sales_tax()
+            # self.output_dict['epc_developer_profit'] = self.epc_developer_profit()
+            # self.output_dict['bonding_usd'] = self.contingency()
+            # self.output_dict['development_overhead_cost'] = self.development_overhead_cost()
+            # self.output_dict['total_sales_tax'] = self.sales_tax()
+            self.output_dict['management_cost'] = self.calculate_management_cost()
 
             self.output_dict['total_management_cost'] = self.total_management_cost()
 

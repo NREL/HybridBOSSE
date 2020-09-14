@@ -52,6 +52,22 @@ class SubstationCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
+    def calculate_substation_cost(self):
+        """
+        This is a BOS cost comming out of ICC
+        """
+
+        usacost = self.input_dict['usacost']        # this is assumed to be a dataframe
+
+        usacost["pct_substation"] = usacost["%ICC(inFC)"] * usacost["Substation"]
+
+        total_cost_percent = usacost.sum(axis=0)["pct_substation"]/100
+
+        self.output_dict['substation_cost'] = total_cost_percent * \
+                                                                self.output_dict['total_initial_capital_cost']
+
+        return self.output_dict['substation_cost']
+
     def calculate_costs(self, input_dict , output_dict):
         """
         Function to calculate Substation Cost in USD
@@ -118,7 +134,8 @@ class SubstationCost(CostModule):
 
         """
         try:
-            self.calculate_costs(self.input_dict, self.output_dict)
+            #self.calculate_costs(self.input_dict, self.output_dict)
+            self.output_dict['total_substation_cost'] = self.calculate_substation_cost()
             return 0, 0
         except Exception as error:
             traceback.print_exc()

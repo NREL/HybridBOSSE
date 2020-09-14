@@ -47,64 +47,22 @@ class GridConnectionCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
-    def calculate_costs(self, input_dict, output_dict):
+    def calculate_grid_connection_cost(self):
         """
-        Function to calculate total costs for transmission and distribution.
-
-        Parameters
-        ----------
-        <None>
-
-        Returns
-        -------
-        tuple
-            First element of tuple contains a 0 or 1. 0 means no errors happened and
-            1 means an error happened and the module failed to run. The second element
-            either returns a 0 if the module ran successfully, or it returns the error
-            raised that caused the failure.
+        This is a BOS cost comming out of ICC
         """
-        # TODO: In the next version update of SolarBOSSE, change grid cost
-        #  calculation as a function of grid_size_MW_AC, not grid_system_size_MW_DC
 
-        # Switch between utility scale model and distributed model
-        # Run utility version of GridConnectionCost for project size > 10 MW:
-        if input_dict['grid_system_size_MW_DC'] > 15:
-            if input_dict['dist_interconnect_mi'] == 0:
-                output_dict['trans_dist_usd'] = 0
-            else:
-                if input_dict['new_switchyard'] is True:
-                    output_dict['interconnect_adder_USD'] = \
-                        18115 * self.input_dict['interconnect_voltage_kV'] + 165944
-                else:
-                    output_dict['interconnect_adder_USD'] = 0
+        usacost = self.input_dict['usacost']        # this is assumed to be a dataframe
 
-                output_dict['trans_dist_usd'] = \
-                    ((1176 * self.input_dict['interconnect_voltage_kV'] + 218257) *
-                     (input_dict['dist_interconnect_mi'] ** (-0.1063)) *
-                     input_dict['dist_interconnect_mi']
-                     ) + output_dict['interconnect_adder_USD']
+        usacost["pct_grid"] = usacost["%ICC(inFC)"] * usacost["Grid Connection"]
 
-        # Run distributed wind version of GridConnectionCost for project size < 15 MW:
-        else:
-            # Code below is for newer version of LandBOSSE which incorporates
-            # distributed wind into the model. Here POI refers to point of
-            # interconnection.
-            output_dict['array_to_POI_usd_per_kw'] = \
-                1736.7 * ((input_dict['grid_size_MW_AC'] * 1000) ** (-0.272))
+        total_cost_percent = usacost.sum(axis=0)["pct_grid"]/100
 
-            output_dict['trans_dist_usd'] = \
-                input_dict['grid_size_MW_AC'] * 1000 * output_dict['array_to_POI_usd_per_kw']
+        self.output_dict['grid_connection_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
 
-        output_dict['trans_dist_usd_df'] = pd.DataFrame([['Other',
-                                                          output_dict['trans_dist_usd'],
-                                                          'Transmission and Distribution']],
-                                                        columns=['Type of cost',
-                                                                 'Cost USD',
-                                                                 'Phase of construction'])
+        return self.output_dict
 
-        output_dict['total_transdist_cost'] = output_dict['trans_dist_usd_df']['Cost USD'].sum()
 
-        return output_dict['trans_dist_usd_df']
 
     def run_module(self):
         """
@@ -124,7 +82,8 @@ class GridConnectionCost(CostModule):
 
         """
         try:
-            self.calculate_costs(self.input_dict, self.output_dict)
+            # self.calculate_costs(self.input_dict, self.output_dict)
+            self.output_dict['total_collection_cost'] = self.calculate_grid_connection_cost()
             return 0, 0 # module ran successfully
         except Exception as error:
             traceback.print_exc()
