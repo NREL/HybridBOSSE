@@ -304,13 +304,14 @@ class XlsxReader:
             The scalar labor cost multiplier.
         """
         print(project_data_dict)
-        crew_price = project_data_dict['crew_price']
+        crew_price = dict()
+        crew_price['crew_price'] = project_data_dict['crew_price']
         crew_price_new_hourly_rates = 100
         crew_price_new_per_diem_rates = 100
         crew_price['Hourly rate USD per hour'] = crew_price_new_hourly_rates
         crew_price['Per diem USD per day'] = crew_price_new_per_diem_rates
-
-        construction_estimator = project_data_dict['construction_estimator']
+        construction_estimator = dict()
+        construction_estimator['construction_estimator'] = project_data_dict['construction_estimator']
 
         # This function maps new labor rates in construction_estimator. Used with an apply()
         # call, it will create a new Series that can be mapped back onto the
@@ -329,4 +330,5 @@ class XlsxReader:
         #     construction_estimator.apply(map_labor_rates, axis=1)
         # construction_estimator.drop(columns=['Rate USD per unit'],
         #                             inplace=True)
+
         construction_estimator['Rate USD per unit'] = 100
