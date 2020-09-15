@@ -141,6 +141,12 @@ class NegativeInputError(Error):
 # <><><><><><><><> EXAMPLE OF RUNNING THIS HydroBOSSE API <><><><><><><><><><><>
 # TODO: uncomment these lines to run HydroBOSSE as a standalone model.
 
+path = os.path.abspath(os.path.dirname(__file__))
+parent_path = os.path.abspath(os.path.join(path, ".."))
+results_dir = os.path.abspath(os.path.join(parent_path, "results"))
+print(results_dir)
+print("pause")
+
 results_dict = dict()
 results_dict['Project_Size_MW'] = list()
 results_dict['Project_Head_Height'] = list()
@@ -230,4 +236,4 @@ for size in project_sizes:
 
         # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 print(results_df)
-results_df.to_csv()
+results_df.to_csv(os.path.join(results_dir, 'test.csv'))
