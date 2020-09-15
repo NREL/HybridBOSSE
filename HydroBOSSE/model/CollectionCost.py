@@ -131,7 +131,7 @@ class CollectionCost(CostModule):
 
         self.output_dict['collection_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
 
-        return self.output_dict
+        return self.output_dict['collection_cost']
 
 
 

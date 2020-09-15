@@ -213,9 +213,9 @@ class FoundationCost(CostModule):
 
         total_cost_percent = usacost.sum(axis=0)["pct_foundation"]/100
 
-        self.output_dict['foundation_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
+        self.output_dict['total_foundation_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
 
-        return self.output_dict
+        return self.output_dict['total_foundation_cost']
 
 
     def run_module(self):
@@ -237,7 +237,7 @@ class FoundationCost(CostModule):
         """
         try:
             # Returns foundation volume
-            self.output_dict['Foundation_cost'] = self.calculate_foundation_cost()
+            self.output_dict['foundation_cost'] = self.calculate_foundation_cost()
 
             return 0, 0   # module ran successfully
 

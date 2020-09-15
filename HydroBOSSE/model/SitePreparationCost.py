@@ -52,7 +52,7 @@ class SitePreparationCost(CostModule):
 
     def calculate_siteprep_cost(self):
         """
-        This is a BOS cost comming out of ICC
+        This is a BOS cost coming out of ICC
         """
 
         # load the USACost as input_dictionary?
@@ -67,7 +67,7 @@ class SitePreparationCost(CostModule):
 
         self.output_dict['site_preparation_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
 
-        return self.output_dict
+        return self.output_dict['site_preparation_cost']
 
 
 

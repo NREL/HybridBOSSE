@@ -60,7 +60,7 @@ class GridConnectionCost(CostModule):
 
         self.output_dict['grid_connection_cost'] = total_cost_percent * self.output_dict['total_initial_capital_cost']
 
-        return self.output_dict
+        return self.output_dict['grid_connection_cost']
 
 
 
@@ -83,7 +83,7 @@ class GridConnectionCost(CostModule):
         """
         try:
             # self.calculate_costs(self.input_dict, self.output_dict)
-            self.output_dict['total_collection_cost'] = self.calculate_grid_connection_cost()
+            self.output_dict['grid_connection_cost'] = self.calculate_grid_connection_cost()
             return 0, 0 # module ran successfully
         except Exception as error:
             traceback.print_exc()
