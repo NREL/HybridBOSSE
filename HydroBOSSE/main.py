@@ -148,17 +148,18 @@ print(results_dir)
 print("pause")
 
 results_dict = dict()
+results_dict['Project_Type'] = list()
 results_dict['Project_Size_MW'] = list()
 results_dict['Project_Head_Height'] = list()
 results_dict['Total_Initial_Capital_Cost'] = list()
-results_dict['Site_Peparation_Cost'] = list()
+results_dict['Site_Preparation_Cost'] = list()
 results_dict['Foundation_Cost'] = list()
 results_dict['Erection_Cost'] = list()
-results_dict['Total_Collection_Cost'] = list()
+results_dict['Collection_Cost'] = list()
 results_dict['Substation_Cost'] = list()
 results_dict['Grid_Connection_Cost'] = list()
 results_dict['Management_Cost'] = list()
-
+results_dict['Total_BOS_Cost'] = list()
 
 project_types = ['Non-powered Dam', 'New Stream-reach Development',
                  'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
@@ -199,17 +200,18 @@ for size in project_sizes:
 
             # Run HydroBOSSE
             BOS_results, detailed_results = run_hydrobosse(input_dict)
-
+            results_dict['Project_Type'].append(project_type)
             results_dict['Project_Size_MW'].append(size)
             results_dict['Project_Head_Height'].append(head_height)
             results_dict['Total_Initial_Capital_Cost'].append(BOS_results['total_initial_capital_cost'])
-            results_dict['Site_Peparation_Cost'].append(BOS_results['site_preparation_cost'])
+            results_dict['Site_Preparation_Cost'].append(BOS_results['site_preparation_cost'])
             results_dict['Foundation_Cost'].append(BOS_results['total_foundation_cost'])
             results_dict['Erection_Cost'].append(BOS_results['total_erection_cost'])
-            results_dict['Total_Collection_Cost'].append(BOS_results['total_collection_cost'])
+            results_dict['Collection_Cost'].append(BOS_results['total_collection_cost'])
             results_dict['Substation_Cost'].append(BOS_results['total_substation_cost'])
             results_dict['Grid_Connection_Cost'].append(BOS_results['grid_connection_cost'])
             results_dict['Management_Cost'].append(BOS_results['total_management_cost'])
+            results_dict['Total_BOS_Cost'].append(BOS_results['total_bos_cost'])
 
             results_df = pd.DataFrame(results_dict)
 
