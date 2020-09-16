@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/HydroBOSSE" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/HydroBOSSE/model" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (hybrid_analysis) (2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

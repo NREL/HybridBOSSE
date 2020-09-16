@@ -89,7 +89,7 @@ class HydroBOSCost(CostModule):
 
         df = self.input_dict['usacost']
 
-        bos_percent = df.sum(axis=0)["Sum Product"]
+        bos_percent = df.sum(axis=0)["Sum Product"]/100
         # bos_percent = df.values[23,17]
         # bos_cost = bos_percent * self.output_dict['total_initial_capital_cost']
 
@@ -151,7 +151,7 @@ class HydroBOSCost(CostModule):
         #     total_bos_cost = 4163746 * P**0.741
         #
         # if self.input_dict['project_type'] == 'Generator Rewind Project':
-        #total_bos_cost = 250147
+        # total_bos_cost = 250147
         #
 
         self.output_dict['total_initial_capital_cost'] = self.total_initial_capital_cost()
@@ -232,7 +232,7 @@ class HydroBOSCost(CostModule):
         """
         try:
             self.project_classification()
-            #self.total_bos_cost()
+            self.total_bos_cost()
             #self.total_initial_capital_cost()
             return 0, 0    # module ran successfully
         except Exception as error:

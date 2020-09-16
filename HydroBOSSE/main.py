@@ -18,8 +18,10 @@ def run_hydrobosse(input_dictionary):
     xlsx_reader = XlsxReader()
     for _, project_parameters in project_data.iterrows():
         project_data_basename = project_parameters['Project data file']
+        # Here I am overwriting the variable - not a good practice though
+        project_data_basename = input_dictionary['project_database']
 
-     # print(project_data_basename)
+    #print(project_data_basename)
 
         project_path = os.path.join(input_output_path, project_data_basename)
 
@@ -84,6 +86,12 @@ def run_hydrobosse(input_dictionary):
 
     return results, output_dict
 
+
+def closest_database(myList, myNumber):
+
+    dbSize = min(myList, key=lambda x: abs(x - myNumber))
+
+    return dbSize
 
 # This method reads in the two input Excel files (project_list; project_1)
 # and stores them as data frames. This method is called internally in
@@ -165,10 +173,18 @@ project_types = ['Non-powered Dam', 'New Stream-reach Development',
                  'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
                  'Generator Rewind Project']
 
-project_sizes = [1, 10, 30, 100]  # MW
+project_sizes = [1, 10, 30, 100]  # This is sizes of database available as project_List_30MW.xlsx
+project_run_sizes = [0.5, 5, 37, 77]
 head_heights = [20, 90, 250]  # feet
 
-for size in project_sizes:
+size_input = 66
+
+dbSize = closest_database(project_sizes, size_input)
+
+print("Your DB size is:", dbSize )
+
+
+for size in project_run_sizes:
     for head_height in head_heights:
         # Create input and output dictionaries
         input_dict = dict()
@@ -179,6 +195,7 @@ for size in project_sizes:
         # Set input parameters
         # input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
         input_dict['project_list'] = 'project_list'  # .xlsx
+        input_dict['project_database'] = 'project_list_' + str(closest_database(project_sizes, size)) + 'MW'
         # Go to the closest roundup value [1 10 30 100]
         input_dict['system_size_MW_DC'] = size
         input_dict['grid_system_size_MW_DC'] = size
