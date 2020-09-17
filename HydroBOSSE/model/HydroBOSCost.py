@@ -47,6 +47,7 @@ class HydroBOSCost(CostModule):
         Cost data is sourced from: “Hydropower Baseline Cost Modelling, Version 2”
          –Oak Ridge National Laboratory https://info.ornl.gov/sites/publications/files/Pub58666.pdf
         """
+        # We need to implement ICC based on size [1 10 30 100] INL(2015)
 
         P = self.input_dict['system_size_MW_DC']
         H = self.input_dict['head_height_ft']
@@ -54,15 +55,35 @@ class HydroBOSCost(CostModule):
         if self.input_dict['project_type'] == 'Non-powered Dam':
             # insert key for the 'Non-powered Dam' from lcmcost dataframe
             self.input_dict['uid_lcmcosts'] = 'npd'
-            total_icc_cost = 11489245 * P**0.976 * H ** -0.240
+            if P < 1:
+                total_icc_cost = 16387025 * P**0.91 * H**-0.22
+            elif P >= 1 & P < 10:
+                total_icc_cost = 9031154 * P**0.77 * H**-0.12
+            elif P >= 10 & P < 30:
+                total_icc_cost = 6527525*P**0.75 * H**0.003
+            else:
+                total_icc_cost =14154867 * P ** 0.79 * H ** -0.20
+            # total_icc_cost = 11489245 * P**0.976 * H ** -0.240
 
         if self.input_dict['project_type'] == 'New Stream-reach Development':
             self.input_dict['uid_lcmcosts'] = 'nsd'
-            total_icc_cost = 9605710 * P**0.977 * H ** -0.126
+            if P < 1:
+                total_icc_cost = 23582431 * P**0.24 * H**-0.4
+            elif P >= 1 & P < 10:
+                total_icc_cost = 5873031 * P**1.06 * H**-0.09
+            elif P >= 10 & P < 30:
+                total_icc_cost = 1610010 * P**1.49 * H**-0.11
+            else:
+                total_icc_cost = 3507978 * P**1.01 * H**0.001
+            # total_icc_cost = 9605710 * P**0.977 * H ** -0.126
 
         if self.input_dict['project_type'] == 'Canal/Conduit Project':
             self.input_dict['uid_lcmcosts'] = 'ccd'
-            total_icc_cost = 9297820 * P**0.810 * H ** -0.102
+            if P < 1:
+                total_icc_cost = 9292909 * P**0.77 * H**-0.13
+            else:
+                total_icc_cost = 6975229 * P**0.58 * H**0.01
+            # total_icc_cost = 9297820 * P**0.810 * H ** -0.102
 
         if self.input_dict['project_type'] == 'Pumped Storage Hydropower Project':
             self.input_dict['uid_lcmcosts'] = 'psh'
