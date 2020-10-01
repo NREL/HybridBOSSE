@@ -5,7 +5,6 @@ from bin.PostSimulationProcessing import PostSimulationProcessing
 import pandas as pd
 import sys
 
-
 # Main API method to run a Hybrid BOS model:
 def run_hybrid_BOS(hybrids_input_dict):
     """
@@ -56,6 +55,7 @@ def run_hybrid_BOS(hybrids_input_dict):
                                                              solar_BOS['total_management_cost'] + \
                                                              storage_BOS['total_management_cost'] + \
                                                              hybrid_BOS.site_facility_usd
+
 
     results['Wind_BOS_results'] = hybrid_BOS.update_BOS_dict(wind_BOS, 'wind')
     results['Solar_BOS_results'] = hybrid_BOS.update_BOS_dict(solar_BOS, 'solar')

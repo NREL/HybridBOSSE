@@ -5,16 +5,26 @@ hybrids_input_dict:
     grid_interconnection_rating_MW: 7.5
     interconnect_voltage_kV: 15
     shared_substation: True
+<<<<<<< HEAD
     hybrid_substation_rating_MW: 7.5
+=======
+    hybrid_substation_rating_MW: 15
+>>>>>>> develop
 
     # Wind farm required inputs
     wind_dist_interconnect_mi: 0    # Gets over-ridden when 'shared_interconnection' is True
     num_turbines: 5
     turbine_rating_MW: 1.5
     wind_construction_time_months: 5
+<<<<<<< HEAD
     project_id: 'foundation_validation_ge15'
     path_to_project_list: '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
     name_of_project_list: 'project_list_'
+=======
+    project_id: 'ge15_public'
+    path_to_project_list: '/Users/abarker/Desktop/Hybrid Model/Code/hybrids_shared_infrastructure/LandBOSSE/landbosse/landbosse_api/'
+    name_of_project_list: 'project_list'
+>>>>>>> develop
 
     # Solar farm required inputs
     solar_system_size_MW_DC: 7.5
