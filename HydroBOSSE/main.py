@@ -7,6 +7,11 @@ from HydroBOSSE.model.SitePreparationCost import SitePreparationCost
 
 
 def run_hydrobosse(input_dictionary):
+    """
+    Runs a HydroBOSSE analysis and returns the result, as well as the overall output_dict from the manager class
+    :param input_dictionary: Input dictionary containing project details
+    :return: (dicts) results, output_dict
+    """
     input_output_path = os.path.dirname(__file__)
     # HydroBOSSE uses LandBOSSE's Excel I/O library for reading in data from Excel
     # files. Accordingly, the environment variables used in HydroBOSSE are called
@@ -87,17 +92,27 @@ def run_hydrobosse(input_dictionary):
     return results, output_dict
 
 
-def closest_database(myList, myNumber):
+def closest_match(myList, myNumber):
+    """
+    Determines the number in myList which most closely matches myNumber
+    :param myList: List of project database sizes
+    :param myNumber: Desired project database size
+    :return: (int) match - Closest project database size to the requested size (MW)
+    """
 
-    dbSize = min(myList, key=lambda x: abs(x - myNumber))
+    match = min(myList, key=lambda x: abs(x - myNumber))
 
-    return dbSize
+    return match
 
-# This method reads in the two input Excel files (project_list; project_1)
-# and stores them as data frames. This method is called internally in
-# run_hydrobosse(), where the data read in is converted to a master input
-# dictionary.
+
 def read_data(file_name):
+    """
+    This method reads in the two input Excel files (project_list; project_1)
+    and stores them as data frames. This method is called internally in
+    run_hydrobosse(), where the data read in is converted to a master input dictionary.
+    :param file_name: Name of project list file to read
+    :return: project_list - list of projects contained within the file.
+    """
     path_to_project_list = os.path.dirname(__file__)
     sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(file_name,
                                                           path_to_project_list)
@@ -111,7 +126,6 @@ def read_data(file_name):
     elif 'Project list' in sheets.keys():
         project_list = sheets['Project list']
 
-
     # Otherwise, raise an exception
     else:
         raise KeyError(
@@ -123,6 +137,11 @@ def read_data(file_name):
 
 
 def read_weather_data(file_path):
+    """
+    Reads weather data from the given file in file_oath
+    :param file_path: Path to weather data file
+    :return: weather_data - pandas dataframe of weather data
+    """
     weather_data = pd.read_csv(file_path,
                                sep=",",
                                header=None,
@@ -130,7 +149,6 @@ def read_weather_data(file_path):
                                usecols=[0, 1, 2, 3, 4]
                                )
     return weather_data
-
 
 
 class Error(Exception):
@@ -148,6 +166,7 @@ class NegativeInputError(Error):
 
 # <><><><><><><><> EXAMPLE OF RUNNING THIS HydroBOSSE API <><><><><><><><><><><>
 # TODO: uncomment these lines to run HydroBOSSE as a standalone model.
+
 
 path = os.path.abspath(os.path.dirname(__file__))
 parent_path = os.path.abspath(os.path.join(path, ".."))
@@ -174,13 +193,13 @@ project_types = ['Non-powered Dam', 'New Stream-reach Development',
                  'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
                  'Generator Rewind Project']
 
-project_sizes = [1, 10, 30, 100]  # This is sizes of database available as project_List_30MW.xlsx
+project_sizes = [1, 10, 30, 100]  # This is sizes of database available as project_List_XXMW.xlsx
 project_run_sizes = [0.5, 5, 37, 77]
 head_heights = [20, 90, 250]  # feet
 
 size_input = 66
 
-dbSize = closest_database(project_sizes, size_input)
+dbSize = closest_match(project_sizes, size_input)
 
 print("Your DB size is:", dbSize)
 
@@ -196,7 +215,7 @@ for size in project_run_sizes:
         # Set input parameters
         # input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
         input_dict['project_list'] = 'project_list'  # .xlsx
-        input_dict['project_database'] = 'project_list_' + str(closest_database(project_sizes, size)) + 'MW'
+        input_dict['project_database'] = 'project_list_' + str(closest_match(project_sizes, size)) + 'MW'
         # Go to the closest roundup value [1 10 30 100]
         input_dict['system_size_MW_DC'] = size
         input_dict['grid_system_size_MW_DC'] = size
