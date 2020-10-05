@@ -2,14 +2,16 @@ from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
 from bin.GridConnectionCost import hybrid_gridconnection
 from StorageBOSSE.main import run_storagebosse
+from HydroBOSSE.main import run_hydrobosse
 
 
 def run_BOSSEs(hybrids_input_dict):
     """
-    Runs 1) LandBOSSE, and 2) SolarBOSSE as mutually exclusive BOS models.
-
+    Runs 1) LandBOSSE 2) SolarBOSSE, 3) StorageBOSSE as mutually exclusive BOS models. Returns the results of each.
+    :param: hybrids_input_dict - Input dictionary containing hybrid plant parameters.
+    :return: LandBOSSE_BOS_results, SolarBOSSE_results, StorageBOSSE_BOS_results
     """
-    # <><><><><><><><><><><><><><><> RUNNING LandBOSSE APRI <><><><><><><><><><><><><><><><>
+    # <><><><><><><><><><><><><><><> RUNNING LandBOSSE API <><><><><><><><><><><><><><><><>
     wind_input_dict = dict()
     wind_input_dict['num_turbines'] = hybrids_input_dict['num_turbines']
     wind_input_dict['turbine_rating_MW'] = hybrids_input_dict['turbine_rating_MW']
@@ -48,7 +50,6 @@ def run_BOSSEs(hybrids_input_dict):
     else:
         LandBOSSE_BOS_results = run_landbosse(wind_input_dict)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
-
 
     # <><><><><><><><><><><><><><><> RUNNING SolarBOSSE API <><><><><><><><><><><><><><><><>
     solar_system_size = hybrids_input_dict['solar_system_size_MW_DC']
@@ -135,5 +136,7 @@ def run_BOSSEs(hybrids_input_dict):
     else:
         StorageBOSSE_BOS_results, detailed_results = run_storagebosse(storage_input_dict)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+
+    # <><><><><><><><><><><><><><><> RUNNING HyrdoBOSSE API <><><><><><><><><><><><><><><><>
 
     return LandBOSSE_BOS_results, SolarBOSSE_results, StorageBOSSE_BOS_results

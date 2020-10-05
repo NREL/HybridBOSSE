@@ -168,112 +168,113 @@ class NegativeInputError(Error):
 # TODO: uncomment these lines to run HydroBOSSE as a standalone model.
 
 
-path = os.path.abspath(os.path.dirname(__file__))
-parent_path = os.path.abspath(os.path.join(path, ".."))
-results_dir = os.path.abspath(os.path.join(parent_path, "results"))
-print(results_dir)
-print("pause")
+if __name__ == "__main__":
 
-results_dict = dict()
-results_dict['Project_Type'] = list()
-results_dict['Project_Size_MW'] = list()
-results_dict['Project_Database'] = list()
-results_dict['Project_Head_Height'] = list()
-results_dict['Total_Initial_Capital_Cost'] = list()
-results_dict['Site_Preparation_Cost'] = list()
-results_dict['Foundation_Cost'] = list()
-results_dict['Erection_Cost'] = list()
-results_dict['Collection_Cost'] = list()
-results_dict['Substation_Cost'] = list()
-results_dict['Grid_Connection_Cost'] = list()
-results_dict['Management_Cost'] = list()
-results_dict['Total_BOS_Cost'] = list()
+    path = os.path.abspath(os.path.dirname(__file__))
+    parent_path = os.path.abspath(os.path.join(path, ".."))
+    results_dir = os.path.abspath(os.path.join(parent_path, "results"))
+    print(results_dir)
+    print("pause")
 
-project_types = ['Non-powered Dam', 'New Stream-reach Development',
-                 'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
-                 'Generator Rewind Project']
+    results_dict = dict()
+    results_dict['Project_Type'] = list()
+    results_dict['Project_Size_MW'] = list()
+    results_dict['Project_Database'] = list()
+    results_dict['Project_Head_Height'] = list()
+    results_dict['Total_Initial_Capital_Cost'] = list()
+    results_dict['Site_Preparation_Cost'] = list()
+    results_dict['Foundation_Cost'] = list()
+    results_dict['Erection_Cost'] = list()
+    results_dict['Collection_Cost'] = list()
+    results_dict['Substation_Cost'] = list()
+    results_dict['Grid_Connection_Cost'] = list()
+    results_dict['Management_Cost'] = list()
+    results_dict['Total_BOS_Cost'] = list()
 
-project_sizes = [1, 10, 30, 100]  # This is sizes of database available as project_List_XXMW.xlsx
-project_run_sizes = [0.5, 5, 37, 77]
-head_heights = [20, 90, 250]  # feet
+    project_types = ['Non-powered Dam', 'New Stream-reach Development',
+                     'Canal/Conduit Project', 'Pumped Storage Hydropower Project', 'Unit Addition Project',
+                     'Generator Rewind Project']
 
-size_input = 66
+    project_sizes = [1, 10, 30, 100]  # This is sizes of database available as project_List_XXMW.xlsx
+    project_run_sizes = [0.5, 5, 37, 77]
+    head_heights = [20, 90, 250]  # feet
 
-dbSize = closest_match(project_sizes, size_input)
+    size_input = 66
 
-print("Your DB size is:", dbSize)
+    dbSize = closest_match(project_sizes, size_input)
 
+    print("Your DB size is:", dbSize)
 
-for size in project_run_sizes:
-    for head_height in head_heights:
-        # Create input and output dictionaries
-        input_dict = dict()
-        output_dict = dict()
-        BOS_results = dict()
-        BOS_results.update({str(size)+' MW scenario': ' '})
+    for size in project_run_sizes:
+        for head_height in head_heights:
+            # Create input and output dictionaries
+            input_dict = dict()
+            output_dict = dict()
+            BOS_results = dict()
+            BOS_results.update({str(size)+' MW scenario': ' '})
 
-        # Set input parameters
-        # input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
-        input_dict['project_list'] = 'project_list'  # .xlsx
-        input_dict['project_database'] = 'project_list_' + str(closest_match(project_sizes, size)) + 'MW'
-        # Go to the closest roundup value [1 10 30 100]
-        input_dict['system_size_MW_DC'] = size
-        input_dict['grid_system_size_MW_DC'] = size
-        input_dict['grid_size_MW_AC'] = size
-        input_dict['head_height_ft'] = head_height
-        input_dict['greenfield_or_existing'] = 'greenfield'
+            # Set input parameters
+            # input_dict['project_list'] = 'project_list_' + str(size) + 'MW'
+            input_dict['project_list'] = 'project_list'  # .xlsx
+            input_dict['project_database'] = 'project_list_' + str(closest_match(project_sizes, size)) + 'MW'
+            # Go to the closest roundup value [1 10 30 100]
+            input_dict['system_size_MW_DC'] = size
+            input_dict['grid_system_size_MW_DC'] = size
+            input_dict['grid_size_MW_AC'] = size
+            input_dict['head_height_ft'] = head_height
+            input_dict['greenfield_or_existing'] = 'greenfield'
 
-        # SitePreparationCost.calculate_siteprep_cost()       # this is giving a output dictionry
-        # spc = output_dict['site_preparation_cost']
-        # print('Site prep cost:', spc)
+            # SitePreparationCost.calculate_siteprep_cost()       # this is giving a output dictionry
+            # spc = output_dict['site_preparation_cost']
+            # print('Site prep cost:', spc)
 
-        # cobb_npd, case = HydroBOSCost.cobb_cost_model(input_dict('lcmcost'), npd)
-        #
-        # print('Cobb Douglas value:', cobb_npd)
+            # cobb_npd, case = HydroBOSCost.cobb_cost_model(input_dict('lcmcost'), npd)
+            #
+            # print('Cobb Douglas value:', cobb_npd)
 
-        for project_type in project_types:
-            input_dict['project_type'] = project_type  # Non-powered Dam, New Stream-reach Development,\
-            # Canal/Conduit Project, Pumped Storage Hydropower Project, Unit Addition Project, Generator Rewind Project
+            for project_type in project_types:
+                input_dict['project_type'] = project_type  # Non-powered Dam, New Stream-reach Development,\
+                # Canal/Conduit Project, Pumped Storage Hydropower Project, Unit Addition Project, Generator Rewind Project
 
-            # Run HydroBOSSE
-            BOS_results, detailed_results = run_hydrobosse(input_dict)
-            results_dict['Project_Type'].append(project_type)
-            results_dict['Project_Size_MW'].append(size)
-            results_dict['Project_Database'].append(input_dict['project_database'])
-            results_dict['Project_Head_Height'].append(head_height)
-            results_dict['Total_Initial_Capital_Cost'].append(BOS_results['total_initial_capital_cost'])
-            results_dict['Site_Preparation_Cost'].append(BOS_results['site_preparation_cost'])
-            results_dict['Foundation_Cost'].append(BOS_results['total_foundation_cost'])
-            results_dict['Erection_Cost'].append(BOS_results['total_erection_cost'])
-            results_dict['Collection_Cost'].append(BOS_results['total_collection_cost'])
-            results_dict['Substation_Cost'].append(BOS_results['total_substation_cost'])
-            results_dict['Grid_Connection_Cost'].append(BOS_results['grid_connection_cost'])
-            results_dict['Management_Cost'].append(BOS_results['total_management_cost'])
-            results_dict['Total_BOS_Cost'].append(BOS_results['total_bos_cost'])
+                # Run HydroBOSSE
+                BOS_results, detailed_results = run_hydrobosse(input_dict)
+                results_dict['Project_Type'].append(project_type)
+                results_dict['Project_Size_MW'].append(size)
+                results_dict['Project_Database'].append(input_dict['project_database'])
+                results_dict['Project_Head_Height'].append(head_height)
+                results_dict['Total_Initial_Capital_Cost'].append(BOS_results['total_initial_capital_cost'])
+                results_dict['Site_Preparation_Cost'].append(BOS_results['site_preparation_cost'])
+                results_dict['Foundation_Cost'].append(BOS_results['total_foundation_cost'])
+                results_dict['Erection_Cost'].append(BOS_results['total_erection_cost'])
+                results_dict['Collection_Cost'].append(BOS_results['total_collection_cost'])
+                results_dict['Substation_Cost'].append(BOS_results['total_substation_cost'])
+                results_dict['Grid_Connection_Cost'].append(BOS_results['grid_connection_cost'])
+                results_dict['Management_Cost'].append(BOS_results['total_management_cost'])
+                results_dict['Total_BOS_Cost'].append(BOS_results['total_bos_cost'])
 
-            results_df = pd.DataFrame(results_dict)
+                results_df = pd.DataFrame(results_dict)
 
-            # Print Results
-        #    print(BOS_results)
-            bos_capex_total = BOS_results['total_initial_capital_cost']
-            management_cost = BOS_results['total_management_cost']
-            collection_cost = detailed_results['collection_cost']       # because it was on output dictionary
-            foundation_cost = detailed_results['foundation_cost']
-            grid_connection_cost = detailed_results['grid_connection_cost']
-            # erection_cost = detailed_results['invertertransformer_erection_cost']   # whether module o/p is dictionary
-            erection_cost = detailed_results['total_erection_cost']             # this is comming from run_module.
-            substation_cost = detailed_results['total_substation_cost']
+                # Print Results
+            #    print(BOS_results)
+                bos_capex_total = BOS_results['total_initial_capital_cost']
+                management_cost = BOS_results['total_management_cost']
+                collection_cost = detailed_results['collection_cost']       # because it was on output dictionary
+                foundation_cost = detailed_results['foundation_cost']
+                grid_connection_cost = detailed_results['grid_connection_cost']
+                # erection_cost = detailed_results['invertertransformer_erection_cost']   # whether module o/p is dictionary
+                erection_cost = detailed_results['total_erection_cost']             # this is comming from run_module.
+                substation_cost = detailed_results['total_substation_cost']
 
-            bos_capex = bos_capex_total / (size * 1e6)
-            management_capex = management_cost / (size * 1e6)
-            print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
-            print(str(size) + ' MW Management (USD/Watt)  = ' + str(round(management_capex, 2)))
-            print(str(size) + ' MW Collection USD  = ' + str(round(collection_cost, 2)))
-            print(str(size) + ' MW Foundation USD  = ' + str(round(foundation_cost, 2)))
-            print(str(size) + ' MW Grid Connection USD  = ' + str(round(grid_connection_cost, 2)))
-            print(str(size) + ' MW Inv Trans Erection USD  = ' + str(round(erection_cost, 2)))
-            print(str(size) + ' MW Substation USD  = ' + str(round(substation_cost, 2)))
+                bos_capex = bos_capex_total / (size * 1e6)
+                management_capex = management_cost / (size * 1e6)
+                print(str(size) + ' MW CAPEX (USD/Watt) = ' + str(round(bos_capex, 2)))
+                print(str(size) + ' MW Management (USD/Watt)  = ' + str(round(management_capex, 2)))
+                print(str(size) + ' MW Collection USD  = ' + str(round(collection_cost, 2)))
+                print(str(size) + ' MW Foundation USD  = ' + str(round(foundation_cost, 2)))
+                print(str(size) + ' MW Grid Connection USD  = ' + str(round(grid_connection_cost, 2)))
+                print(str(size) + ' MW Inv Trans Erection USD  = ' + str(round(erection_cost, 2)))
+                print(str(size) + ' MW Substation USD  = ' + str(round(substation_cost, 2)))
 
-        # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
-print(results_df)
-results_df.to_csv(os.path.join(results_dir, 'HyrdoBOSSE_Results.csv'))
+            # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    print(results_df)
+    results_df.to_csv(os.path.join(results_dir, 'HyrdoBOSSE_Results.csv'))
