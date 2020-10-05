@@ -8,7 +8,15 @@ import sys
 # Main API method to run a Hybrid BOS model:
 def run_hybrid_BOS(hybrids_input_dict):
     """
-    Returns a dictionary with detailed Shared Infrastructure BOS results.
+    run_hybrid_BOS runs the respective BOS models for wind,
+     solar and storage, aggregates the results, and returns
+     the collective hybrid BOS results, as well as detailed results for
+     individual technologies.
+
+     :param hybrids_input_dict: Input dictionary containing system details including sizing
+     and components
+     :return: (dict) results, wind_only_BOS, solar_only_BOS, storage_only_BOS
+
     """
 
     wind_BOS, solar_BOS, storage_BOS = run_BOSSEs(hybrids_input_dict)
@@ -70,6 +78,9 @@ def read_hybrid_scenario(file_path):
     Reads in default hybrid_inputs.yaml (YAML file) shipped with
     bin, and returns a python dictionary with all required
     key:value pairs needed to run the bin API.
+    :param: file_path - path to .yaml file to read
+    :return: (dict) hybrids_scenario_dict - dictionary of hybrid plant components and scenario which
+    can be used as input to run_hybrid_BOS
     """
     if file_path:
         input_file_path = file_path['input_file_path']
@@ -115,7 +126,16 @@ yaml_file_path = dict()
 
 
 def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_dict):
-
+    """
+    Creates and returns a dataframe from overall, wind, solar and storage results passed in
+    Prints and returns these dataframes
+    :param hybrid_dict: hybrid results dictionary produced by running run_hybrid_BOS
+    :param wind_only_dict: wind results dictionary ""
+    :param solar_only_dict: solar results dictionary ""
+    :param storage_only_dict: storage results dictionary ""
+    :return: hybrids_df, hybrids_solar_df, hybrids_wind_df, hybrids_storage_df, solar_only_bos, wind_only_bos,\
+           storage_only_bos
+    """
     hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
 
     hybrids_solar_df = pd.DataFrame(
@@ -160,7 +180,9 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
 
 
 if __name__ == '__main__':
-
+    """
+    Example of running HybridBOSSE for a wind, solar, storage plant
+    """
     # Add Some Paths
     path = os.path.abspath(os.path.dirname(__file__))
     parent_path = os.path.abspath(os.path.join(path, ".."))
