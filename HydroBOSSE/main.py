@@ -182,7 +182,7 @@ size_input = 66
 
 dbSize = closest_database(project_sizes, size_input)
 
-print("Your DB size is:", dbSize )
+print("Your DB size is:", dbSize)
 
 
 for size in project_run_sizes:

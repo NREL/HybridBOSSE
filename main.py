@@ -114,7 +114,6 @@ yaml_file_path = dict()
 #                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
 
 
-
 def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_dict):
 
     hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
@@ -159,16 +158,17 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
     return hybrids_df, hybrids_solar_df, hybrids_wind_df, hybrids_storage_df, solar_only_bos, wind_only_bos,\
            storage_only_bos
 
+
 if __name__ == '__main__':
 
-    #Add Some Paths
+    # Add Some Paths
     path = os.path.abspath(os.path.dirname(__file__))
     parent_path = os.path.abspath(os.path.join(path, ".."))
     sys.path.append(parent_path)
     sys.path.append("..")
     sys.path.append(".")
 
-    #Create the hybrid_scenario_dict from a yaml file
+    # Create the hybrid_scenario_dict from a yaml file
     # hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 
     # Create hybrid_scenario_dict manually
@@ -196,7 +196,7 @@ if __name__ == '__main__':
             "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/bin/StorageBOSSE/project_list_test.xlsx",
             "storage_project_list": "project_list_test"
     }
-    #Set custom HybridBOSSE parameters
+    # Set custom HybridBOSSE parameters
     wind_size = 150
     hybrids_scenario_dict['wind_plant_size_MW'] = wind_size
     hybrids_scenario_dict['num_turbines'] = wind_size / 1.5
@@ -223,9 +223,9 @@ if __name__ == '__main__':
     hybrids_scenario_dict['path_to_project_list'] = os.path.abspath(os.path.dirname(__file__))
     hybrids_scenario_dict['path_to_storage_project_list'] = os.path.join(os.path.abspath(os.path.dirname(__file__))
                                                                          , 'StorageBOSSE')
-    #Setting inteconnect sizes based on project size
+    # Setting inteconnect sizes based on project size
     grid_size_multiplier = 1
-    grid_size = wind_size #* grid_size_multiplier * 2
+    grid_size = wind_size # * grid_size_multiplier * 2
     if grid_size > 15:
         hybrids_scenario_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
     else:

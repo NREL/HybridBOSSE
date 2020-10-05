@@ -115,7 +115,6 @@ yaml_file_path = dict()
 #                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
 
 
-
 def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_dict):
 
     hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
@@ -159,6 +158,7 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
 
     return hybrids_df, hybrids_solar_df, hybrids_wind_df, hybrids_storage_df, solar_only_bos, wind_only_bos,\
            storage_only_bos
+
 
 def hybrid_bosse(wind_size, solar_size, hybrid_size):
 
