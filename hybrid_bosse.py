@@ -6,10 +6,17 @@ import pandas as pd
 import sys
 
 
-# Main API method to run a Hybrid BOS model:
 def run_hybrid_BOS(hybrids_input_dict):
     """
-    Returns a dictionary with detailed Shared Infrastructure BOS results.
+    run_hybrid_BOS runs the respective BOS models for wind,
+     solar and storage, aggregates the results, and returns
+     the collective hybrid BOS results, as well as detailed results for
+     individual technologies.
+
+     :param hybrids_input_dict: Input dictionary containing system details including sizing
+     and components
+     :return: (dict) results, wind_only_BOS, solar_only_BOS, storage_only_BOS
+
     """
 
     wind_BOS, solar_BOS, storage_BOS = run_BOSSEs(hybrids_input_dict)
@@ -71,6 +78,9 @@ def read_hybrid_scenario(file_path):
     Reads in default hybrid_inputs.yaml (YAML file) shipped with
     bin, and returns a python dictionary with all required
     key:value pairs needed to run the bin API.
+    :param: file_path - path to .yaml file to read
+    :return: (dict) hybrids_scenario_dict - dictionary of hybrid plant components and scenario which
+    can be used as input to run_hybrid_BOS
     """
     if file_path:
         input_file_path = file_path['input_file_path']
@@ -116,7 +126,16 @@ yaml_file_path = dict()
 
 
 def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_dict):
-
+    """
+    Creates and returns a dataframe from overall, wind, solar and storage results passed in
+    Prints and returns these dataframes
+    :param hybrid_dict: hybrid results dictionary produced by running run_hybrid_BOS
+    :param wind_only_dict: wind results dictionary ""
+    :param solar_only_dict: solar results dictionary ""
+    :param storage_only_dict: storage results dictionary ""
+    :return: hybrids_df, hybrids_solar_df, hybrids_wind_df, hybrids_storage_df, solar_only_bos, wind_only_bos,\
+           storage_only_bos
+    """
     hybrids_df = pd.DataFrame(hybrid_dict['hybrid'].items(), columns=['Type', 'USD'])
 
     hybrids_solar_df = pd.DataFrame(
@@ -162,14 +181,22 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
 
 def hybrid_bosse(wind_size, solar_size, hybrid_size):
 
-    #Add Some Paths
+    """
+    Runs a Hybrid BOS analysis for a given wind, solar and hybrid plant (total) size
+    :param wind_size: Size of wind plant in MW
+    :param solar_size: Size of solar plant in MW
+    :param hybrid_size: Size of overall hybrid plant in MW
+    :return:
+    """
+
+    # Add Necessary Paths
     path = os.path.abspath(os.path.dirname(__file__))
     parent_path = os.path.abspath(os.path.join(path, ".."))
     sys.path.append(parent_path)
     sys.path.append("..")
     sys.path.append(".")
 
-    #Create the hybrid_scenario_dict from a yaml file
+    # Create the hybrid_scenario_dict from a yaml file
     # hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
 
     # Create hybrid_scenario_dict manually
@@ -197,8 +224,8 @@ def hybrid_bosse(wind_size, solar_size, hybrid_size):
             "path_to_storage_project_list": "/Users/abarker/Desktop/Hybrid Model/Code/bin/StorageBOSSE/project_list_test.xlsx",
             "storage_project_list": "project_list_test"
     }
-    #Set custom HybridBOSSE parameters
-    wind_size = 150
+    # Set custom HybridBOSSE parameters
+    # wind_size = 150
     hybrids_scenario_dict['wind_plant_size_MW'] = wind_size
     hybrids_scenario_dict['num_turbines'] = wind_size / 1.5
     hybrids_scenario_dict["grid_interconnection_rating_MW"] = wind_size
@@ -206,7 +233,7 @@ def hybrid_bosse(wind_size, solar_size, hybrid_size):
     hybrids_scenario_dict["hybrid_substation_rating_MW"] = wind_size
     hybrids_scenario_dict["hybrid_construction_months"] = wind_size
     hybrids_scenario_dict["interconnect_voltage_kV"] = 15
-    hybrids_scenario_dict["solar_system_size_MW_DC"] = wind_size
+    hybrids_scenario_dict["solar_system_size_MW_DC"] = solar_size
 
     if hybrids_scenario_dict['num_turbines'] is None or hybrids_scenario_dict['num_turbines'] == 0:
         hybrids_scenario_dict['num_turbines'] = 0

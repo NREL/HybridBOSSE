@@ -5,7 +5,7 @@ from bin.PostSimulationProcessing import PostSimulationProcessing
 import pandas as pd
 import sys
 
-# Main API method to run a Hybrid BOS model:
+
 def run_hybrid_BOS(hybrids_input_dict):
     """
     run_hybrid_BOS runs the respective BOS models for wind,
