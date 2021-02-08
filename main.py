@@ -367,7 +367,7 @@ def display_results(hybrid_dict, wind_only_dict, solar_only_dict, storage_only_d
     # txt_settings = dict(boxstyle='square', facecolor='white', alpha=0.25)
     #
     # plot.text(0.025, 0.975, text_str, transform=plot.transAxes, fontsize=8,
-    #           verticalalignment='top', bbox=txt_settings)
+    #           verticala lignment='top', bbox=txt_settings)
     #
     # figure.savefig('BOS_Cost_versus_WSRatio.png')
     #
