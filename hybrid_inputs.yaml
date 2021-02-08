@@ -10,16 +10,23 @@ hybrids_input_dict:
     # Wind farm required inputs
     wind_dist_interconnect_mi: 0    # Gets over-ridden when 'shared_interconnection' is True
     num_turbines: 5
-    turbine_rating_MW: 1.5
+    turbine_rating_MW: 1
     wind_construction_time_months: 5
     project_id: 'foundation_validation_ge15'
-    path_to_project_list: '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
-    name_of_project_list: 'project_list_'
+    path_to_wind_project_list: '/Users/ccampos/PycharmProjects/HybridBOSSE/hybridbosse/LandBOSSE/landbosse/landbosse_api/'
+    name_of_wind_project_list: 'project_list'
     # override_total_management_cost: 1500000
     # development_labor_cost_usd: 1500000
 
     # Solar farm required inputs
-    solar_system_size_MW_DC: 7.5
+    solar_system_size_MW_DC: 5
     dc_ac_ratio: 1
     solar_construction_time_months: 5   # Optional. Overrides Has a scaling MW v. construction time relationship
     solar_dist_interconnect_mi: 5   # Gets over-ridden when 'shared_interconnection' is True
+
+    #Storage inputs
+    name_of_storage_project_list: 'project_list_test'
+    storage_system_size_MW_DC: 10
+    storage_system_size_MWH: 10
+    storage_construction_time_months: 6
+

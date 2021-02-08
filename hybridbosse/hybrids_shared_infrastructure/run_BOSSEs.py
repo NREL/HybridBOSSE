@@ -1,19 +1,24 @@
 from hybridbosse.LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from hybridbosse.SolarBOSSE.main import run_solarbosse
+from hybridbosse.StorageBOSSE.main import run_storagebosse
 from hybridbosse.hybrids_shared_infrastructure.GridConnectionCost import hybrid_gridconnection
 
 
 def run_BOSSEs(hybrids_input_dict):
     """
-    Runs 1) LandBOSSE, and 2) SolarBOSSE as mutually exclusive BOS models.
+    Runs 1) LandBOSSE, 2) SolarBOSSE, and 3) StorageBOSSE as mutually exclusive BOS models.
 
     """
     # <><><><><><><><><><><><><><><> RUNNING LandBOSSE API <><><><><><><><><><><><><><><><>
     wind_input_dict = dict()
+
+    if "labor_cost_multiplier" in hybrids_input_dict:
+        wind_input_dict['labor_cost_multiplier'] = hybrids_input_dict['labor_cost_multiplier']
+
     wind_input_dict['num_turbines'] = hybrids_input_dict['num_turbines']
     wind_input_dict['turbine_rating_MW'] = hybrids_input_dict['turbine_rating_MW']
 
-    wind_input_dict['interconnect_voltage_kV'] =    \
+    wind_input_dict['interconnect_voltage_kV'] = \
                                             hybrids_input_dict['interconnect_voltage_kV']
 
     wind_input_dict['distance_to_interconnect_mi'] = \
@@ -32,9 +37,9 @@ def run_BOSSEs(hybrids_input_dict):
 
     wind_input_dict['project_id'] = hybrids_input_dict['project_id']
     if 'path_to_project_list' in hybrids_input_dict:
-        wind_input_dict['path_to_project_list'] = hybrids_input_dict['path_to_project_list']
+        wind_input_dict['path_to_project_list'] = hybrids_input_dict['path_to_wind_project_list']
     if 'name_of_project_list' in hybrids_input_dict:
-        wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_project_list']
+        wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_wind_project_list']
     if 'development_labor_cost_usd' in hybrids_input_dict:
         wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
 
@@ -49,10 +54,10 @@ def run_BOSSEs(hybrids_input_dict):
     # <><><><><><><><><><><><><><><> RUNNING SolarBOSSE API <><><><><><><><><><><><><><><><>
     solar_system_size = hybrids_input_dict['solar_system_size_MW_DC']
     solar_input_dict = dict()
-    BOS_results = dict()
     solar_input_dict['project_list'] = 'project_list_50MW'
     solar_input_dict['system_size_MW_DC'] = solar_system_size
-
+    if "labor_cost_multiplier" in hybrids_input_dict:
+        solar_input_dict['labor_cost_multiplier'] = hybrids_input_dict['labor_cost_multiplier']
     if 'solar_dist_interconnect_mi' in hybrids_input_dict:
         solar_input_dict['dist_interconnect_mi'] = hybrids_input_dict['solar_dist_interconnect_mi']
     else:
@@ -98,4 +103,18 @@ def run_BOSSEs(hybrids_input_dict):
         SolarBOSSE_results, detailed_results = run_solarbosse(solar_input_dict)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
-    return LandBOSSE_BOS_results, SolarBOSSE_results
+
+    # <><><><><><><><><><><><><><><> RUNNING StorageBOSSE API <><><><><><><><><><><><><><><><>
+    storage_input_dict = dict()
+    if 'name_of_storage_project_list' in hybrids_input_dict:
+        storage_input_dict['project_list'] = hybrids_input_dict['name_of_storage_project_list']
+    else:
+        storage_input_dict['project_list'] = "project_list_test"
+    if "labor_cost_multiplier" in hybrids_input_dict:
+        storage_input_dict['labor_cost_multiplier'] = hybrids_input_dict['labor_cost_multiplier']
+
+    if "material_cost_multiplier" in hybrids_input_dict:
+        storage_input_dict['material_cost_multiplier'] = hybrids_input_dict['material_cost_multiplier']
+    StorageBOSSE_results, detailed_results = run_storagebosse(storage_input_dict)
+
+    return LandBOSSE_BOS_results, SolarBOSSE_results, StorageBOSSE_results

@@ -10,10 +10,11 @@ def run(hybrids_input_dict):
     """
     Returns a dictionary with detailed Shared Infrastructure BOS results.
     """
-    wind_BOS, solar_BOS = run_BOSSEs(hybrids_input_dict)
-    # Store a copy of both solar only and wind only outputs dictionaries:
+    wind_BOS, solar_BOS, storage_BOS = run_BOSSEs(hybrids_input_dict)
+    # Store a copy of solar, storage, and wind only outputs dictionaries:
     wind_only_BOS = wind_BOS.copy()
     solar_only_BOS = solar_BOS.copy()
+    storage_only_BOS = storage_BOS.copy()
 
     # print('wind_only_BOS at ', hybrids_input_dict['wind_plant_size_MW'], ' MW: ' , wind_BOS)
     # print('solar_only_BOS ', hybrids_input_dict['solar_system_size_MW_DC'], ' MW: ' , solar_BOS)

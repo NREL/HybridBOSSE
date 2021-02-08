@@ -23,6 +23,8 @@ def run_solarbosse(input_dictionary):
 
         # make sure you call create_master_input_dictionary() as soon as
         # labor_cost_multiplier's value is changed.
+        if 'labor_cost_multiplier' in input_dictionary:
+            project_parameters['Labor cost multiplier'] = input_dictionary['labor_cost_multiplier']
         master_input_dict = xlsx_reader.create_master_input_dictionary(
                                             project_data_sheets, project_parameters)
 
