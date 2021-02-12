@@ -1,5 +1,8 @@
 hybrids_input_dict:
     shared_interconnection: True
+    shared_site_prep: False
+    shared_crane_equipment: False
+    shared_management: False
     distance_to_interconnect_mi: 1.5
     new_switchyard: True
     grid_interconnection_rating_MW: 7.5
@@ -24,8 +27,9 @@ hybrids_input_dict:
     solar_construction_time_months: 5   # Optional. Overrides Has a scaling MW v. construction time relationship
     solar_dist_interconnect_mi: 5   # Gets over-ridden when 'shared_interconnection' is True
 
-    #Storage inputs
+    # Storage required inputs
     name_of_storage_project_list: 'project_list_test'
+    path_to_storage_project_list: ''
     storage_system_size_MW_DC: 10
     storage_system_size_MWH: 10
     storage_construction_time_months: 6

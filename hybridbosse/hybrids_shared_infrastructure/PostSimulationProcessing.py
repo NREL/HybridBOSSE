@@ -154,7 +154,6 @@ class PostSimulationProcessing:
         hybrid_plant_size_MW = self.hybrids_input_dict['hybrid_plant_size_MW']
         wind_plant_size_MW = self.hybrids_input_dict['wind_plant_size_MW']
         solar_system_size_MW_DC = self.hybrids_input_dict['solar_system_size_MW_DC']
-        storage_system_size_MW_DC = self.hybrids_input_dict['storage_system_size_MW_DC']
 
         landbosse_cost_before_mgmt = self.LandBOSSE_BOS_results['total_bos_cost'] - \
                                      self.LandBOSSE_BOS_results['total_management_cost']
@@ -207,9 +206,6 @@ class PostSimulationProcessing:
         if self.hybrids_input_dict['hybrid_plant_size_MW'] > 15:
             self.SolarBOSSE_results['development_overhead_cost'] -= \
                 solar_overhead_savings
-
-        storagebosse_cost_before_mgmt = self.StorageBOSSE_results['total_bos_cost'] - \
-                                     self.StorageBOSSE_results['total_management_cost']
 
     def site_facility_hybrid(self):
         """
