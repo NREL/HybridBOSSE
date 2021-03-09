@@ -28,6 +28,6 @@ Cloning HybridBOSSE
 
 Recursively install HybridBOSSE using command line ::
 
-git clone --recurse-submodules https://github.com/parangat94/HybridBOSSE.git
+    git clone --recurse-submodules https://github.com/parangat94/HybridBOSSE.git
 
 ..
