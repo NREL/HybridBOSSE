@@ -23,3 +23,9 @@ Features
 
 ![hybrid infrastructure](https://user-images.githubusercontent.com/41651551/90398485-c0856b80-e056-11ea-81bc-50d0faa1e80c.png)
 
+Cloning HybridBOSSE
+-------------------
+
+Recursively install HybridBOSSE using command line ::
+
+git clone --recurse-submodules https://github.com/parangat94/HybridBOSSE.git
