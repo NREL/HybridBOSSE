@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from SolarBOSSE.excelio.create_master_input_dict import XlsxReader
-from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
+from hybridbosse.LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from SolarBOSSE.model.Manager import Manager
 
 

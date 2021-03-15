@@ -1,4 +1,4 @@
-from LandBOSSE.landbosse.model import DefaultMasterInputDict
+from hybridbosse.LandBOSSE.landbosse.model import DefaultMasterInputDict
 
 
 class XlsxReader:

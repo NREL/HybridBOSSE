@@ -1,4 +1,4 @@
-from LandBOSSE.landbosse.landbosse_api.run import run_landbosse
+from hybridbosse.LandBOSSE.landbosse.landbosse_api.run import run_landbosse
 from SolarBOSSE.main import run_solarbosse
 from hybrids_shared_infrastructure.GridConnectionCost import hybrid_gridconnection
 
@@ -11,7 +11,12 @@ def run_BOSSEs(hybrids_input_dict):
     # <><><><><><><><><><><><><><><> RUNNING LandBOSSE API <><><><><><><><><><><><><><><><>
     wind_input_dict = dict()
     wind_input_dict['num_turbines'] = hybrids_input_dict['num_turbines']
+    wind_input_dict['breakpoint_between_base_and_topping_percent'] = \
+        hybrids_input_dict['breakpoint_between_base_and_topping_percent']
     wind_input_dict['turbine_rating_MW'] = hybrids_input_dict['turbine_rating_MW']
+    wind_input_dict['num_hwy_permits'] = hybrids_input_dict['num_hwy_permits']
+    wind_input_dict['num_access_roads'] = hybrids_input_dict['num_access_roads']
+    wind_input_dict['road_length_adder_m'] = hybrids_input_dict['road_length_adder_m']
 
     wind_input_dict['interconnect_voltage_kV'] =    \
                                             hybrids_input_dict['interconnect_voltage_kV']
@@ -35,7 +40,7 @@ def run_BOSSEs(hybrids_input_dict):
     wind_input_dict['name_of_project_list'] = hybrids_input_dict['name_of_project_list']
     if 'development_labor_cost_usd' in hybrids_input_dict:
         wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
-
+    wind_input_dict['construct_duration'] = hybrids_input_dict['wind_construction_time_months']
     if hybrids_input_dict['wind_plant_size_MW'] < 1:
         LandBOSSE_BOS_results = dict()
         LandBOSSE_BOS_results['total_bos_cost'] = 0

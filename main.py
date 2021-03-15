@@ -94,14 +94,12 @@ yaml_file_path = dict()
 # Some preset scenarios:
 #
 # hybrid_inputs_7.5_7.5_7.5
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_7.5.yaml'
+# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Hybrids_BOS_model/' \
+#                                     'yaml_inputs/hybrid_inputs_7.5_7.5_7.5.yaml'
 
 # hybrid_inputs_7.5_7.5_15
-# yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
-#                                     'Infrastructure/hybrids_shared_infra_tool/shared_' \
-#                                     'infra_in_out_scenarios/hybrid_inputs_7.5_7.5_15.yaml'
+yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Hybrids_BOS_model/' \
+                                    'yaml_inputs/hybrid_inputs_7.5_7.5_15.yaml'
 
 # hybrid_inputs_15_15_15
 # yaml_file_path['input_file_path'] = '/Users/pbhaskar/Desktop/Projects/Shared ' \
@@ -294,6 +292,7 @@ max_grid = 1
 # hybrid_csv = pd.DataFrame(columns=['Project Rating (MW)', 'BOS Component', 'USD'])
 # solar_csv = pd.DataFrame(columns=['Project Rating (MW)', 'BOS Component', 'USD'])
 # wind_csv = pd.DataFrame(columns=['Project Rating (MW)', 'BOS Component', 'USD'])
+hybrids_scenario_dict = dict()
 
 while grid_size_multiplier <= max_grid:
     size = 5
@@ -312,12 +311,54 @@ while grid_size_multiplier <= max_grid:
     while size <= max_size:
 
         override_dict = dict()
+        # LandBOSSE Crane Breakpoint:
+        if size >= 50:
+            override_dict['breakpoint_between_base_and_topping_percent'] = 0.38888889
+        else:
+            override_dict['breakpoint_between_base_and_topping_percent'] = 0
 
-        # Grid Connection, and Substation rating
+        # LandBOSSE Road Length adder, number of access roads, and number of highway permits:
+        if size < 20 :
+            override_dict['road_length_adder_m'] = 0
+            override_dict['num_hwy_permits'] = 0
+            override_dict['num_access_roads'] = 0
+        elif size >= 20 and  size < 50:
+            override_dict['road_length_adder_m'] = 1000
+            override_dict['num_hwy_permits'] = 2
+            override_dict['num_access_roads'] = 2
+        elif size >= 50 and size < 100:
+            override_dict['road_length_adder_m'] = 2135.4
+            override_dict['num_hwy_permits'] = 4
+            override_dict['num_access_roads'] = 2
+        elif size >= 100 and size < 150:
+            override_dict['road_length_adder_m'] = 2812.5
+            override_dict['num_hwy_permits'] = 8
+            override_dict['num_access_roads'] = 2
+        elif size >= 150 and size < 200:
+            override_dict['road_length_adder_m'] = 3489.6
+            override_dict['num_hwy_permits'] = 12
+            override_dict['num_access_roads'] = 2
+        elif size >= 200 and size < 400:
+            override_dict['road_length_adder_m'] = 4166.70
+            override_dict['num_hwy_permits'] = 16
+            override_dict['num_access_roads'] = 2
+        elif size >= 400 and size < 1000 :
+            override_dict['road_length_adder_m'] = 6875.10
+            override_dict['num_hwy_permits'] = 32
+            override_dict['num_access_roads'] = 3
+        elif size >= 1000:
+            override_dict['road_length_adder_m'] = 15000.30
+            override_dict['num_hwy_permits'] = 80
+            override_dict['num_access_roads'] = 6
+
+            # Grid Connection, and Substation rating
         grid_size = size * grid_size_multiplier * 2
         override_dict['grid_interconnection_rating_MW'] = grid_size
         if grid_size > 15:
-            override_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
+            # Used in 2020 run and based on PV Benchmark Study of 2018
+            # override_dict['distance_to_interconnect_mi'] = (0.0263 * grid_size) - 0.2632
+            # Used in 2021 run and based on LandBOSSE cost and scaling study
+            override_dict['distance_to_interconnect_mi'] = (0.0097 * grid_size) + 0.429
         else:
             override_dict['distance_to_interconnect_mi'] = 0
 
@@ -340,6 +381,7 @@ while grid_size_multiplier <= max_grid:
 
         # Assign override_dict to hybrids_scenario_dict:
         hybrids_scenario_dict = read_hybrid_scenario(yaml_file_path)
+        print(yaml_file_path)
 
         # project list file for utility scale
         if size > 15:
@@ -376,6 +418,11 @@ while grid_size_multiplier <= max_grid:
         hybrids_scenario_dict['num_turbines'] = override_dict['num_turbines']
         hybrids_scenario_dict['solar_system_size_MW_DC'] = override_dict['solar_system_size_MW_DC']
         hybrids_scenario_dict['wind_plant_size_MW'] = override_dict['wind_plant_size_MW']
+        hybrids_scenario_dict['breakpoint_between_base_and_topping_percent'] = \
+            override_dict['breakpoint_between_base_and_topping_percent']
+        hybrids_scenario_dict['num_hwy_permits'] = override_dict['num_hwy_permits']
+        hybrids_scenario_dict['num_access_roads'] = override_dict['num_access_roads']
+        hybrids_scenario_dict['road_length_adder_m'] = override_dict['road_length_adder_m']
 
         hybrid_results, wind_only, solar_only = run_hybrid_BOS(hybrids_scenario_dict)
         # print(hybrid_results)
@@ -397,8 +444,7 @@ while grid_size_multiplier <= max_grid:
     # print(hybrid_BOS_results)
     # print(wind_only_BOS_results)
     # print(solar_only_BOS_results)
-    path = '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/' \
-           'shared_infra_outputs/'
+    path = '/Users/pbhaskar/Desktop/Projects/Hybrids_BOS_model/outputs/'
     hybrid_csv.to_csv(path + 'hybrids_' + str(100*grid_size_multiplier) + '_percent_grid.csv', index=False)
     solar_csv.to_csv(path + 'solar_' + str(100*grid_size_multiplier) + '_percent_grid.csv', index=False)
     wind_csv.to_csv(path + 'wind_' + str(100*grid_size_multiplier) + '_percent_grid.csv', index=False)
