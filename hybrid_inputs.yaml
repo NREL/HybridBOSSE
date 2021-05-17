@@ -1,29 +1,35 @@
 hybrids_input_dict:
+    project_name: 'Hybrid_BOSSE'
+    project_mode: 1 # 1: Auto, 2: AC coupled, 3: DC coupled, 4: Hybrid coupled NOTE: Recalculate wherever mode 2 was and reprogram mode 2 to be ac while mode 3 is DC but has a dc substation
     shared_interconnection: True
-    distance_to_interconnect_mi: 1.5
+    shared_collection_system: True
+    distance_to_interconnect_mi: 3
     new_switchyard: True
     grid_interconnection_rating_MW: 7.5
     interconnect_voltage_kV: 15
     shared_substation: True
     hybrid_substation_rating_MW: 7.5
-
+    collection_layout_file_name: 'project_data_defaults'
+    collection_layout_path: '/Users/ccampos/Desktop/hybrid_manual_inputs/project_data'
+    line_frequency_hz: 60
     # Wind farm required inputs
     wind_dist_interconnect_mi: 0    # Gets over-ridden when 'shared_interconnection' is True
-    num_turbines: 5
-    turbine_rating_MW: 1.5
+    num_turbines: 100
+    turbine_rating_MW:  1
     wind_construction_time_months: 5
     project_id: 'foundation_validation_ge15'
-    path_to_project_list: '/Users/pbhaskar/Desktop/Projects/Shared Infrastructure/hybrids_shared_infra_tool/'
-    name_of_project_list: 'project_list_'
+    path_to_project_list: '/Users/ccampos/Desktop/hybrid_manual_inputs/project_data'
+    name_of_project_list: 'project_list_ge15_dist_05'
 
     # Solar farm required inputs
-    solar_system_size_MW_DC: 7.5
+    solar_system_size_MW_DC: 100
     dc_ac_ratio: 1
     solar_construction_time_months: 5   # Optional. Overrides Has a scaling MW v. construction time relationship
     solar_dist_interconnect_mi: 5   # Gets over-ridden when 'shared_interconnection' is True
 
     # Storage required inputs
-    storage_system_size_MW_DC: 10
+    storage_system_size_MW_DC: 50
     storage_system_size_MWh: 1
+    storage_construction_time_months: 5
     path_to_storage_project_list: '/Users/abarker/Desktop/Hybrid Model/Code/bin/StorageBOSSE/project_list_test.xlsx'
     storage_project_list: 'project_list_test'

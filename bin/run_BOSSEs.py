@@ -41,7 +41,8 @@ def run_BOSSEs(hybrids_input_dict):
     if 'development_labor_cost_usd' in hybrids_input_dict:
         wind_input_dict['development_labor_cost_usd'] = hybrids_input_dict['development_labor_cost_usd']
     # --/Parangat Additions 2-- #
-
+    if 'wind_collection_layout' in hybrids_input_dict:
+        wind_input_dict['collection_layout'] = hybrids_input_dict['wind_collection_layout']
     if hybrids_input_dict['wind_plant_size_MW'] < 1:
         LandBOSSE_BOS_results = dict()
         LandBOSSE_BOS_results['total_bos_cost'] = 0

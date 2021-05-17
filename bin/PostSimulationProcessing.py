@@ -1,6 +1,9 @@
+from copy import deepcopy
 from .GridConnectionCost import hybrid_gridconnection
 from .SubstationCost import hybrid_substation
+from .InverterTransformerErection import InverterTransformerErection
 from .ManagementCost import *
+from .CollectionCost import ArraySystem, get_ac_hybrid_matrix, get_dc_hybrid_matrix
 
 
 class PostSimulationProcessing:
@@ -14,7 +17,9 @@ class PostSimulationProcessing:
         self.SolarBOSSE_results = SolarBOSSE_results
         self.StorageBOSSE_results = StorageBOSSE_results
         self.hybrid_gridconnection_usd = self.hybrid_gridconnection_usd()
+        self.inverter_cost_usd = self.inverter_cost()
         self.hybrid_substation_usd = self.hybrid_substation_usd()
+        self.hybrid_collection_cost_usd = self.hybrid_collection_cost()
         self.site_facility_usd = self.site_facility_hybrid()
         self.developer_profit_USD()
         self.developer_overhead_USD()
@@ -25,10 +30,20 @@ class PostSimulationProcessing:
         """
         Hybrid BOS Results on a total project basis (USD)
         """
-
+        mode = self.hybrids_input_dict['project_mode']
+        shared_collection = self.hybrids_input_dict['shared_collection_system']
         total_hybrids_BOS_USD = self.LandBOSSE_BOS_results['total_bos_cost'] + \
                                 self.SolarBOSSE_results['total_bos_cost'] + \
                                 self.StorageBOSSE_results['total_bos_cost']
+        if shared_collection:
+            total_hybrids_BOS_USD -= (self.LandBOSSE_BOS_results['total_collection_cost'] +
+                                      self.SolarBOSSE_results['total_collection_cost'] +
+                                      self.StorageBOSSE_results['total_collection_cost'])
+
+        if mode == 2:
+            total_hybrids_BOS_USD += self.inverter_cost_usd
+
+
 
         if self.hybrids_input_dict['wind_plant_size_MW'] == 0:
             self.LandBOSSE_BOS_results['total_gridconnection_cost'] = 0
@@ -53,7 +68,7 @@ class PostSimulationProcessing:
                                     self.StorageBOSSE_results['total_transdist_cost'] - \
                                     self.StorageBOSSE_results['substation_cost']
 
-        return total_hybrids_BOS_USD
+        return total_hybrids_BOS_USD.sum()
 
     def hybrid_BOS_usd_watt(self):
         if self.SolarBOSSE_results['total_bos_cost'] == 0:
@@ -76,7 +91,7 @@ class PostSimulationProcessing:
                                          ((self.hybrids_input_dict['solar_system_size_MW_DC'] * 1e6) +
                                           (self.hybrids_input_dict['wind_plant_size_MW'] * 1e6))
 
-        return total_hybrids_BOS_USD_Watt
+        return total_hybrids_BOS_USD_Watt.sum()
 
     def hybrid_gridconnection_usd(self):
         """
@@ -110,7 +125,59 @@ class PostSimulationProcessing:
         else:
             hybrid_substation_usd = 0
 
+        if (self.hybrids_input_dict['project_mode'] == 2 or self.hybrids_input_dict['project_mode'] == 4) and self.hybrids_input_dict['shared_collection_system']:
+            hybrid_substation_usd += self.inverter_cost_usd
+
         return hybrid_substation_usd
+
+    def hybrid_collection_cost(self):
+        """
+
+        """
+        if self.hybrids_input_dict['shared_collection_system']:
+            if self.hybrids_input_dict['project_mode'] == 4:
+                dc_outputs = dict()
+
+
+                hybrid_dc_collection_inputs = self.hybrids_input_dict.copy()
+                hybrid_dc_collection_inputs['project_mode'] = 3
+
+                #sets up dictionary for hybrid dc setup
+                adj, x, y, types = get_dc_hybrid_matrix(hybrid_dc_collection_inputs)
+                hybrid_dc_collection_inputs['adj_layout'] = adj
+                hybrid_dc_collection_inputs['x_coordinate_layout'] = x
+                hybrid_dc_collection_inputs['y_coordinate_layout'] = y
+                hybrid_dc_collection_inputs['type_layout'] = types
+
+
+                hybrid_collection_cost_dc = ArraySystem(input_dict=hybrid_dc_collection_inputs, output_dict=dc_outputs)
+                hybrid_collection_cost_dc.run_module()
+                hybrid_collection_cost_dc_bos = dc_outputs['total_collection_cost'].sum().values[1]
+                hybrid_collection_cost_bos = self.LandBOSSE_BOS_results['total_collection_cost'] + hybrid_collection_cost_dc_bos
+            else:
+                outputs = dict()
+                hybrid_collection_cost = ArraySystem(input_dict=self.hybrids_input_dict, output_dict=outputs)
+                hybrid_collection_cost.run_module()
+                hybrid_collection_cost_bos = outputs['total_collection_cost'].sum().values[1]
+
+
+        else:
+            outputs = dict()
+            hybrid_collection_cost_bos = (self.LandBOSSE_BOS_results['total_collection_cost'] +
+                                      self.SolarBOSSE_results['total_collection_cost'] +
+                                      self.StorageBOSSE_results['total_collection_cost'])
+
+        return hybrid_collection_cost_bos
+
+    def inverter_cost(self):
+        if self.hybrids_input_dict['project_mode'] == 2 and self.hybrids_input_dict['shared_collection_system']:
+            output = dict()
+            inverter = InverterTransformerErection(self.hybrids_input_dict, output, "external_inverter")
+            inverter.run_module()
+            hybrid_inverter_cost = output['total_erection_cost'].sum()
+        else:
+            hybrid_inverter_cost = 0
+        return hybrid_inverter_cost
 
     def developer_profit_USD(self):
         """
@@ -234,6 +301,8 @@ class PostSimulationProcessing:
             BOS_dict.pop('markup_contingency_usd')
             BOS_dict.pop('engineering_usd')
             BOS_dict.pop('site_facility_usd')
+            if self.hybrids_input_dict['shared_collection_system']:
+                BOS_dict.pop('total_collection_cost')
 
         elif technology == 'solar' and BOS_dict['total_bos_cost'] > 0:
             BOS_dict.pop('substation_cost')
@@ -243,12 +312,16 @@ class PostSimulationProcessing:
             BOS_dict.pop('bonding_usd')
             BOS_dict.pop('development_overhead_cost')
             BOS_dict.pop('total_sales_tax')
+            if self.hybrids_input_dict['shared_collection_system']:
+                BOS_dict.pop('total_collection_cost')
 
         elif technology == 'storage' and BOS_dict['total_bos_cost'] > 0:
             # Remove the appropriate cost buckets for a system involving storage
             # BOS_dict.pop('substation_cost')
             BOS_dict.pop('total_transdist_cost')
             BOS_dict.pop('substation_cost')
+            if self.hybrids_input_dict['shared_collection_system']:
+                BOS_dict.pop('total_collection_cost')
 
         return BOS_dict
 
