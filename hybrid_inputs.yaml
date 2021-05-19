@@ -1,6 +1,6 @@
 hybrids_input_dict:
     project_name: 'Hybrid_BOSSE'
-    project_mode: 1 # 1: Auto, 2: AC coupled, 3: DC coupled, 4: Hybrid coupled NOTE: Recalculate wherever mode 2 was and reprogram mode 2 to be ac while mode 3 is DC but has a dc substation
+    project_mode: 1 # 1: Auto, 2: AC coupled, 3: DC coupled, 4: Hybrid coupled
     shared_interconnection: True
     shared_collection_system: True
     distance_to_interconnect_mi: 3
