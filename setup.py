@@ -51,7 +51,7 @@ setup(
         'xlsxwriter==1.2.1',
         'xlrd==1.2.0',
         'pytest==5.3.5',
-        'PyYaml==5.1.2'
+        'PyYaml==5.4'
     ],
     packages=['hybridbosse', 'hybridbosse.hybrids_shared_infrastructure',
               'hybridbosse.LandBOSSE', 'hybridbosse.LandBOSSE.landbosse.model',
